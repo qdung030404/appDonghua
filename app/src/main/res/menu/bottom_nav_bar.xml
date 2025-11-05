@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="Trang Chủ"/>
+    <item
+        android:id="@+id/audio"
+        android:icon="@drawable/ic_audio"
+        android:title="Truyện Audio"/>
+    <item
+        android:id="@+id/classify"
+        android:icon="@drawable/ic_book"
+        android:title="Phân Loại"/>
+    <item
+        android:id="@+id/bookcase"
+        android:icon="@drawable/ic_folder"
+        android:title="Tủ Sách"/>
+    <item
+        android:id="@+id/user"
+        android:icon="@drawable/ic_user"
+        android:title="Tài Khoản"/>
+</menu>
