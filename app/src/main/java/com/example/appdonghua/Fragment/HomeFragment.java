@@ -188,16 +188,15 @@ public class HomeFragment extends Fragment {
     private void initRanking(){
         ArrayList<NovelList> items =new ArrayList<>();
         items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Đấu Phá Thương Khung", "45k", "Huyền Huyễn", "200", "Thiên Tàm Thổ Đậu"));
-        items.add(new NovelList(R.drawable.tghm, "Võ Động Càn Khôn", "40k", "Huyền Huyễn", "180", "Thiên Tàm Thổ Đậu"));
-        items.add(new NovelList(R.drawable.tghm, "Tiên Nghịch", "35k", "Tiên Hiệp", "160", "Nhĩ Căn"));
-        items.add(new NovelList(R.drawable.tghm, "Ngã Là Chí Tôn", "30k", "Huyền Huyễn", "140", "Phong Lăng Thiên Hạ"));
-        items.add(new NovelList(R.drawable.tghm, "Thần Mộ", "28k", "Huyền Huyễn", "130", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Hoàng Kim Hạ", "25k", "Huyền Huyễn", "120", "Tư Đồ"));
-        items.add(new NovelList(R.drawable.tghm, "Bất Lương Chi Niên Đại Thiệu", "22k", "Đô Thị", "110", "Nam Phái Tam Thúc"));
-        items.add(new NovelList(R.drawable.tghm, "Tu La Vũ Thần", "20k", "Huyền Huyễn", "100", "Thiện Lương Đích Mì Ong"));
-        items.add(new NovelList(R.drawable.tghm, "Ngự Thiên", "18k", "Huyền Huyễn", "95", "Huyệt Hạ Bạch Hồ"));
-
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rankingRecyclerView.setLayoutManager(layoutManager);
         rankingAdapter = new RankingAdapter(items);
