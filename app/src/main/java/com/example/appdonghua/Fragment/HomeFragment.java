@@ -13,15 +13,15 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 
 import com.example.appdonghua.Adapter.CarouselAdapter;
 import com.example.appdonghua.Adapter.CellAdapter;
-import com.example.appdonghua.Adapter.HotNovelScrollAdapter;
+import com.example.appdonghua.Adapter.NoveListAdapter;
+import com.example.appdonghua.Adapter.RankingAdapter;
 import com.example.appdonghua.Model.Carousel;
 import com.example.appdonghua.Model.Cell;
-import com.example.appdonghua.Model.HotNovelScroll;
+import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
 import java.util.ArrayList;
@@ -36,13 +36,14 @@ public class HomeFragment extends Fragment {
     private static final long AUTO_SCROLL_DELAY = 3000;
     private ViewPager2 carousel;
     private ImageButton search_Button;
-    private RecyclerView recyclerView, hotnovelScrollView;
+    private RecyclerView recyclerView, hotnovelScrollView, rankingRecyclerView;
     private List<Carousel> carouselItems;
     private CarouselAdapter carouselAdapter;
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
     private CellAdapter cellAdapter;
-    private HotNovelScrollAdapter hotNovelScrollAdapter;
+    private NoveListAdapter noveListAdapter;
+    private RankingAdapter rankingAdapter;
 
 
 
@@ -95,6 +96,7 @@ public class HomeFragment extends Fragment {
         setupScroll();
         initRecycleView();
         initHotNovelScrollView();
+        initRanking();
         return view;
     }
     private void initView(View v){
@@ -102,6 +104,7 @@ public class HomeFragment extends Fragment {
         search_Button = v.findViewById(R.id.search_Button);
         recyclerView = v.findViewById(R.id.recyclerView);
         hotnovelScrollView = v.findViewById(R.id.scollView);
+        rankingRecyclerView = v.findViewById(R.id.rankingRecyclerView);
     }
     private void setupCarousel(){
         carouselItems = new ArrayList<>();
@@ -168,18 +171,36 @@ public class HomeFragment extends Fragment {
 
     }
     private void initHotNovelScrollView(){
-        ArrayList<HotNovelScroll> items =new ArrayList<>();
-        items.add(new HotNovelScroll(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn"));
-        items.add(new HotNovelScroll(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn"));
-        items.add(new HotNovelScroll(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn"));
-        items.add(new HotNovelScroll(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn"));
-        items.add(new HotNovelScroll(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn"));
+        ArrayList<NovelList> items =new ArrayList<>();
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
         LinearLayoutManager layoutManager =new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         hotnovelScrollView.setLayoutManager(layoutManager);
-        hotNovelScrollAdapter = new HotNovelScrollAdapter(items);
-        hotnovelScrollView.setAdapter(hotNovelScrollAdapter);
+        noveListAdapter = new NoveListAdapter(items);
+        hotnovelScrollView.setAdapter(noveListAdapter);
 
 
 
+    }
+    private void initRanking(){
+        ArrayList<NovelList> items =new ArrayList<>();
+        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Đấu Phá Thương Khung", "45k", "Huyền Huyễn", "200", "Thiên Tàm Thổ Đậu"));
+        items.add(new NovelList(R.drawable.tghm, "Võ Động Càn Khôn", "40k", "Huyền Huyễn", "180", "Thiên Tàm Thổ Đậu"));
+        items.add(new NovelList(R.drawable.tghm, "Tiên Nghịch", "35k", "Tiên Hiệp", "160", "Nhĩ Căn"));
+        items.add(new NovelList(R.drawable.tghm, "Ngã Là Chí Tôn", "30k", "Huyền Huyễn", "140", "Phong Lăng Thiên Hạ"));
+        items.add(new NovelList(R.drawable.tghm, "Thần Mộ", "28k", "Huyền Huyễn", "130", "Thần Đông"));
+        items.add(new NovelList(R.drawable.tghm, "Hoàng Kim Hạ", "25k", "Huyền Huyễn", "120", "Tư Đồ"));
+        items.add(new NovelList(R.drawable.tghm, "Bất Lương Chi Niên Đại Thiệu", "22k", "Đô Thị", "110", "Nam Phái Tam Thúc"));
+        items.add(new NovelList(R.drawable.tghm, "Tu La Vũ Thần", "20k", "Huyền Huyễn", "100", "Thiện Lương Đích Mì Ong"));
+        items.add(new NovelList(R.drawable.tghm, "Ngự Thiên", "18k", "Huyền Huyễn", "95", "Huyệt Hạ Bạch Hồ"));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        rankingRecyclerView.setLayoutManager(layoutManager);
+        rankingAdapter = new RankingAdapter(items);
+        rankingRecyclerView.setAdapter(rankingAdapter);
     }
 }
