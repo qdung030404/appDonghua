@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#3E4155"
+    tools:context=".Activity.RankingActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:scaleType="fitCenter"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@color/background"
+            app:srcCompat="@drawable/ic_arrow_left"
+            app:tint="@color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Bảng Xếp Hạng"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rankingBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tool_bar">
+
+
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/filter_Button"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:background="#3E4155"
+            app:itemTextColor="@color/bottom_nav_item_color"
+            app:itemTextAppearance="@style/NavigationViewTextAppearance"
+            app:menu="@menu/category_menu"
+            />
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/filter_Button"
+            android:layout_marginBottom="0dp" />
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

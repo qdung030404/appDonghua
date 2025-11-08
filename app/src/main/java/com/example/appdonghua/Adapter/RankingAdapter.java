@@ -44,15 +44,12 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         if (rank == 1) {
             holder.rankingNumber.setTextColor(Color.parseColor("#FFD700"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
-            holder.rankingBadge.setImageResource(android.R.drawable.star_big_on);
         } else if (rank == 2) {
             holder.rankingNumber.setTextColor(Color.parseColor("#C0C0C0"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
-            holder.rankingBadge.setImageResource(android.R.drawable.star_big_on);
         } else if (rank == 3) {
             holder.rankingNumber.setTextColor(Color.parseColor("#CD7F32"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
-            holder.rankingBadge.setImageResource(android.R.drawable.star_big_on);
         } else {
             holder.rankingNumber.setTextColor(Color.WHITE);
             holder.rankingBadge.setVisibility(View.GONE);

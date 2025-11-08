@@ -16,7 +16,7 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="350dp"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:paddingLeft="100dp"
             android:paddingRight="50dp"
@@ -25,7 +25,7 @@
 
         <ImageButton
             android:id="@+id/search_Button"
-            android:layout_width="wrap_content"
+            android:layout_width="40dp"
             android:layout_height="30dp"
             android:layout_marginTop="15dp"
             android:layout_toEndOf="@+id/imageView"
@@ -33,6 +33,18 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_search"
             app:tint="@color/white" />
+        <ImageButton
+            android:id="@+id/ranking_Button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/search_Button"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_ranking"
+            app:tint="@color/white" />
+
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -52,12 +64,47 @@
                 android:layout_height="250dp"
                 android:layout_margin="16dp" />
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="35dp"
                 android:layout_marginStart="10dp"
-                android:text="Có thể bạn sẽ thích"
+                android:text="Lịch ra chương"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/date_Button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="Có thể bạn sẽ thích"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="Arrow"
+                    app:tint="@color/white" />
+
+            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -89,28 +136,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_margin="10dp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:text="Bảng Xếp Hạng"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/white"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rankingRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:nestedScrollingEnabled="false"/>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
