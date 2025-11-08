@@ -1,5 +1,6 @@
 package com.example.appdonghua.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,17 +11,21 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.example.appdonghua.Activity.RankingActivity;
 import com.example.appdonghua.Adapter.CarouselAdapter;
 import com.example.appdonghua.Adapter.CellAdapter;
+import com.example.appdonghua.Adapter.DateAdapter;
 import com.example.appdonghua.Adapter.NoveListAdapter;
 import com.example.appdonghua.Adapter.RankingAdapter;
 import com.example.appdonghua.Model.Carousel;
 import com.example.appdonghua.Model.Cell;
+import com.example.appdonghua.Model.Date;
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
@@ -35,17 +40,15 @@ import java.util.List;
 public class HomeFragment extends Fragment {
     private static final long AUTO_SCROLL_DELAY = 3000;
     private ViewPager2 carousel;
-    private ImageButton search_Button;
-    private RecyclerView recyclerView, hotnovelScrollView, rankingRecyclerView;
+    private ImageButton search_Button, ranking_Button;
+    private RecyclerView recyclerView, hotnovelScrollView, dateViews;
     private List<Carousel> carouselItems;
     private CarouselAdapter carouselAdapter;
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
     private CellAdapter cellAdapter;
     private NoveListAdapter noveListAdapter;
-    private RankingAdapter rankingAdapter;
-
-
+    private DateAdapter datebuttonAdapter;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -93,10 +96,10 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         initView(view);
         setupCarousel();
+        initDateButton();
         setupScroll();
         initRecycleView();
         initHotNovelScrollView();
-        initRanking();
         return view;
     }
     private void initView(View v){
@@ -104,7 +107,16 @@ public class HomeFragment extends Fragment {
         search_Button = v.findViewById(R.id.search_Button);
         recyclerView = v.findViewById(R.id.recyclerView);
         hotnovelScrollView = v.findViewById(R.id.scollView);
-        rankingRecyclerView = v.findViewById(R.id.rankingRecyclerView);
+        dateViews = v.findViewById(R.id.date_Button);
+        ranking_Button = v.findViewById(R.id.ranking_Button);
+        ranking_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), RankingActivity.class);
+                startActivity(intent);
+
+            }
+        });
     }
     private void setupCarousel(){
         carouselItems = new ArrayList<>();
@@ -155,6 +167,26 @@ public class HomeFragment extends Fragment {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
         }
     }
+    private void initDateButton(){
+        ArrayList<Date> items =new ArrayList<>();
+        items.add(new Date("Mon"));
+        items.add(new Date("Tue"));
+        items.add(new Date("Wed"));
+        items.add(new Date("Thu"));
+        items.add(new Date("Fri"));
+        items.add(new Date("Sat"));
+        items.add(new Date("Sun"));
+        LinearLayoutManager layoutManager =new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        dateViews.setLayoutManager(layoutManager);
+        datebuttonAdapter = new DateAdapter(items);
+        dateViews.setAdapter(datebuttonAdapter);
+        datebuttonAdapter.setOnItemClickListener(new DateAdapter.OnItemClickListener() {
+            @Override
+            public void onDateClick(Date date, int position) {
+                Log.d("HomeFragment", "Date clicked: " + date.getName());
+            }
+        });
+    }
     private void initRecycleView(){
         ArrayList<Cell> items =new ArrayList<>();
         items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
@@ -185,21 +217,5 @@ public class HomeFragment extends Fragment {
 
 
     }
-    private void initRanking(){
-        ArrayList<NovelList> items =new ArrayList<>();
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "50k", "Huyền Huyễn", "150", "Thần Đông"));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        rankingRecyclerView.setLayoutManager(layoutManager);
-        rankingAdapter = new RankingAdapter(items);
-        rankingRecyclerView.setAdapter(rankingAdapter);
-    }
+
 }

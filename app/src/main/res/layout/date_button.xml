@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:id="@+id/date_Button"
+        android:layout_width="50dp"
+        android:layout_height="40dp"
+        android:paddingStart="8dp"
+        android:layout_margin="3dp"
+        android:paddingEnd="8dp"
+        android:text="date"
+        android:background="@drawable/btnbg"
+        app:backgroundTintMode="screen"
+        app:backgroundTint="@null"
+        android:textSize="14sp" />
+</LinearLayout>
