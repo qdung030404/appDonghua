@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.example.appdonghua.Activity.RankingActivity;
+import com.example.appdonghua.Activity.SearchActivity;
 import com.example.appdonghua.Adapter.CarouselAdapter;
 import com.example.appdonghua.Adapter.CellAdapter;
 import com.example.appdonghua.Adapter.DateAdapter;
@@ -109,6 +110,14 @@ public class HomeFragment extends Fragment {
         hotnovelScrollView = v.findViewById(R.id.scollView);
         dateViews = v.findViewById(R.id.date_Button);
         ranking_Button = v.findViewById(R.id.ranking_Button);
+        search_Button = v.findViewById(R.id.search_Button);
+        search_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            }
+        });
         ranking_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
