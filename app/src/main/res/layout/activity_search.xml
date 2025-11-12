@@ -8,7 +8,6 @@
     android:background="#3E4155"
     tools:context=".Activity.SearchActivity">
 
-    <!-- Toolbar -->
     <RelativeLayout
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
@@ -32,10 +31,10 @@
             android:layout_width="match_parent"
             android:layout_height="40sp"
             android:layout_toRightOf="@id/backButton"
-            android:layout_toLeftOf="@id/searchIcon"
+            android:layout_toLeftOf="@id/searchButton"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
             android:background="@drawable/search_background"
             android:hint="Nhập tên truyện..."
             android:paddingStart="15dp"
@@ -44,14 +43,16 @@
             android:textSize="16sp"
             android:imeOptions="actionSearch"
             android:inputType="text" />
-        <ImageView
-            android:id="@+id/searchIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <ImageButton
+            android:id="@+id/searchButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitCenter"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="8dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
+            android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_search"
             app:tint="@color/white" />
         <ImageButton
@@ -60,7 +61,8 @@
             android:layout_height="24dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="15dp"
+            android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_close"
@@ -79,17 +81,25 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <TextView
+            <ImageView
+                android:id="@+id/history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                app:srcCompat="@drawable/ic_history" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/history"
                 android:text="Lịch sử tìm kiếm"
+                android:layout_marginLeft="5dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/clearAllButton"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 app:srcCompat="@drawable/ic_trash"
