@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.viewpager2)
     implementation(libs.recyclerview)
     implementation(libs.cardview)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
