@@ -10,8 +10,9 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="280sp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scaleType="centerInside"
         app:srcCompat="@drawable/logo"
         android:layout_centerInParent="true"/>
 
