@@ -114,11 +114,11 @@ public class SearchActivity extends AppCompatActivity {
     }
     private void setupTopSearchData(){
         topSearchList = new ArrayList<>();
-        topSearchList.add(new TopSearch(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
+        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
     }
     private void setupRecyclerViews(){
         historyAdapter = new SearchHistoryAdapter(historyList, new SearchHistoryAdapter.OnHistoryItemClickListener() {
