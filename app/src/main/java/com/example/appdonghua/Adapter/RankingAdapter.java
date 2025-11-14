@@ -36,23 +36,40 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         holder.rankingNumber.setText(String.valueOf(rank));
         holder.bookCover.setImageResource(novelList.getImage());
         holder.bookTitle.setText(novelList.getTitle());
-        holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
-        holder.bookCategory.setText("Thể loại: " + novelList.getCategory());
-        holder.viewCount.setText("👁 " + novelList.getViews());
+        holder.bookAuthor.setText("Tác giả:\n " + novelList.getAuthor());
+        holder.bookCategory.setText(novelList.getCategory());
+        holder.viewCount.setText("👁 " + formatNumber(novelList.getViews()));
         holder.chapterCount.setText("📖 chương " + novelList.getChapter() );
 
         if (rank == 1) {
-            holder.rankingNumber.setTextColor(Color.parseColor("#FFD700"));
+            holder.rankingNumber.setBackgroundColor(Color.parseColor("#FFD700"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else if (rank == 2) {
-            holder.rankingNumber.setTextColor(Color.parseColor("#C0C0C0"));
+            holder.rankingNumber.setBackgroundColor(Color.parseColor("#C0C0C0"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else if (rank == 3) {
-            holder.rankingNumber.setTextColor(Color.parseColor("#CD7F32"));
+            holder.rankingNumber.setBackgroundColor(Color.parseColor("#CD7F32"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else {
             holder.rankingNumber.setTextColor(Color.WHITE);
             holder.rankingBadge.setVisibility(View.GONE);
+        }
+    }
+    public static String formatNumber(int number) {
+        if (number >= 1000000) {
+            double result = number / 1000000.0;
+            if (result == (int) result) {
+                return String.format("%dM", (int) result);
+            }
+            return String.format("%.1fM", result);
+        } else if (number >= 1000) {
+            double result = number / 1000.0;
+            if (result == (int) result) {
+                return String.format("%dk", (int) result);
+            }
+            return String.format("%.1fk", result);
+        } else {
+            return String.valueOf(number);
         }
     }
 
