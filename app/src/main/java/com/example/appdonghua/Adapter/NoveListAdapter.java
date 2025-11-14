@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
@@ -32,7 +31,7 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
 
         holder.bookCover.setImageResource(novelList.getImage());
         holder.bookTitle.setText(novelList.getTitle());
-        holder.viewCount.setText("👁 " + novelList.getViews());
+        holder.viewCount.setText("👁 " + RankingAdapter.formatNumber(novelList.getViews()));
         holder.bookCategory.setText(novelList.getCategory());
         holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
         holder.chapterCount.setText("📖 chương " + novelList.getChapter());
