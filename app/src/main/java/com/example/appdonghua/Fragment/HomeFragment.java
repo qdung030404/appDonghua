@@ -198,12 +198,12 @@ public class HomeFragment extends Fragment {
     }
     private void initRecycleView(){
         ArrayList<Cell> items =new ArrayList<>();
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
-        items.add(new Cell(R.drawable.tghm, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        items.add(new Cell(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
 
         GridLayoutManager layoutManager =new GridLayoutManager(getContext(), 3);
         recyclerView.setLayoutManager(layoutManager);
@@ -213,11 +213,13 @@ public class HomeFragment extends Fragment {
     }
     private void initHotNovelScrollView(){
         ArrayList<NovelList> items =new ArrayList<>();
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
-        items.add(new NovelList(R.drawable.tghm, "Thế Giới Hoàn Mỹ", "30k", "Huyền Huyễn", "120", "Thần Đông"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+        items.add(new NovelList(R.drawable.img_2, "Title", 31000, "Thể loại", 120, "Tác Giả"));
+
         LinearLayoutManager layoutManager =new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         hotnovelScrollView.setLayoutManager(layoutManager);
         noveListAdapter = new NoveListAdapter(items);
