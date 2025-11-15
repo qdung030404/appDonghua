@@ -68,7 +68,7 @@ public class RankingActivity extends AppCompatActivity {
                     category = "mechanic";
                 }
                 loadFragment(category);
-                return true;
+                return false;
             }
 
         });

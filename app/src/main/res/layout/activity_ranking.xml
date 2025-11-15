@@ -28,21 +28,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-
             android:text="Bảng Xếp Hạng"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
-
     </RelativeLayout>
-
     <RelativeLayout
         android:id="@+id/rankingBadge"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_below="@id/tool_bar">
-
-
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/filter_Button"
             android:layout_width="120dp"
@@ -60,7 +55,4 @@
             android:layout_toRightOf="@id/filter_Button"
             android:layout_marginBottom="0dp" />
     </RelativeLayout>
-
-
-
 </RelativeLayout>
