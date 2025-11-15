@@ -1,5 +1,7 @@
 package com.example.appdonghua.Adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.appdonghua.Activity.ComicInfoActivity;
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
@@ -15,8 +19,15 @@ import java.util.ArrayList;
 
 public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHolder>{
     private ArrayList<NovelList> item;
+    private Context context;
     public NoveListAdapter(ArrayList<NovelList> items){this.item = items;}
-
+    private OnItemClickListener listener;
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+    public interface OnItemClickListener {
+        void onItemClick(NovelList novelList, int position);
+    }
     @NonNull
     @Override
     public NoveListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,6 +47,21 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
         holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
         holder.chapterCount.setText("📖 chương " + novelList.getChapter());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ComicInfoActivity.class);
+                intent.putExtra("IMAGE", novelList.getImage());
+                intent.putExtra("TITLE", novelList.getTitle());
+                intent.putExtra("VIEWS", novelList.getViews());
+                intent.putExtra("CATEGORY", novelList.getCategory());
+                intent.putExtra("CHAPTER", novelList.getChapter());
+                intent.putExtra("AUTHOR", novelList.getAuthor());
+
+                context.startActivity(intent);
+
+            }
+        });
     }
 
     @Override
