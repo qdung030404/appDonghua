@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.appdonghua" />
+                  <option name="mobileSdkAppId" value="1:250840098527:android:881a16c92d131c367aeb6a" />
+                  <option name="projectId" value="donghua-66d34" />
+                  <option name="projectNumber" value="250840098527" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

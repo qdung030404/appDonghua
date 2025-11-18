@@ -28,15 +28,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 fragment = new HomeFragment();
                 break;
             case 1:
-                fragment = new AudioFragment();
-                break;
-            case 2:
                 fragment = new ClassifyFragment();
                 break;
-            case 3:
+            case 2:
                 fragment = new CaseFragment();
                 break;
-            case 4:
+            case 3:
                 fragment = new UserFragment();
                 break;
             default:

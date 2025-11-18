@@ -1,5 +1,10 @@
+import org.gradle.kotlin.dsl.annotationProcessor
+import org.gradle.kotlin.dsl.implementation
+
+
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -32,6 +37,16 @@ android {
 }
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.firebase.storage)
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation ("com.google.firebase:firebase-firestore:25.0.0")
+    implementation(libs.chip.navigation.bar)
 
     implementation(libs.appcompat)
     implementation(libs.material)

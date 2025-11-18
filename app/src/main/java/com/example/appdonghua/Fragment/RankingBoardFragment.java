@@ -99,9 +99,7 @@ public class RankingBoardFragment extends Fragment {
             default:
                 break;
         }
-        for (int i = 0; i < 10; i++) {
-            items.add(new NovelList(R.drawable.img_2, "Truyện " + category + " " + (i+1), (30000 - i*1000), "Category", "120", "Tác giả"));
-        }
+
         return items;
     }
 

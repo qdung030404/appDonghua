@@ -1,25 +1,37 @@
 package com.example.appdonghua.Activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.view.Gravity;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.ViewPager;
 
 import com.example.appdonghua.Fragment.RankingBoardFragment;
 import com.example.appdonghua.R;
-import com.google.android.material.navigation.NavigationView;
 
 public class RankingActivity extends AppCompatActivity {
-    private NavigationView navigationView;
+    private LinearLayout filterButton;
     private ImageButton backButton;
+    private TextView selectedTextView;
+
+    private String[][] categories = {
+            {"nomination", "Đề cử"},
+            {"hot", "Hot nhất"},
+            {"full", "Hoàn Thành"},
+            {"tu_tien", "Tu Tiên"},
+            {"magical", "Huyền Huyễn"},
+            {"xuyen_khong", "Xuyên Không"},
+            {"tien_hiep", "Tiên Hiệp"},
+            {"mechanic", "Khoa Huyễn"}
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,52 +44,88 @@ public class RankingActivity extends AppCompatActivity {
             return insets;
         });
         init();
+        setupCategories();
         setupListener();
         loadFragment("nomination");
     }
 
-
-
     private void init(){
-        navigationView = findViewById(R.id.filter_Button);
+        filterButton = findViewById(R.id.filter_Button);
         backButton = findViewById(R.id.backButton);
-
     }
+
+    private void setupCategories() {
+        for (String[] category : categories) {
+            TextView textView = createCategoryTextView(category[0], category[1]);
+            filterButton.addView(textView);
+        }
+
+        if (filterButton.getChildCount() > 0) {
+            selectedTextView = (TextView) filterButton.getChildAt(0);
+            setSelectedStyle(selectedTextView);
+        }
+    }
+
+    private TextView createCategoryTextView(String categoryId, String categoryName) {
+        TextView textView = new TextView(this);
+        textView.setText(categoryName);
+        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(14);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setPadding(10, 50, 20, 50);
+        textView.setTag(categoryId);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 5, 0, 5);
+        textView.setLayoutParams(params);
+
+        textView.setOnClickListener(v -> {
+            onCategoryClick(textView);
+        });
+
+        return textView;
+    }
+
+    private void onCategoryClick(TextView clickedTextView) {
+        // Reset style của item trước đó
+        if (selectedTextView != null) {
+            setUnselectedStyle(selectedTextView);
+        }
+
+        // Set style cho item mới
+        setSelectedStyle(clickedTextView);
+        selectedTextView = clickedTextView;
+
+        // Load fragment
+        String category = (String) clickedTextView.getTag();
+        loadFragment(category);
+    }
+
+    private void setSelectedStyle(TextView textView) {
+        textView.setTextSize(16);
+        textView.setTextColor(Color.WHITE);
+        textView.setTypeface(null, android.graphics.Typeface.BOLD);
+        textView.setBackgroundColor(Color.parseColor("#5F639D"));
+    }
+
+    private void setUnselectedStyle(TextView textView) {
+        textView.setTextSize(14);
+        textView.setTextColor(Color.WHITE);
+        textView.setTypeface(null, android.graphics.Typeface.NORMAL);
+        textView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
     private void setupListener(){
         backButton.setOnClickListener(v -> finish());
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                String category = "";
-                int id = menuItem.getItemId();
-                if (id == R.id.nomination) {
-                    category = "nomination";
-                } else if (id == R.id.hot) {
-                    category = "hot";
-                } else if (id == R.id.full) {
-                    category = "full";
-                } else if (id == R.id.tu_tien) {
-                    category = "tu_tien";
-                } else if (id == R.id.magical) {
-                    category = "magical";
-                } else if (id == R.id.xuyen_khong) {
-                    category = "xuyen_khong";
-                } else if (id == R.id.tien_hiep) {
-                    category = "tien_hiep";
-                } else if (id == R.id.mechanic) {
-                    category = "mechanic";
-                }
-                loadFragment(category);
-                return false;
-            }
-
-        });
     }
-    private void loadFragment(String nomination) {
-        RankingBoardFragment fragment = RankingBoardFragment.newInstance(nomination);
+
+    private void loadFragment(String category) {
+        RankingBoardFragment fragment = RankingBoardFragment.newInstance(category);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
         transaction.commit();
-
     }
 }

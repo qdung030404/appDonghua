@@ -1,5 +1,6 @@
 package com.example.appdonghua.Adapter;
 
+import android.content.Context; // <-- THÊM IMPORT NÀY
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // <-- THÊM IMPORT NÀY
 import com.example.appdonghua.Model.Carousel;
 import com.example.appdonghua.R;
 
@@ -28,8 +30,27 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Carousel Items = carouselItem.get(position);
-        holder.iv_carousel.setImageResource(Items.getImage());
+        // 1. Lấy item
+        Carousel items = carouselItem.get(position);
+        if (items == null) return;
+
+        // 2. Lấy URL ảnh (bây giờ là String)
+        String imageUrl = items.getImageUrl();
+
+        // 3. Lấy Context từ View
+        Context context = holder.itemView.getContext();
+
+        // 4. Dùng Glide để tải ảnh từ URL
+        if (imageUrl != null && context != null) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.img) // (Tùy chọn) Ảnh tạm khi đang tải
+                    .error(R.drawable.img_1) // (Tùy chọn) Ảnh khi lỗi
+                    .into(holder.iv_carousel);
+        }
+
+        // Dòng này sai vì getImageUrl() là String, không phải int
+        // holder.iv_carousel.setImageResource(Items.getImageUrl()); // <-- LỖI CŨ
     }
 
     @Override

@@ -1,14 +1,14 @@
 package com.example.appdonghua.Model;
-
 public class Cell {
-    private int image;
-    private String name;
-    public Cell(int image, String name) {
-        this.image = image;
-        this.name = name;
-        }
-    public int getImage() {return image;}
-    public String getName() {return name;}
-    public void setImage(int image) {this.image = image;}
-    public void setName(String name) {this.name = name;}
+    private String imageUrl; // THAY ĐỔI: từ int thành String
+    private String title;
+
+    public Cell(String imageUrl, String title) { // THAY ĐỔI: String imageUrl
+        this.imageUrl = imageUrl;
+        this.title = title;
+    }
+
+    // Thêm Getters
+    public String getImageUrl() { return imageUrl; }
+    public String getTitle() { return title; }
 }

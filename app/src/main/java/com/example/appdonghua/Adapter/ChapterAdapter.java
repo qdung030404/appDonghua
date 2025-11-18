@@ -3,66 +3,55 @@ package com.example.appdonghua.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.appdonghua.R;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.appdonghua.Model.Chapter;
+import com.example.appdonghua.R;
 
 import java.util.List;
 
-public class ChapterAdapter extends BaseAdapter {
+public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHolder> {
     private List<Chapter> chapters;
-    private LayoutInflater inflater;
 
     public ChapterAdapter(List<Chapter> chapters) {
         this.chapters = chapters;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
-        return chapters.size();
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chapter, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
-    public Object getItem(int position) {
-        return chapters.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-
-        if (convertView == null) {
-
-            if (inflater == null) {
-                inflater = LayoutInflater.from(parent.getContext());
-            }
-
-            convertView = inflater.inflate(R.layout.item_chapter, parent, false);
-
-            holder = new ViewHolder();
-            holder.tvChapter = convertView.findViewById(R.id.tvChapter);
-            holder.tvView = convertView.findViewById(R.id.tvView);
-
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chapter chapter = chapters.get(position);
         holder.tvChapter.setText(chapter.getChapter());
         holder.tvView.setText(String.valueOf(chapter.getViews()));
 
-        return convertView;
+        // Thêm sự kiện click vào chương nếu cần
+        holder.itemView.setOnClickListener(v -> {
+            // Xử lý khi bấm vào một chương (ví dụ: mở màn hình đọc)
+        });
     }
-    static class ViewHolder {
+
+    @Override
+    public int getItemCount() {
+        return chapters.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvChapter;
         TextView tvView;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvChapter = itemView.findViewById(R.id.tvChapter);
+            tvView = itemView.findViewById(R.id.tvView);
+        }
     }
 }

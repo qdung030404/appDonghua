@@ -57,12 +57,11 @@ public class DateAdapter  extends RecyclerView.Adapter<DateAdapter.ViewHolder> {
         }
         public void bind(Date date, int position) {
             dateButton.setText(date.getName());
-            dateButton.setOnClickListener(v ->  {
+            dateButton.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onDateClick(date, position);
                 }
             });
-
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.appdonghua.Adapter;
 
+import android.content.Context; // <-- THÊM IMPORT NÀY
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // <-- THÊM IMPORT NÀY
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
@@ -32,15 +34,34 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull RankingAdapter.ViewHolder holder, int position) {
         NovelList novelList = items.get(position);
+        if (novelList == null) return;
+
         int rank = position + 1;
         holder.rankingNumber.setText(String.valueOf(rank));
-        holder.bookCover.setImageResource(novelList.getImage());
+
+        // --- SỬA LỖI TẢI ẢNH ---
+        Context context = holder.itemView.getContext();
+        String imageUrl = novelList.getImageUrl(); // SỬA: getImage() -> getImageUrl()
+
+        if (context != null && imageUrl != null) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.img_2) // Ảnh tạm
+                    .error(R.drawable.img_2) // Ảnh lỗi
+                    .centerCrop()
+                    .into(holder.bookCover);
+        }
+        // -------------------------
+
+        // --- SỬA LỖI TÊN HÀM MODEL ---
         holder.bookTitle.setText(novelList.getTitle());
         holder.bookAuthor.setText("Tác giả:\n " + novelList.getAuthor());
-        holder.bookCategory.setText(novelList.getCategory());
-        holder.viewCount.setText("👁 " + formatNumber(novelList.getViews()));
-        holder.chapterCount.setText("📖 chương " + novelList.getChapter() );
+        holder.bookCategory.setText(novelList.getGenre()); // SỬA: getCategory() -> getGenre()
+        holder.viewCount.setText(" " + formatNumber(novelList.getViewCount())); // SỬA: getViews() -> getViewCount()
+        holder.chapterCount.setText(" chương " + novelList.getChapterCount()); // SỬA: getChapter() -> getChapterCount()
+        // -------------------------
 
+        // (Code đổi màu rank của bạn đã đúng, giữ nguyên)
         if (rank == 1) {
             holder.rankingNumber.setBackgroundColor(Color.parseColor("#FFD700"));
             holder.rankingBadge.setVisibility(View.VISIBLE);
@@ -55,17 +76,19 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             holder.rankingBadge.setVisibility(View.GONE);
         }
     }
-    public static String formatNumber(int number) {
+
+    // --- SỬA LỖI KIỂU DỮ LIỆU (int -> long) ---
+    public static String formatNumber(long number) { // SỬA: int -> long
         if (number >= 1000000) {
             double result = number / 1000000.0;
-            if (result == (int) result) {
-                return String.format("%dM", (int) result);
+            if (result == (long) result) {
+                return String.format("%dM", (long) result);
             }
             return String.format("%.1fM", result);
         } else if (number >= 1000) {
             double result = number / 1000.0;
-            if (result == (int) result) {
-                return String.format("%dk", (int) result);
+            if (result == (long) result) {
+                return String.format("%dk", (long) result);
             }
             return String.format("%.1fk", result);
         } else {
@@ -75,7 +98,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return items != null ? items.size() : 0; // Thêm check null
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

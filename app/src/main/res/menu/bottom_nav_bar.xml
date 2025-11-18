@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/home"
         android:icon="@drawable/ic_home"
+        app:cnb_backgroundColor="@color/white"
+        app:cnb_iconColor = "@color/background"
         android:title="Trang Chủ"/>
-    <item
-        android:id="@+id/audio"
-        android:icon="@drawable/ic_audio"
-        android:title="Truyện Audio"/>
     <item
         android:id="@+id/classify"
         android:icon="@drawable/ic_book"
+        app:cnb_backgroundColor="@color/white"
+        app:cnb_iconColor = "@color/background"
         android:title="Phân Loại"/>
     <item
         android:id="@+id/bookcase"
         android:icon="@drawable/ic_folder"
+        app:cnb_backgroundColor="@color/white"
+        app:cnb_iconColor = "@color/background"
         android:title="Tủ Sách"/>
     <item
         android:id="@+id/user"
         android:icon="@drawable/ic_user"
+        app:cnb_backgroundColor="@color/white"
+        app:cnb_iconColor = "@color/background"
         android:title="Tài Khoản"/>
 </menu>

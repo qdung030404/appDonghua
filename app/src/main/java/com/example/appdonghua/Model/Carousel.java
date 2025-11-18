@@ -1,8 +1,11 @@
 package com.example.appdonghua.Model;
 
 public class Carousel {
-    private int image;
-    public Carousel(int image) {this.image = image;}
-    public int getImage() {return image;}
-    public void setImage(int image) {this.image = image;}
+    private String imageUrl; // THAY ĐỔI: từ int thành String
+
+    public Carousel(String imageUrl) { // THAY ĐỔI: String imageUrl
+        this.imageUrl = imageUrl;
+    }
+
+    public String getImageUrl() { return imageUrl; }
 }

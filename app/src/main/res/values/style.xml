@@ -2,6 +2,7 @@
 <resources>
     <style name="NavigationViewTextAppearance" parent="TextAppearance.AppCompat">
         <item name="android:textSize">10sp</item>
-        <item name="android:textStyle">bold</item>
+
     </style>
+
 </resources>
