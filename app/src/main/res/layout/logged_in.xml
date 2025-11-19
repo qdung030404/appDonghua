@@ -281,9 +281,8 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_right"
+                android:src="@drawable/ic_logout"
                 android:contentDescription="Logout"
-                android:rotation="180"
                 app:tint="#FF5252" />
 
             <TextView

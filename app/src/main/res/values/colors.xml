@@ -3,5 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#393D5E</color>
+    <color name="red">#FF0000</color>
     <color name="logo" tools:ignore="ReferenceType">@drawable/bottom_nav_background</color>
 </resources>

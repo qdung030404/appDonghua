@@ -39,7 +39,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         if (novelList == null) return;
 
         int rank = position + 1;
-        holder.rankingNumber.setText(String.valueOf(rank));
 
         // Tải ảnh với Glide
         Context context = holder.itemView.getContext();
@@ -63,24 +62,32 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
 
         // Đổi màu cho top 3
         if (rank == 1) {
-            holder.rankingNumber.setBackgroundColor(Color.parseColor("#FFD700"));
-            holder.rankingNumber.setTextColor(Color.BLACK);
-            holder.rankingBadge.setVisibility(View.VISIBLE);
+            // Top 1 - Vàng
+            holder.rankingNumber.setImageResource(R.drawable.first); // Huy chương vàng
+            holder.rankingNumber.setVisibility(View.VISIBLE);
+            holder.rankingText.setVisibility(View.GONE);
+
         } else if (rank == 2) {
-            holder.rankingNumber.setBackgroundColor(Color.parseColor("#C0C0C0"));
-            holder.rankingNumber.setTextColor(Color.BLACK);
-            holder.rankingBadge.setVisibility(View.VISIBLE);
+            // Top 2 - Bạc
+            holder.rankingNumber.setImageResource(R.drawable.second); // Huy chương bạc
+            holder.rankingNumber.setVisibility(View.VISIBLE);
+            holder.rankingText.setVisibility(View.GONE);
+
         } else if (rank == 3) {
-            holder.rankingNumber.setBackgroundColor(Color.parseColor("#CD7F32"));
-            holder.rankingNumber.setTextColor(Color.BLACK);
-            holder.rankingBadge.setVisibility(View.VISIBLE);
+            // Top 3 - Đồng
+            holder.rankingNumber.setImageResource(R.drawable.third); // Huy chương đồng
+            holder.rankingNumber.setVisibility(View.VISIBLE);
+            holder.rankingText.setVisibility(View.GONE);
+
         } else {
-            holder.rankingNumber.setBackgroundColor(Color.TRANSPARENT);
-            holder.rankingNumber.setTextColor(Color.WHITE);
-            holder.rankingBadge.setVisibility(View.GONE);
+            // Các vị trí còn lại - dùng TEXT
+            holder.rankingNumber.setVisibility(View.GONE);
+            holder.rankingText.setVisibility(View.VISIBLE);
+            holder.rankingText.setText(String.valueOf(rank));
+            holder.rankingText.setBackgroundResource(R.drawable.ranking_circle);
+            holder.rankingText.setTextColor(Color.BLACK);
         }
 
-        // Thêm click listener để mở ComicInfoActivity
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,8 +138,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView rankingNumber, bookTitle, bookAuthor, bookCategory, viewCount, chapterCount;
-        ImageView bookCover, rankingBadge;
+        TextView bookTitle, bookAuthor, bookCategory, viewCount, chapterCount,rankingText;
+        ImageView bookCover, rankingNumber;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -143,7 +150,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             bookCategory = itemView.findViewById(R.id.bookCategory);
             viewCount = itemView.findViewById(R.id.viewCount);
             chapterCount = itemView.findViewById(R.id.chapterCount);
-            rankingBadge = itemView.findViewById(R.id.rankingBadge);
+            rankingText = itemView.findViewById(R.id.rankingText);
         }
     }
 }

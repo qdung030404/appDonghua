@@ -277,7 +277,7 @@ public class UserFragment extends Fragment {
         // Hiển thị thông tin về ứng dụng
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Về chúng tôi");
-        builder.setMessage("Ứng dụng App Đông Họa\nPhiên bản: 1.0.0\n\nỨng dụng xem hoạt hình online.");
+        builder.setMessage("Ứng dụng đọc truyện Đông Hoa.\nPhiên bản: 1.0.0");
         builder.setPositiveButton("Đóng", null);
         builder.show();
     }

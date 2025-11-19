@@ -9,7 +9,7 @@
         android:layout_width="50dp"
         android:layout_height="40dp"
         android:paddingStart="8dp"
-        android:layout_margin="3dp"
+        android:layout_margin="2dp"
         android:paddingEnd="8dp"
         android:text="date"
         android:background="@drawable/btnbg"

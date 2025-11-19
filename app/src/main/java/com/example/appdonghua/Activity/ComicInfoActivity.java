@@ -2,6 +2,7 @@ package com.example.appdonghua.Activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,11 +73,12 @@ public class ComicInfoActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         initViews();
-        getIntentData(); // Nhận dữ liệu
-        setupUI();       // Hiển thị dữ liệu
+        getIntentData();
+        setupUI();
         setupListener();
         setupChapter();
-        addToHistory();  // Lưu lịch sử
+        addToHistory();
+        checkSaved();
     }
 
     private void initViews(){
@@ -131,13 +133,12 @@ public class ComicInfoActivity extends AppCompatActivity {
         favoriteButton.setOnClickListener(v -> {
             isFavorite = !isFavorite;
             if (isFavorite) {
-                favoriteButton.setImageResource(R.drawable.ic_bookmark_solid); // Bạn cần có icon này
+                favoriteButton.setImageResource(R.drawable.ic_bookmark_solid);
+                addToSave();
             } else {
                 favoriteButton.setImageResource(R.drawable.ic_bookmark_regular);
+                unSave();
             }
-            Toast.makeText(ComicInfoActivity.this,
-                    isFavorite ? "Đã thêm vào danh sách yêu thích" : "Đã xóa khỏi danh sách",
-                    Toast.LENGTH_SHORT).show();
         });
 
         expandButton.setOnClickListener(v -> toggle());
@@ -193,7 +194,48 @@ public class ComicInfoActivity extends AppCompatActivity {
                 .collection("history").document(strTitle)
                 .set(historyData);
     }
-
+    private void addToSave(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || strTitle == null) return;
+        Map<String, Object> saveData = new HashMap<>();
+        saveData.put("title", strTitle);
+        saveData.put("coverImageUrl", strImage);
+        saveData.put("timestamp", FieldValue.serverTimestamp());
+        db.collection("users").document(currentUser.getUid())
+                .collection("save").document(strTitle).set(saveData);
+        Toast.makeText(ComicInfoActivity.this, "Đã thêm vào danh sách yêu thích", Toast.LENGTH_SHORT).show();
+    }
+    private void unSave(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null || strTitle == null) return;
+        db.collection("users").document(currentUser.getUid())
+                .collection("save").document(strTitle).delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("firestore", "DocumentSnapshot successfully deleted!");
+                    Toast.makeText(ComicInfoActivity.this, "Đã xóa khỏi danh sách yêu thích", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("firestore", "Error deleting document", e);
+                });
+    }
+    private void checkSaved(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser == null || strTitle == null) return;
+        db.collection("users").document(currentUser.getUid())
+                .collection("save").document(strTitle).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        isFavorite = true;
+                        favoriteButton.setImageResource(R.drawable.ic_bookmark_solid);
+                    } else {
+                        isFavorite = false;
+                        favoriteButton.setImageResource(R.drawable.ic_bookmark_regular);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("Firestore", "Error checking favorite status", e);
+                });
+    }
     // Hàm format số view (copy từ RankingAdapter sang cho tiện)
     public static String formatNumber(long number) {
         if (number >= 1000000) {

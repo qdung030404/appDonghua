@@ -1,5 +1,6 @@
 package com.example.appdonghua.Fragment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.appdonghua.Activity.LoginActivity;
 import com.example.appdonghua.Adapter.CellAdapter;
@@ -29,14 +32,17 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CaseFragment extends Fragment {
 
     // --- Views ---
     LinearLayout case_menu;
-    Button editButton;
+    Button editButton, selectAllButton, deleteButton;
     TextView selectedTextView, emptyTextView;
     RecyclerView caseRecyclerView;
+    RelativeLayout bottomEditBar;
+
 
     // --- Firebase ---
     private FirebaseFirestore db;
@@ -45,6 +51,7 @@ public class CaseFragment extends Fragment {
     // --- Adapter & Data ---
     private CellAdapter adapter;
     private ArrayList<Cell> cellList;
+    private String currentTab = "history";
 
     private String[][] menuItems = {
             {"history", "Lịch Sử"},
@@ -77,16 +84,78 @@ public class CaseFragment extends Fragment {
             // Giả lập click vào tab đầu tiên để load data
             case_menu.getChildAt(0).performClick();
         }
+        steupListener();
         return view;
     }
 
     private void init(View view){
         case_menu = view.findViewById(R.id.case_menu);
-        editButton = view.findViewById(R.id.button);
+        editButton = view.findViewById(R.id.editButton);
         caseRecyclerView = view.findViewById(R.id.case_RecyclerView);
         emptyTextView = view.findViewById(R.id.empty_text_view);
-    }
+        bottomEditBar = view.findViewById(R.id.bottom_edit_bar);
+        selectAllButton = view.findViewById(R.id.selectAllButton);
+        deleteButton = view.findViewById(R.id.deleteButton);
 
+    }
+    private void steupListener() {
+        editButton.setOnClickListener(v -> {
+            adapter.toggleEdit();
+            if (bottomEditBar.getVisibility() == View.GONE) {
+                bottomEditBar.setVisibility(View.VISIBLE);
+                editButton.setText("Hủy");
+            } else {
+                bottomEditBar.setVisibility(View.GONE);
+                editButton.setText("Sửa");
+            }
+        });
+        selectAllButton.setOnClickListener(v -> {
+            if(adapter != null){
+                if( adapter.getSelectedCount() == adapter.getItemCount()){
+                    adapter.unSelectAll();
+                    selectAllButton.setText("Chọn Tất Cả");
+                }else {
+                    adapter.seLectAll();
+                    selectAllButton.setText("Hủy Chọn");
+                }
+            }
+        });
+        deleteButton.setOnClickListener(v -> {
+            if( adapter != null && adapter.isSelectedItem()){
+                new AlertDialog.Builder(getContext()).setTitle("Xác Nhận")
+                        .setMessage("Bạn có chắc muốn xóa " + adapter.getSelectedCount() + " mục?")
+                        .setPositiveButton("Có", (dialog, which) -> {
+                            adapter.deleteSelectedItems();
+                            adapter.unSelectAll();
+                            Toast.makeText(getContext(), "Đã xóa thành công", Toast.LENGTH_SHORT).show();
+                        }).setNegativeButton("Không", null).show();
+
+            }else {
+                Toast.makeText(getContext(), "Chưa chọn item nào", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+    private void deleteFromFirebase(List<String> titles) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null || titles.isEmpty()) return;
+
+        // Xác định collection dựa vào tab hiện tại
+        String collection = currentTab; // "history" hoặc "save"
+
+        for (String title : titles) {
+            db.collection("users").document(user.getUid())
+                    .collection(collection)
+                    .document(title)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("CaseFragment", "Deleted: " + title);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("CaseFragment", "Error deleting: " + title, e);
+                    });
+        }
+    }
     private void setupRecyclerView() {
         // Sử dụng GridLayoutManager 3 cột (giống HomeFragment)
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
@@ -95,6 +164,7 @@ public class CaseFragment extends Fragment {
         cellList = new ArrayList<>();
         adapter = new CellAdapter(cellList);
         caseRecyclerView.setAdapter(adapter);
+        adapter.setOnDeleteItemsListener(titles -> deleteFromFirebase(titles));
     }
 
     private void setupMenuItems(){
@@ -154,7 +224,7 @@ public class CaseFragment extends Fragment {
     }
 
     private void handleMenuSelection(String itemId) {
-        // Xóa dữ liệu cũ trước khi load mới
+        currentTab = itemId;
         cellList.clear();
         adapter.notifyDataSetChanged();
 
@@ -163,8 +233,8 @@ public class CaseFragment extends Fragment {
                 loadHistoryData();
                 break;
             case "save":
-                // loadFavoritesData(); // Làm sau
-                showEmpty("Chưa có truyện đã lưu");
+                loadSaveDate();
+
                 break;
             case "download":
                 // loadDownloadsData(); // Làm sau
@@ -182,8 +252,6 @@ public class CaseFragment extends Fragment {
             return;
         }
 
-        // Truy vấn vào collection: users -> [uid] -> history
-        // Sắp xếp theo thời gian xem mới nhất (timestamp giảm dần)
         db.collection("users").document(user.getUid())
                 .collection("history")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -211,7 +279,38 @@ public class CaseFragment extends Fragment {
                     Log.e("CaseFragment", "Error loading history", e);
                 });
     }
+    private void loadSaveDate(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            showEmpty("Vui lòng đăng nhập để xem truyện đã lưu");
+            return;
+        }
+        db.collection("users").document(user.getUid())
+                .collection("save")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        showEmpty("Bạn chưa lưu truyện nào");
+                    } else {
+                        hideEmpty();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            String title = doc.getString("title");
+                            String image = doc.getString("coverImageUrl");
 
+                            if (title != null && image != null) {
+                                cellList.add(new Cell(image, title));
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+
+                })
+                .addOnFailureListener(e -> {
+                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
+                    Log.e("CaseFragment", "Error loading history", e);
+                });
+    }
     // Hàm hiển thị thông báo trống
     private void showEmpty(String message) {
         caseRecyclerView.setVisibility(View.GONE);

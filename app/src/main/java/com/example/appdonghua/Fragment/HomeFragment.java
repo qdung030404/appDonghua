@@ -269,12 +269,24 @@ public class HomeFragment extends Fragment {
                 .limit(6) // Lấy 6 truyện
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<Cell> comics = new ArrayList<>();
+                    ArrayList<Cell> items = new ArrayList<>();
+                    ArrayList<NovelList> novelLists = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Story story = doc.toObject(Story.class);
-                        comics.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
+                        String genre = (story.getGenres() != null && !story.getGenres().isEmpty()) ? story.getGenres().get(0) : "Khác";
+                        NovelList novelList = new NovelList(
+                                story.getCoverImageUrl(),
+                                story.getTitle(),
+                                story.getViewCount(),
+                                genre,
+                                story.getChapter(),
+                                story.getAuthor(),
+                                story.getDescription()
+                        );
+                        novelLists.add(novelList);
+                        items.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
                     }
-                    comicsByDayAdapter = new CellAdapter(comics);
+                    comicsByDayAdapter = new CellAdapter(items, novelLists);
                     comicsByDateRecyclerView.setAdapter(comicsByDayAdapter);
                 })
                 .addOnFailureListener(e -> {

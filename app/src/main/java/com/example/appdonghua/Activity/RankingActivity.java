@@ -24,7 +24,7 @@ public class RankingActivity extends AppCompatActivity {
 
     // Cập nhật categories theo NovelList
     private String[][] categories = {
-            {"all", "Tất cả"},
+            {"all", "Đề Xuất"},
             {"hot", "Hot nhất"},
             {"full", "Hoàn thành"},
             {"tu_tien", "Tu Tiên"},
@@ -75,7 +75,7 @@ public class RankingActivity extends AppCompatActivity {
         textView.setText(categoryName);
         textView.setTextColor(Color.WHITE);
         textView.setTextSize(14);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setGravity(Gravity.CENTER);
         textView.setPadding(10, 50, 20, 50);
         textView.setTag(categoryId);
 
@@ -112,7 +112,7 @@ public class RankingActivity extends AppCompatActivity {
         textView.setTextSize(16);
         textView.setTextColor(Color.WHITE);
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundColor(Color.parseColor("#5F639D"));
+        textView.setBackgroundResource(R.drawable.btnbg);
     }
 
     private void setUnselectedStyle(TextView textView) {
