@@ -172,13 +172,24 @@ public class HomeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Cell> items = new ArrayList<>();
+                    ArrayList<NovelList> novelLists = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Story story = doc.toObject(Story.class);
-                        // THAY ĐỔI: Dùng model Cell mới với String URL
+                        String genre = (story.getGenres() != null && !story.getGenres().isEmpty()) ? story.getGenres().get(0) : "Khác";
+                        NovelList novelList = new NovelList(
+                                story.getCoverImageUrl(),
+                                story.getTitle(),
+                                story.getViewCount(),
+                                genre,
+                                story.getChapter(),
+                                story.getAuthor(),
+                                story.getDescription()
+                        );
+                        novelLists.add(novelList);
                         items.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
                     }
                     // THAY ĐỔI: Cập nhật dữ liệu cho adapter
-                    recommendedAdapter = new CellAdapter(items);
+                    recommendedAdapter = new CellAdapter(items, novelLists);
                     recyclerView.setAdapter(recommendedAdapter);
                 })
                 .addOnFailureListener(e -> {
@@ -190,7 +201,7 @@ public class HomeFragment extends Fragment {
     private void fetchHotNovelsData() {
         db.collection("stories")
                 .orderBy("viewCount", Query.Direction.DESCENDING) // Sắp xếp theo lượt xem
-                .limit(10) // Lấy 10 truyện
+                .limit(5) // Lấy 10 truyện
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<NovelList> items = new ArrayList<>();
@@ -204,8 +215,8 @@ public class HomeFragment extends Fragment {
                                 story.getTitle(),
                                 story.getViewCount(),
                                 genre,
-                                "120", // Bạn cần thêm trường này vào model Story
-                                "Tác Giả", // Bạn cần thêm trường "author" vào model Story
+                                story.getChapter(), // Bạn cần thêm trường này vào model Story
+                                story.getAuthor(), // Bạn cần thêm trường "author" vào model Story
                                 story.getDescription()
                         ));
                     }

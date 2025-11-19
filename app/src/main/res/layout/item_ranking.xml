@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:text="👁 30k"
                     android:textColor="@color/white"
-                    android:textSize="6sp" />
+                    android:textSize="10sp" />
 
                 <TextView
                     android:id="@+id/chapterCount"
@@ -99,7 +99,7 @@
                     android:text="📖 120 chương"
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/white"
-                    android:textSize="6sp" />
+                    android:textSize="10sp" />
             </LinearLayout>
 
         </LinearLayout>

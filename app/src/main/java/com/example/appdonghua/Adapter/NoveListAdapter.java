@@ -20,7 +20,8 @@ import java.util.ArrayList;
 
 public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHolder>{
     private ArrayList<NovelList> item;
-    // private Context context; // <-- BẠN KHÔNG CẦN BIẾN NÀY
+
+
 
     public NoveListAdapter(ArrayList<NovelList> items){this.item = items;}
 

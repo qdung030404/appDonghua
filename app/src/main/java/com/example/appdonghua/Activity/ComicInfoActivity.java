@@ -43,8 +43,8 @@ public class ComicInfoActivity extends AppCompatActivity {
     private boolean isFavorite = false;
 
     // Variables nhận từ Intent
-    private String strTitle, strImage, strAuthor, strCategory, strChapterCount, strDescription;
-    private long lViews;
+    private String strTitle, strImage, strAuthor, strCategory, strDescription;
+    private long lViews, strChapterCount;
 
     // Firebase
     private FirebaseFirestore db;
@@ -88,7 +88,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         tvViews = findViewById(R.id.Views);
         author = findViewById(R.id.author);
         status = findViewById(R.id.status);
-        description = findViewById(R.id.introduce);
+        description = findViewById(R.id.description);
         chapterCount = findViewById(R.id.chapterCount);
 
         // SỬA: Ánh xạ RecyclerView (ID trong XML là rvChapters)
@@ -104,7 +104,7 @@ public class ComicInfoActivity extends AppCompatActivity {
             strAuthor = intent.getStringExtra("AUTHOR");
             strDescription = intent.getStringExtra("DESCRIPTION");
             strCategory = intent.getStringExtra("CATEGORY");
-            strChapterCount = intent.getStringExtra("CHAPTER");
+            strChapterCount = intent.getLongExtra("CHAPTER", 0);
             lViews = intent.getLongExtra("VIEWS", 0);
         }
     }
@@ -114,7 +114,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         texTitle.setText(strTitle);
         author.setText("Tác giả: " + (strAuthor != null ? strAuthor : "Đang cập nhật"));
         tvViews.setText(formatNumber(lViews) + " Views");
-        chapterCount.setText((strChapterCount != null ? strChapterCount : "0") + " chương");
+        chapterCount.setText(strChapterCount  + " chương");
         if (strDescription != null && !strDescription.isEmpty()) {
             description.setText(strDescription);
         } else {
@@ -162,9 +162,9 @@ public class ComicInfoActivity extends AppCompatActivity {
         rvChapters.setNestedScrollingEnabled(false);
 
         int count = 20; // Mặc định
-        try {
-            if (strChapterCount != null) count = Integer.parseInt(strChapterCount.trim());
-        } catch (Exception e) {}
+        if (strChapterCount > 0) {
+            count = (int) strChapterCount; // Ép kiểu long sang int
+        }
 
         List<Chapter> chapters = generateChapter(count);
         chapterAdapter = new ChapterAdapter(chapters);

@@ -1,6 +1,7 @@
 package com.example.appdonghua.Adapter;
 
-import android.content.Context; // <-- THÊM IMPORT NÀY
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // <-- THÊM IMPORT NÀY
+import com.bumptech.glide.Glide;
+import com.example.appdonghua.Activity.ComicInfoActivity;
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
@@ -23,12 +25,12 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     public RankingAdapter(ArrayList<NovelList> items) {
         this.items = items;
     }
+
     @NonNull
     @Override
     public RankingAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ranking, parent, false);
         return new ViewHolder(view);
-
     }
 
     @Override
@@ -39,46 +41,67 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         int rank = position + 1;
         holder.rankingNumber.setText(String.valueOf(rank));
 
-        // --- SỬA LỖI TẢI ẢNH ---
+        // Tải ảnh với Glide
         Context context = holder.itemView.getContext();
-        String imageUrl = novelList.getImageUrl(); // SỬA: getImage() -> getImageUrl()
+        String imageUrl = novelList.getImageUrl();
 
         if (context != null && imageUrl != null) {
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.img_2) // Ảnh tạm
-                    .error(R.drawable.img_2) // Ảnh lỗi
+                    .placeholder(R.drawable.img_2)
+                    .error(R.drawable.img_2)
                     .centerCrop()
                     .into(holder.bookCover);
         }
-        // -------------------------
 
-        // --- SỬA LỖI TÊN HÀM MODEL ---
+        // Thiết lập thông tin truyện
         holder.bookTitle.setText(novelList.getTitle());
-        holder.bookAuthor.setText("Tác giả:\n " + novelList.getAuthor());
-        holder.bookCategory.setText(novelList.getGenre()); // SỬA: getCategory() -> getGenre()
-        holder.viewCount.setText(" " + formatNumber(novelList.getViewCount())); // SỬA: getViews() -> getViewCount()
-        holder.chapterCount.setText(" chương " + novelList.getChapterCount()); // SỬA: getChapter() -> getChapterCount()
-        // -------------------------
+        holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
+        holder.bookCategory.setText(novelList.getGenre());
+        holder.viewCount.setText("Views: " + formatNumber(novelList.getViewCount()));
+        holder.chapterCount.setText("\uD83D\uDCD6 chương " + novelList.getChapterCount());
 
-        // (Code đổi màu rank của bạn đã đúng, giữ nguyên)
+        // Đổi màu cho top 3
         if (rank == 1) {
             holder.rankingNumber.setBackgroundColor(Color.parseColor("#FFD700"));
+            holder.rankingNumber.setTextColor(Color.BLACK);
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else if (rank == 2) {
             holder.rankingNumber.setBackgroundColor(Color.parseColor("#C0C0C0"));
+            holder.rankingNumber.setTextColor(Color.BLACK);
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else if (rank == 3) {
             holder.rankingNumber.setBackgroundColor(Color.parseColor("#CD7F32"));
+            holder.rankingNumber.setTextColor(Color.BLACK);
             holder.rankingBadge.setVisibility(View.VISIBLE);
         } else {
+            holder.rankingNumber.setBackgroundColor(Color.TRANSPARENT);
             holder.rankingNumber.setTextColor(Color.WHITE);
             holder.rankingBadge.setVisibility(View.GONE);
         }
+
+        // Thêm click listener để mở ComicInfoActivity
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, ComicInfoActivity.class);
+
+                // Truyền dữ liệu truyện
+                intent.putExtra("IMAGE_URL", novelList.getImageUrl());
+                intent.putExtra("TITLE", novelList.getTitle());
+                intent.putExtra("VIEWS", novelList.getViewCount());
+                intent.putExtra("CATEGORY", novelList.getGenre());
+                intent.putExtra("CHAPTER", novelList.getChapterCount());
+                intent.putExtra("AUTHOR", novelList.getAuthor());
+                intent.putExtra("DESCRIPTION", novelList.getDescription());
+
+                context.startActivity(intent);
+            }
+        });
     }
 
-    // --- SỬA LỖI KIỂU DỮ LIỆU (int -> long) ---
-    public static String formatNumber(long number) { // SỬA: int -> long
+    public static String formatNumber(long number) {
         if (number >= 1000000) {
             double result = number / 1000000.0;
             if (result == (long) result) {
@@ -98,7 +121,13 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return items != null ? items.size() : 0; // Thêm check null
+        return items != null ? items.size() : 0;
+    }
+
+    // Phương thức cập nhật dữ liệu
+    public void updateData(ArrayList<NovelList> newItems) {
+        this.items = newItems;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -115,7 +144,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             viewCount = itemView.findViewById(R.id.viewCount);
             chapterCount = itemView.findViewById(R.id.chapterCount);
             rankingBadge = itemView.findViewById(R.id.rankingBadge);
-
         }
     }
 }

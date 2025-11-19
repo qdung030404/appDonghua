@@ -7,22 +7,26 @@ import java.util.List;
 public class Story {
     private String title;
     private String description;
+    private long chapter;
     private String coverImageUrl;
     private List<String> genres; // Mảng thể loại
     private String status;
     private long viewCount;
     private double ratingAvg;
+    private String author;
     private Date lastUpdated;
     public Story() {}
 
-    public Story(String title, String description, String coverImageUrl, List<String> genres, String status, long viewCount, double ratingAvg) {
+    public Story(String title,long chapter, String author, String description, String coverImageUrl, List<String> genres, String status, long viewCount, double ratingAvg) {
         this.title = title;
         this.description = description;
         this.coverImageUrl = coverImageUrl;
+        this.chapter = chapter;
         this.genres = genres;
         this.status = status;
         this.viewCount = viewCount;
         this.ratingAvg = ratingAvg;
+        this.author = author;
         // lastUpdated sẽ được gán tự động
     }
 
@@ -40,6 +44,11 @@ public class Story {
 
     public List<String> getGenres() { return genres; }
     public void setGenres(List<String> genres) { this.genres = genres; }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
+    public long getChapter() { return chapter; }
+    public void setChapter(long chapter) { this.chapter = chapter; }
+
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
@@ -49,7 +58,6 @@ public class Story {
 
     public double getRatingAvg() { return ratingAvg; }
     public void setRatingAvg(double ratingAvg) { this.ratingAvg = ratingAvg; }
-
     @ServerTimestamp // Tự động gán thời gian của server
     public Date getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Date lastUpdated) { this.lastUpdated = lastUpdated; }

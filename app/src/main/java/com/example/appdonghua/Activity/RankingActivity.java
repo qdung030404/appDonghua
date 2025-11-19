@@ -22,10 +22,11 @@ public class RankingActivity extends AppCompatActivity {
     private ImageButton backButton;
     private TextView selectedTextView;
 
+    // Cập nhật categories theo NovelList
     private String[][] categories = {
-            {"nomination", "Đề cử"},
+            {"all", "Tất cả"},
             {"hot", "Hot nhất"},
-            {"full", "Hoàn Thành"},
+            {"full", "Hoàn thành"},
             {"tu_tien", "Tu Tiên"},
             {"magical", "Huyền Huyễn"},
             {"xuyen_khong", "Xuyên Không"},
@@ -46,7 +47,7 @@ public class RankingActivity extends AppCompatActivity {
         init();
         setupCategories();
         setupListener();
-        loadFragment("nomination");
+        loadFragment("all"); // Mặc định load tất cả
     }
 
     private void init(){
@@ -55,6 +56,9 @@ public class RankingActivity extends AppCompatActivity {
     }
 
     private void setupCategories() {
+        // Xóa các view cũ (nếu có)
+        filterButton.removeAllViews();
+
         for (String[] category : categories) {
             TextView textView = createCategoryTextView(category[0], category[1]);
             filterButton.addView(textView);
@@ -99,7 +103,7 @@ public class RankingActivity extends AppCompatActivity {
         setSelectedStyle(clickedTextView);
         selectedTextView = clickedTextView;
 
-        // Load fragment
+        // Load fragment với category mới
         String category = (String) clickedTextView.getTag();
         loadFragment(category);
     }

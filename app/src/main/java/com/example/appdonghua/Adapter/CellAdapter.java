@@ -14,15 +14,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide; // Thêm import này
 import com.example.appdonghua.Activity.ComicInfoActivity;
 import com.example.appdonghua.Model.Cell;
+import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
     private List<Cell> cells;
+    private List<NovelList> novelLists;
 
     public CellAdapter(List<Cell> cells){
         this.cells = cells;
+        this.novelLists = new ArrayList<>();
+    }
+    public CellAdapter(List<Cell> cells, List<NovelList> novelLists){
+        this.cells = cells;
+        this.novelLists = novelLists;
     }
 
     @NonNull
@@ -39,18 +47,31 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
             Context context = v.getContext();
             Intent intent = new Intent(context, ComicInfoActivity.class); // Chuyển sang màn hình chi tiết
 
-            // Gửi dữ liệu qua (Key phải khớp với ComicInfoActivity)
-            intent.putExtra("TITLE", cell.getTitle());
-            intent.putExtra("IMAGE_URL", cell.getImageUrl());
+            if (novelLists != null && position < novelLists.size()) {
+                NovelList novelList = novelLists.get(position);
 
-            // Vì Model "Cell" của bạn ít thông tin hơn "NovelList",
-            // nên các mục khác mình tạm để trống hoặc điền mặc định
-            intent.putExtra("AUTHOR", "Đang cập nhật");
-            intent.putExtra("CATEGORY", "Truyện tranh");
-            intent.putExtra("VIEWS", 0);
+                // Gửi dữ liệu đầy đủ từ NovelList
+                intent.putExtra("TITLE", novelList.getTitle());
+                intent.putExtra("IMAGE_URL", novelList.getImageUrl());
+                intent.putExtra("AUTHOR", novelList.getAuthor());
+                intent.putExtra("CATEGORY", novelList.getGenre());
+                intent.putExtra("VIEWS", novelList.getViewCount());
+                intent.putExtra("CHAPTER", novelList.getChapterCount());
+                intent.putExtra("DESCRIPTION", novelList.getDescription());
+            } else {
+                // Fallback: Chỉ gửi dữ liệu cơ bản từ Cell
+                intent.putExtra("TITLE", cell.getTitle());
+                intent.putExtra("IMAGE_URL", cell.getImageUrl());
+                intent.putExtra("AUTHOR", "Đang cập nhật");
+                intent.putExtra("CATEGORY", "Truyện tranh");
+                intent.putExtra("VIEWS", 0);
+                intent.putExtra("CHAPTER", "0");
+                intent.putExtra("DESCRIPTION", "Đang cập nhật mô tả...");
+            }
 
             context.startActivity(intent);
         });
+
         if (cell == null) return;
 
         // 1. Set Tên truyện
