@@ -90,13 +90,12 @@
 
                 <TextView
                     android:id="@+id/texTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="220dp"
                     android:layout_height="wrap_content"
                     android:text="Tiên Nghịch"
                     android:textColor="@color/black"
                     android:textSize="24sp"
                     android:textStyle="bold" />
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -189,6 +188,7 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+
                 <!-- Giới thiệu truyện -->
                 <TextView
                     android:layout_width="match_parent"
@@ -217,6 +217,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="4dp"
+                            android:maxLines="3"
                             android:text="Tiên Nghịch là câu chuyện Tiên Hiệp kể về Vương Lâm - một thiếu niên bình thường, may mắn được gia nhập vào một môn phái tu tiên xuống dốc của nước Triệu, vì thiếu linh căn, vì một hiểu nhầm tai hại, vì một khối thiết tinh và nhờ có được một Hạt Châu Thần Bí. Vương Lâm đã bước lên con đường tu tiên và trên con đường này, hắn sẽ đối mặt với chuyện gì?"
                             android:textColor="#CCFFFFFF"
                             android:textSize="14sp" />

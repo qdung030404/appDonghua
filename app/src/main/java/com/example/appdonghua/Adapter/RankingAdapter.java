@@ -57,8 +57,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         holder.bookTitle.setText(novelList.getTitle());
         holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
         holder.bookCategory.setText(novelList.getGenre());
-        holder.viewCount.setText("Views: " + formatNumber(novelList.getViewCount()));
-        holder.chapterCount.setText("\uD83D\uDCD6 chương " + novelList.getChapterCount());
+        holder.viewCount.setText("Views: \n" + formatNumber(novelList.getViewCount()));
+        holder.chapterCount.setText("Chương:\n " + novelList.getChapterCount());
 
         // Đổi màu cho top 3
         if (rank == 1) {

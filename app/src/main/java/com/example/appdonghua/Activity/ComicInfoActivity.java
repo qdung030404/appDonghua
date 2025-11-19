@@ -20,6 +20,8 @@ import com.bumptech.glide.Glide;
 import com.example.appdonghua.Adapter.ChapterAdapter;
 import com.example.appdonghua.Model.Chapter;
 import com.example.appdonghua.R;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -37,15 +39,15 @@ public class ComicInfoActivity extends AppCompatActivity {
     private ImageView imageCover;
     private TextView texTitle, tvViews, author, status, description, chapterCount;
     private RecyclerView rvChapters; // SỬA: Dùng RecyclerView thay vì ListView
-
     // Data
     private ChapterAdapter chapterAdapter;
     private boolean isExpanded = false;
     private boolean isFavorite = false;
 
     // Variables nhận từ Intent
-    private String strTitle, strImage, strAuthor, strCategory, strDescription;
+    private String strTitle, strImage, strAuthor, strDescription;
     private long lViews, strChapterCount;
+    private ArrayList<String> genres;
 
     // Firebase
     private FirebaseFirestore db;
@@ -77,6 +79,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         setupUI();
         setupListener();
         setupChapter();
+
         addToHistory();
         checkSaved();
     }
@@ -92,7 +95,6 @@ public class ComicInfoActivity extends AppCompatActivity {
         status = findViewById(R.id.status);
         description = findViewById(R.id.description);
         chapterCount = findViewById(R.id.chapterCount);
-
         // SỬA: Ánh xạ RecyclerView (ID trong XML là rvChapters)
         rvChapters = findViewById(R.id.rvChapters);
     }
@@ -105,9 +107,9 @@ public class ComicInfoActivity extends AppCompatActivity {
             strImage = intent.getStringExtra("IMAGE_URL");
             strAuthor = intent.getStringExtra("AUTHOR");
             strDescription = intent.getStringExtra("DESCRIPTION");
-            strCategory = intent.getStringExtra("CATEGORY");
             strChapterCount = intent.getLongExtra("CHAPTER", 0);
             lViews = intent.getLongExtra("VIEWS", 0);
+            genres = intent.getStringArrayListExtra("GENRES");
         }
     }
 
