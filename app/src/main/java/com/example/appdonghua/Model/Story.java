@@ -17,7 +17,7 @@ public class Story {
     private Date lastUpdated;
     public Story() {}
 
-    public Story(String title,long chapter, String author, String description, String coverImageUrl, List<String> genres, String status, long viewCount, double ratingAvg) {
+    public Story(String title,long chapter, String author, String coverImageUrl, List<String> genres, String status, long viewCount, double ratingAvg, String description) {
         this.title = title;
         this.description = description;
         this.coverImageUrl = coverImageUrl;

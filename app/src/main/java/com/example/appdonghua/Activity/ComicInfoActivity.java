@@ -3,6 +3,8 @@ package com.example.appdonghua.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +22,6 @@ import com.bumptech.glide.Glide;
 import com.example.appdonghua.Adapter.ChapterAdapter;
 import com.example.appdonghua.Model.Chapter;
 import com.example.appdonghua.R;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
@@ -38,9 +38,13 @@ public class ComicInfoActivity extends AppCompatActivity {
     private ImageButton backButton, favoriteButton, expandButton;
     private ImageView imageCover;
     private TextView texTitle, tvViews, author, status, description, chapterCount;
-    private RecyclerView rvChapters; // SỬA: Dùng RecyclerView thay vì ListView
+    private RecyclerView rvChapters;
+    private Button viewAllButton;
     // Data
     private ChapterAdapter chapterAdapter;
+    private List<Chapter> allChapters;
+    private boolean showingAllChapters = false;
+    private static final int INITIAL_CHAPTER_COUNT = 5;
     private boolean isExpanded = false;
     private boolean isFavorite = false;
 
@@ -95,8 +99,8 @@ public class ComicInfoActivity extends AppCompatActivity {
         status = findViewById(R.id.status);
         description = findViewById(R.id.description);
         chapterCount = findViewById(R.id.chapterCount);
-        // SỬA: Ánh xạ RecyclerView (ID trong XML là rvChapters)
         rvChapters = findViewById(R.id.rvChapters);
+        viewAllButton = findViewById(R.id.viewAllButton);
     }
 
     // --- HÀM MỚI: Nhận dữ liệu từ HomeFragment ---
@@ -144,6 +148,9 @@ public class ComicInfoActivity extends AppCompatActivity {
         });
 
         expandButton.setOnClickListener(v -> toggle());
+        viewAllButton.setOnClickListener(v -> {
+            showAllChapters();
+        });
     }
 
     private void toggle(){
@@ -168,12 +175,33 @@ public class ComicInfoActivity extends AppCompatActivity {
         if (strChapterCount > 0) {
             count = (int) strChapterCount; // Ép kiểu long sang int
         }
+        allChapters = generateChapter(count);
+        showInitialChapters();
 
-        List<Chapter> chapters = generateChapter(count);
-        chapterAdapter = new ChapterAdapter(chapters);
+        // Show "View All" button if there are more than 5 chapters
+        if (count > INITIAL_CHAPTER_COUNT) {
+            viewAllButton.setVisibility(View.VISIBLE);
+        }
+    }
+    private void showInitialChapters() {
+        List<Chapter> initialChapters;
+        if (allChapters.size() > INITIAL_CHAPTER_COUNT) {
+            initialChapters = allChapters.subList(0, INITIAL_CHAPTER_COUNT);
+        } else {
+            initialChapters = allChapters;
+        }
+
+        chapterAdapter = new ChapterAdapter(initialChapters);
         rvChapters.setAdapter(chapterAdapter);
+        showingAllChapters = false;
     }
 
+    private void showAllChapters() {
+        chapterAdapter = new ChapterAdapter(allChapters);
+        rvChapters.setAdapter(chapterAdapter);
+        showingAllChapters = true;
+        viewAllButton.setVisibility(View.GONE); // Hide button when showing all
+    }
     private List<Chapter> generateChapter(int count){
         List<Chapter> chapters = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -190,6 +218,11 @@ public class ComicInfoActivity extends AppCompatActivity {
         Map<String, Object> historyData = new HashMap<>();
         historyData.put("title", strTitle);
         historyData.put("coverImageUrl", strImage);
+        historyData.put("author", strAuthor);
+        historyData.put("description", strDescription);
+        historyData.put("viewCount", lViews);
+        historyData.put("chapterCount", strChapterCount);
+        historyData.put("genre", genres);
         historyData.put("timestamp", FieldValue.serverTimestamp());
 
         db.collection("users").document(currentUser.getUid())
@@ -202,6 +235,11 @@ public class ComicInfoActivity extends AppCompatActivity {
         Map<String, Object> saveData = new HashMap<>();
         saveData.put("title", strTitle);
         saveData.put("coverImageUrl", strImage);
+        saveData.put("author", strAuthor);
+        saveData.put("description", strDescription);
+        saveData.put("viewCount", lViews);
+        saveData.put("chapterCount", strChapterCount);
+        saveData.put("genre", genres);
         saveData.put("timestamp", FieldValue.serverTimestamp());
         db.collection("users").document(currentUser.getUid())
                 .collection("save").document(strTitle).set(saveData);

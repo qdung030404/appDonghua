@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.appdonghua.Activity.LoginActivity;
 import com.example.appdonghua.Adapter.CellAdapter;
 import com.example.appdonghua.Model.Cell;
+import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -52,7 +53,7 @@ public class CaseFragment extends Fragment {
     private CellAdapter adapter;
     private ArrayList<Cell> cellList;
     private String currentTab = "history";
-
+    private ArrayList<NovelList> novelList;
     private String[][] menuItems = {
             {"history", "Lịch Sử"},
             {"save", "Đã Lưu"}, // Tương lai bạn làm tính năng Favorites
@@ -129,7 +130,6 @@ public class CaseFragment extends Fragment {
                             adapter.unSelectAll();
                             Toast.makeText(getContext(), "Đã xóa thành công", Toast.LENGTH_SHORT).show();
                         }).setNegativeButton("Không", null).show();
-
             }else {
                 Toast.makeText(getContext(), "Chưa chọn item nào", Toast.LENGTH_SHORT).show();
             }
@@ -162,7 +162,8 @@ public class CaseFragment extends Fragment {
         caseRecyclerView.setLayoutManager(layoutManager);
 
         cellList = new ArrayList<>();
-        adapter = new CellAdapter(cellList);
+        novelList = new ArrayList<>(); // Khởi tạo novelList
+        adapter = new CellAdapter(cellList, novelList); // Truyền cả 2 list
         caseRecyclerView.setAdapter(adapter);
         adapter.setOnDeleteItemsListener(titles -> deleteFromFirebase(titles));
     }
@@ -183,7 +184,7 @@ public class CaseFragment extends Fragment {
         TextView textView = new TextView(getContext());
         textView.setText(name);
         textView.setTextColor(Color.WHITE);
-        textView.setTextSize(16);
+        textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
         textView.setPadding(20, 20, 20, 30);
         textView.setTag(id);
@@ -210,14 +211,14 @@ public class CaseFragment extends Fragment {
     }
 
     private void setSelectedStyle(TextView textView) {
-        textView.setTextSize(20);
+        textView.setTextSize(18);
         textView.setTextColor(Color.WHITE);
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
         textView.setBackgroundColor(Color.parseColor("#5F639D"));
     }
 
     private void setUnselectedStyle(TextView textView) {
-        textView.setTextSize(16);
+        textView.setTextSize(14);
         textView.setBackgroundColor(Color.TRANSPARENT);
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
         textView.setTextColor(Color.WHITE);
@@ -233,7 +234,7 @@ public class CaseFragment extends Fragment {
                 loadHistoryData();
                 break;
             case "save":
-                loadSaveDate();
+                loadSaveData();
 
                 break;
             case "download":
@@ -248,7 +249,6 @@ public class CaseFragment extends Fragment {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             showEmpty("Vui lòng đăng nhập để xem lịch sử");
-            // (Tùy chọn) Chuyển về màn hình Login
             return;
         }
 
@@ -261,14 +261,32 @@ public class CaseFragment extends Fragment {
                         showEmpty("Bạn chưa xem truyện nào");
                     } else {
                         hideEmpty();
+                        cellList.clear();
+                        novelList.clear();
+
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            // Lấy dữ liệu từ document lịch sử
                             String title = doc.getString("title");
                             String image = doc.getString("coverImageUrl");
+                            String author = doc.getString("author");
+                            String description = doc.getString("description");
+                            String genre = doc.getString("genre");
+                            Long viewCount = doc.getLong("viewCount");
+                            Long chapterCount = doc.getLong("chapterCount");
 
-                            // Tạo đối tượng Cell và thêm vào list
                             if (title != null && image != null) {
+                                // Thêm Cell cho hiển thị grid
                                 cellList.add(new Cell(image, title));
+
+                                // Thêm NovelList để truyền đầy đủ thông tin khi click
+                                novelList.add(new NovelList(
+                                        image,
+                                        title,
+                                        viewCount != null ? viewCount : 0,
+                                        genre != null ? genre : "Truyện tranh",
+                                        chapterCount != null ? chapterCount : 0,
+                                        author != null ? author : "Đang cập nhật",
+                                        description != null ? description : "Đang cập nhật mô tả..."
+                                ));
                             }
                         }
                         adapter.notifyDataSetChanged();
@@ -279,12 +297,13 @@ public class CaseFragment extends Fragment {
                     Log.e("CaseFragment", "Error loading history", e);
                 });
     }
-    private void loadSaveDate(){
+    private void loadSaveData(){
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
             showEmpty("Vui lòng đăng nhập để xem truyện đã lưu");
             return;
         }
+
         db.collection("users").document(user.getUid())
                 .collection("save")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -294,21 +313,38 @@ public class CaseFragment extends Fragment {
                         showEmpty("Bạn chưa lưu truyện nào");
                     } else {
                         hideEmpty();
+                        cellList.clear();
+                        novelList.clear();
+
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                             String title = doc.getString("title");
                             String image = doc.getString("coverImageUrl");
+                            String author = doc.getString("author");
+                            String description = doc.getString("description");
+                            String genre = doc.getString("genre");
+                            Long viewCount = doc.getLong("viewCount");
+                            Long chapterCount = doc.getLong("chapterCount");
 
                             if (title != null && image != null) {
                                 cellList.add(new Cell(image, title));
+
+                                novelList.add(new NovelList(
+                                        image,
+                                        title,
+                                        viewCount != null ? viewCount : 0,
+                                        genre != null ? genre : "Truyện tranh",
+                                        chapterCount != null ? chapterCount : 0,
+                                        author != null ? author : "Đang cập nhật",
+                                        description != null ? description : "Đang cập nhật mô tả..."
+                                ));
                             }
                         }
                         adapter.notifyDataSetChanged();
                     }
-
                 })
                 .addOnFailureListener(e -> {
                     showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
-                    Log.e("CaseFragment", "Error loading history", e);
+                    Log.e("CaseFragment", "Error loading saved items", e);
                 });
     }
     // Hàm hiển thị thông báo trống

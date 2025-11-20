@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.LoginActivity;
+import com.example.appdonghua.Activity.RegisterActivity;
 import com.example.appdonghua.Model.User;
 import com.example.appdonghua.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,8 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class UserFragment extends Fragment {
     private LinearLayout layoutNotLoggedIn;
-    private Button btnLogin;
-    private ImageView googleLoginBtn;
+    private Button btnLogin, btnRegister;
     private FirebaseFirestore db;
     private View layoutLoggedIn;
     private ImageView imgAvatar;
@@ -83,7 +83,7 @@ public class UserFragment extends Fragment {
         // Not logged in layout
         layoutNotLoggedIn = view.findViewById(R.id.layout_not_logged_in);
         btnLogin = view.findViewById(R.id.btn_login);
-        googleLoginBtn = view.findViewById(R.id.google_login_btn);
+        btnRegister = view.findViewById(R.id.btn_register);
 
         // Logged in layout (chỉ là container)
         layoutLoggedIn = view.findViewById(R.id.layout_logged_in);
@@ -92,8 +92,8 @@ public class UserFragment extends Fragment {
         if (btnLogin != null) {
             btnLogin.setOnClickListener(v -> navigateToLogin());
         }
-        if (googleLoginBtn != null) {
-            googleLoginBtn.setOnClickListener(v -> navigateToLogin());
+        if (btnRegister != null) {
+            btnRegister.setOnClickListener(v -> navigateToRegister());
         }
     }
 
@@ -269,6 +269,11 @@ public class UserFragment extends Fragment {
     private void navigateToLogin() {
         if (getActivity() == null) return;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
+    }
+    private void navigateToRegister() {
+        if (getActivity() == null) return;
+        Intent intent = new Intent(getActivity(), RegisterActivity.class);
         startActivity(intent);
     }
 

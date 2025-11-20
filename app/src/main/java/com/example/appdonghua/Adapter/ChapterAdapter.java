@@ -44,6 +44,9 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHold
         return chapters.size();
     }
 
+    public void setHighlightedPosition(int position) {
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvChapter;
         TextView tvView;
