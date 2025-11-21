@@ -25,11 +25,11 @@ import com.example.appdonghua.Model.Carousel;
 import com.example.appdonghua.Model.Cell;
 import com.example.appdonghua.Model.Date;
 import com.example.appdonghua.Model.NovelList;
-import com.example.appdonghua.Model.Story; // THAY ĐỔI: Import model Story
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
-import com.google.firebase.firestore.FirebaseFirestore; // THAY ĐỔI: Import
-import com.google.firebase.firestore.Query; // THAY ĐỔI: Import
-import com.google.firebase.firestore.QueryDocumentSnapshot; // THAY ĐỔI: Import
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     // --- Firebase ---
-    private FirebaseFirestore db; // THAY ĐỔI: Thêm Firestore
+    private FirebaseFirestore db;
 
     // --- Views ---
     private ViewPager2 carousel;
@@ -48,10 +48,10 @@ public class HomeFragment extends Fragment {
 
     // --- Adapters ---
     private CarouselAdapter carouselAdapter;
-    private CellAdapter recommendedAdapter; // THAY ĐỔI: Đổi tên cho rõ
-    private NoveListAdapter hotNovelAdapter; // THAY ĐỔI: Đổi tên cho rõ
+    private CellAdapter recommendedAdapter;
+    private NoveListAdapter hotNovelAdapter;
     private DateAdapter datebuttonAdapter;
-    private CellAdapter comicsByDayAdapter; // THAY ĐỔI: Adapter riêng cho mục này
+    private CellAdapter comicsByDayAdapter;
 
     // --- Data Lists ---
     private List<Carousel> carouselItems = new ArrayList<>();
@@ -60,8 +60,6 @@ public class HomeFragment extends Fragment {
     private Handler autoScrollHandler;
     private Runnable autoScrollRunnable;
 
-    // (Xóa các biến ARG_PARAM và newInstance() nếu bạn không dùng)
-
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -69,9 +67,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // THAY ĐỔI: Khởi tạo Firestore
         db = FirebaseFirestore.getInstance();
-        // Xóa initComicsByDayData() vì sẽ lấy từ Firebase
     }
 
     @Override
@@ -79,9 +75,9 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        initView(view); // 1. Ánh xạ View
-        setupEmptyAdapters(); // 2. Cài đặt LayoutManager và Adapter rỗng
-        fetchDataFromFirestore(); // 3. Bắt đầu tải dữ liệu
+        initView(view);
+        setupEmptyAdapters();
+        fetchDataFromFirestore();
 
         return view;
     }
@@ -107,12 +103,11 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * THAY ĐỔI: Khởi tạo các RecyclerView với Adapter rỗng
-     * Dữ liệu sẽ được "đổ" vào sau khi Firebase trả về.
+     * SỬA LỖI: Khởi tạo đúng adapter cho carousel
      */
     private void setupEmptyAdapters() {
-        // Carousel
-        carouselAdapter = new CarouselAdapter(carouselItems);
+        // Carousel - SỬA LỖI: Dùng CarouselAdapter thay vì NoveListAdapter
+        carouselAdapter = new CarouselAdapter(new ArrayList<>());
         carousel.setAdapter(carouselAdapter);
 
         // Recommended (Đề xuất)
@@ -134,31 +129,45 @@ public class HomeFragment extends Fragment {
         comicsByDateRecyclerView.setAdapter(comicsByDayAdapter);
     }
 
-    /**
-     * THAY ĐỔI: Hàm tổng để gọi tất cả các hàm tải dữ liệu
-     */
     private void fetchDataFromFirestore() {
         fetchCarouselData();
         fetchRecommendedData();
         fetchHotNovelsData();
-        initDateButton(); // (Hàm này sẽ tự fetch khi được click)
+        initDateButton();
     }
 
     // --- 1. Tải dữ liệu cho CAROUSEL ---
     private void fetchCarouselData() {
         db.collection("stories")
-                .whereEqualTo("featured", true) // Lấy truyện có "featured" = true
-                .limit(5) // Lấy 5 truyện
+                .whereEqualTo("featured", true)
+                .limit(5)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    carouselItems.clear(); // Xóa data cũ
+                    carouselItems.clear();
+                    List<NovelList> novelLists = new ArrayList<>(); // THÊM: Tạo novelLists cho carousel
+
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Story story = doc.toObject(Story.class);
-                        // THAY ĐỔI: Dùng model Carousel mới với String URL
                         carouselItems.add(new Carousel(story.getCoverImageUrl()));
+
+                        // THÊM: Tạo NovelList để truyền đầy đủ thông tin
+                        String genre = (story.getGenres() != null && !story.getGenres().isEmpty()) ? story.getGenres().get(0) : "Khác";
+                        NovelList novelList = new NovelList(
+                                story.getCoverImageUrl(),
+                                story.getTitle(),
+                                story.getViewCount(),
+                                genre,
+                                story.getChapter(),
+                                story.getAuthor(),
+                                story.getDescription()
+                        );
+                        novelLists.add(novelList);
                     }
-                    carouselAdapter.notifyDataSetChanged();
-                    setupCarouselScroll(); // CHỈ setup scroll SAU KHI có data
+
+                    // SỬA: Cập nhật adapter với cả carouselItems và novelLists
+                    carouselAdapter = new CarouselAdapter(carouselItems, novelLists);
+                    carousel.setAdapter(carouselAdapter);
+                    setupCarouselScroll();
                 })
                 .addOnFailureListener(e -> {
                     Log.w(TAG, "Error getting carousel data", e);
@@ -168,7 +177,7 @@ public class HomeFragment extends Fragment {
     // --- 2. Tải dữ liệu cho RECOMMENDED (Đề xuất - Grid 3 cột) ---
     private void fetchRecommendedData() {
         db.collection("stories")
-                .limit(6) // Lấy 6 truyện
+                .limit(6)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Cell> items = new ArrayList<>();
@@ -188,7 +197,6 @@ public class HomeFragment extends Fragment {
                         novelLists.add(novelList);
                         items.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
                     }
-                    // THAY ĐỔI: Cập nhật dữ liệu cho adapter
                     recommendedAdapter = new CellAdapter(items, novelLists);
                     recyclerView.setAdapter(recommendedAdapter);
                 })
@@ -200,23 +208,21 @@ public class HomeFragment extends Fragment {
     // --- 3. Tải dữ liệu cho HOT NOVELS (Truyện hot) ---
     private void fetchHotNovelsData() {
         db.collection("stories")
-                .orderBy("viewCount", Query.Direction.DESCENDING) // Sắp xếp theo lượt xem
-                .limit(5) // Lấy 10 truyện
+                .orderBy("viewCount", Query.Direction.DESCENDING)
+                .limit(5)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<NovelList> items = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Story story = doc.toObject(Story.class);
-                        // THAY ĐỔI: Dùng model NovelList mới với String URL
-                        // (Giả sử "chapterCount" bạn sẽ lưu ở đâu đó, tạm để "120")
                         String genre = (story.getGenres() != null && !story.getGenres().isEmpty()) ? story.getGenres().get(0) : "Khác";
                         items.add(new NovelList(
                                 story.getCoverImageUrl(),
                                 story.getTitle(),
                                 story.getViewCount(),
                                 genre,
-                                story.getChapter(), // Bạn cần thêm trường này vào model Story
-                                story.getAuthor(), // Bạn cần thêm trường "author" vào model Story
+                                story.getChapter(),
+                                story.getAuthor(),
                                 story.getDescription()
                         ));
                     }
@@ -244,12 +250,11 @@ public class HomeFragment extends Fragment {
         datebuttonAdapter = new DateAdapter(items);
         dateViews.setAdapter(datebuttonAdapter);
 
-        // THAY ĐỔI: Click listener giờ sẽ gọi hàm fetch từ Firebase
         datebuttonAdapter.setOnItemClickListener(new DateAdapter.OnItemClickListener() {
             @Override
             public void onDateClick(Date date, int position) {
                 Log.d(TAG, "Date clicked: " + date.getName());
-                fetchComicsByDay(date.getName()); // Gọi hàm tải data
+                fetchComicsByDay(date.getName());
             }
         });
 
@@ -259,14 +264,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    /**
-     * THAY ĐỔI: Hàm mới thay thế cho loadComicsByDate()
-     * Hàm này sẽ truy vấn Firestore
-     */
     private void fetchComicsByDay(String day) {
         db.collection("stories")
-                .whereEqualTo("releaseDay", day) // Lấy truyện có ngày ra = "Mon", "Tue"...
-                .limit(6) // Lấy 6 truyện
+                .whereEqualTo("releaseDay", day)
+                .limit(6)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Cell> items = new ArrayList<>();
@@ -294,9 +295,12 @@ public class HomeFragment extends Fragment {
                 });
     }
 
-    // --- Các hàm xử lý Carousel Auto-Scroll (Giữ nguyên) ---
-    // THAY ĐỔI: Tách hàm setup scroll ra
+    // --- Các hàm xử lý Carousel Auto-Scroll ---
     private void setupCarouselScroll() {
+        if (carouselAdapter == null || carouselAdapter.getItemCount() == 0) {
+            return; // Không setup scroll nếu không có dữ liệu
+        }
+
         autoScrollHandler = new Handler(Looper.getMainLooper());
         autoScrollRunnable = new Runnable() {
             @Override
@@ -334,6 +338,15 @@ public class HomeFragment extends Fragment {
     private void stopAutoScroll() {
         if (autoScrollHandler != null && autoScrollRunnable != null) {
             autoScrollHandler.removeCallbacks(autoScrollRunnable);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stopAutoScroll();
+        if (autoScrollHandler != null) {
+            autoScrollHandler.removeCallbacksAndMessages(null);
         }
     }
 }

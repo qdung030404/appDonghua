@@ -27,7 +27,7 @@ public class RankingActivity extends AppCompatActivity {
             {"all", "Đề Xuất"},
             {"hot", "Hot nhất"},
             {"full", "Hoàn thành"},
-            {"tu_tien", "Tu Tiên"},
+            {"do_thi", "Đô Thị"},
             {"magical", "Huyền Huyễn"},
             {"xuyen_khong", "Xuyên Không"},
             {"tien_hiep", "Tiên Hiệp"},

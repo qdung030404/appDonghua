@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.appdonghua.Fragment.AudioFragment;
 import com.example.appdonghua.Fragment.CaseFragment;
 import com.example.appdonghua.Fragment.ClassifyFragment;
 import com.example.appdonghua.Fragment.HomeFragment;

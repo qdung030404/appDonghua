@@ -91,10 +91,10 @@ public class RankingBoardFragment extends Fragment {
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
-            case "tu_tien":
+            case "do_thi":
                 // Lấy truyện thể loại Tu Tiên
                 query = db.collection("stories")
-                        .whereArrayContains("genres", "Tu Tiên")
+                        .whereArrayContains("genres", "Đô Thị")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;

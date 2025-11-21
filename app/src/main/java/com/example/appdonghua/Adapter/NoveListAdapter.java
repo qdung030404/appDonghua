@@ -47,7 +47,6 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
     public void onBindViewHolder(@NonNull NoveListAdapter.ViewHolder holder, int position) {
 
         NovelList novelList = item.get(position);
-        if (novelList == null) return;
 
         // --- SỬA LỖI TẢI ẢNH ---
         Context context = holder.itemView.getContext(); // Lấy context từ view

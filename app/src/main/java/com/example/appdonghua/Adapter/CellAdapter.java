@@ -118,7 +118,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull CellAdapter.ViewHolder holder, int position) {
         Cell cell = cells.get(position);
 
-        if (cell == null) return;
         holder.checkbox.setVisibility(isEditMode ? View.VISIBLE : View.GONE);
         holder.itemView.setOnClickListener(v -> {
             if (!isEditMode){

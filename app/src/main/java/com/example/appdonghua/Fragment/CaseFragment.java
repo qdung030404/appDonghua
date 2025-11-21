@@ -214,7 +214,7 @@ public class CaseFragment extends Fragment {
         textView.setTextSize(18);
         textView.setTextColor(Color.WHITE);
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundColor(Color.parseColor("#5F639D"));
+        textView.setBackgroundResource(R.drawable.round_conner);
     }
 
     private void setUnselectedStyle(TextView textView) {
