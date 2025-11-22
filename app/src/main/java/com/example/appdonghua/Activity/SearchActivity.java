@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,32 +23,40 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appdonghua.Adapter.SearchHistoryAdapter;
 import com.example.appdonghua.Adapter.TopSearchAdapter;
+import com.example.appdonghua.Adapter.NoveListAdapter;
 import com.example.appdonghua.Model.SearchHistory;
 import com.example.appdonghua.Model.TopSearch;
+import com.example.appdonghua.Model.Story;
+import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
     private EditText searchEditText;
     private ImageButton searchButton, clearButton, backButton, clearAllButton;
-    private RecyclerView historyRecyclerView, topSearchRecyclerView;
+    private RecyclerView historyRecyclerView, topSearchRecyclerView, searchResultRecyclerView;
     private SearchHistoryAdapter historyAdapter;
     private TopSearchAdapter topSearchAdapter;
+    private NoveListAdapter searchResultAdapter;
     private ArrayList<SearchHistory> historyList;
     private ArrayList<TopSearch> topSearchList;
+    private ArrayList<NovelList> searchResultList;
     private SharedPreferences sharedPreferences;
+    private FirebaseFirestore db;
+    private ProgressBar progressBar;
+    private TextView noResultTextView;
+
     private static final String PREFS_NAME = "SearchPrefs";
     private static final String KEY_SEARCH_HISTORY = "searchHistory";
     private static final int MAX_HISTORY_SIZE = 10;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,8 @@ public class SearchActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        db = FirebaseFirestore.getInstance();
         init();
         setupSharedPreferences();
         searchHistory();
@@ -66,6 +77,7 @@ public class SearchActivity extends AppCompatActivity {
         setupRecyclerViews();
         setupListeners();
     }
+
     private void init(){
         searchEditText = findViewById(R.id.searchEditText);
         searchButton = findViewById(R.id.searchButton);
@@ -74,12 +86,15 @@ public class SearchActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         historyRecyclerView = findViewById(R.id.historyRecyclerView);
         topSearchRecyclerView = findViewById(R.id.topSearchRecyclerView);
-
+        searchResultRecyclerView = findViewById(R.id.searchResultRecyclerView);
+        progressBar = findViewById(R.id.progressBar);
+        noResultTextView = findViewById(R.id.noResultTextView);
     }
+
     private void setupSharedPreferences(){
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-
     }
+
     private void searchHistory(){
         String json = sharedPreferences.getString(KEY_SEARCH_HISTORY, null);
         historyList = new ArrayList<>();
@@ -97,47 +112,83 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
     }
+
     private void saveHistory() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         JSONArray jsonArray = new JSONArray();
-       try {
-           for (SearchHistory history : historyList) {
-               JSONObject jsonObject = new JSONObject();
-               jsonObject.put("title", history.getTitle());
-               jsonArray.put(jsonObject);
-           }
-           editor.putString(KEY_SEARCH_HISTORY, jsonArray.toString());
-           editor.apply();
-       } catch (JSONException e) {
-           e.printStackTrace();
-       }
+        try {
+            for (SearchHistory history : historyList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", history.getTitle());
+                jsonArray.put(jsonObject);
+            }
+            editor.putString(KEY_SEARCH_HISTORY, jsonArray.toString());
+            editor.apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
     private void setupTopSearchData(){
         topSearchList = new ArrayList<>();
-        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
-        topSearchList.add(new TopSearch(R.drawable.img_2, "Thế Giới Hoàn Mỹ"));
+        loadTopSearchFromFirestore();
     }
-    private void setupRecyclerViews(){
-        historyAdapter = new SearchHistoryAdapter(historyList, new SearchHistoryAdapter.OnHistoryItemClickListener() {
 
+    private void loadTopSearchFromFirestore() {
+        // Lấy top 10 truyện có lượt xem cao nhất
+        db.collection("stories")
+                .orderBy("search", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    topSearchList.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Story story = document.toObject(Story.class);
+
+                        // Tạo TopSearch object với URL ảnh và title
+                        TopSearch topSearch = new TopSearch(
+                                story.getCoverImageUrl(),
+                                story.getTitle()
+                        );
+                        topSearchList.add(topSearch);
+                    }
+
+                    // Cập nhật adapter
+                    if (topSearchAdapter != null) {
+                        topSearchAdapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi tải top search: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void setupRecyclerViews(){
+        // Search result list
+        searchResultList = new ArrayList<>();
+        searchResultAdapter = new NoveListAdapter(searchResultList);
+        searchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        searchResultRecyclerView.setAdapter(searchResultAdapter);
+        searchResultRecyclerView.setVisibility(View.GONE);
+
+        // History list
+        historyAdapter = new SearchHistoryAdapter(historyList, new SearchHistoryAdapter.OnHistoryItemClickListener() {
             @Override
             public void onHistoryItemClick(String query) {
                 searchEditText.setText(query);
                 performSearch(query);
-
             }
 
             @Override
             public void onDeleteButtonClick(int position) {
                 deleteItem(position);
-
             }
         });
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         historyRecyclerView.setAdapter(historyAdapter);
+
+        // Top search list
         topSearchAdapter = new TopSearchAdapter(topSearchList, new TopSearchAdapter.OnTopSearchClickListener() {
             @Override
             public void onTopSearchClick(String query) {
@@ -148,14 +199,19 @@ public class SearchActivity extends AppCompatActivity {
         topSearchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         topSearchRecyclerView.setAdapter(topSearchAdapter);
     }
+
     private void setupListeners() {
         backButton.setOnClickListener(v -> finish());
+
         clearButton.setOnClickListener(v -> {
             searchEditText.setText("");
             clearButton.setVisibility(View.GONE);
             searchButton.setVisibility(View.VISIBLE);
+            showHistoryAndTopSearch();
         });
-        clearAllButton.setOnClickListener(v -> cLearALLItem());
+
+        clearAllButton.setOnClickListener(v -> clearAllItem());
+
         searchEditText.addTextChangedListener(new TextWatcher(){
             @Override
             public void afterTextChanged(Editable s) {}
@@ -171,41 +227,119 @@ public class SearchActivity extends AppCompatActivity {
                 } else {
                     clearButton.setVisibility(View.GONE);
                     searchButton.setVisibility(View.VISIBLE);
+                    showHistoryAndTopSearch();
                 }
             }
         });
+
         searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener(){
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH){
-                    String query = searchEditText.getText().toString();
+                    String query = searchEditText.getText().toString().trim();
                     if(!query.isEmpty()){
                         performSearch(query);
-                    }return true;
-
+                    }
+                    return true;
                 }
                 return false;
             }
-
-
         });
+
         searchButton.setOnClickListener(v -> {
-            String query = searchEditText.getText().toString();
+            String query = searchEditText.getText().toString().trim();
             if (!query.isEmpty()) {
                 performSearch(query);
             }
         });
     }
+
     private void performSearch(String query){
         if (query.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
+            return;
         }
-        addToSearchHistory(query);
-        Toast.makeText(this, "Đang tìm kiếm: " + query, Toast.LENGTH_SHORT).show();
 
+        addToSearchHistory(query);
+        searchStoriesInFirestore(query);
     }
+
+    private void searchStoriesInFirestore(String query) {
+        // Show loading
+        progressBar.setVisibility(View.VISIBLE);
+        noResultTextView.setVisibility(View.GONE);
+        historyRecyclerView.setVisibility(View.GONE);
+        topSearchRecyclerView.setVisibility(View.GONE);
+        searchResultRecyclerView.setVisibility(View.GONE);
+
+        // Clear previous results
+        searchResultList.clear();
+
+        // Convert query to lowercase for case-insensitive search
+        String searchQuery = query.toLowerCase();
+
+        // Search in Firestore
+        db.collection("stories")
+                .orderBy("title")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    searchResultList.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Story story = document.toObject(Story.class);
+
+                        // Check if title contains search query (case-insensitive)
+                        if (story.getTitle() != null &&
+                                story.getTitle().toLowerCase().contains(searchQuery)) {
+                            incrementSearchCount(document.getId(), story.getTitle());
+                            // Convert Story to NovelList
+                            String genre = story.getGenres() != null && !story.getGenres().isEmpty()
+                                    ? story.getGenres().get(0) : "Chưa phân loại";
+
+                            NovelList novelList = new NovelList(
+                                    story.getCoverImageUrl(),
+                                    story.getTitle(),
+                                    story.getViewCount(),
+                                    genre,
+                                    story.getChapter(),
+                                    story.getAuthor(),
+                                    story.getDescription()
+                            );
+
+                            searchResultList.add(novelList);
+                        }
+                    }
+
+                    // Update UI
+                    progressBar.setVisibility(View.GONE);
+
+                    if (searchResultList.isEmpty()) {
+                        noResultTextView.setVisibility(View.VISIBLE);
+                        noResultTextView.setText("Không tìm thấy kết quả cho \"" + query + "\"");
+                        searchResultRecyclerView.setVisibility(View.GONE);
+                    } else {
+                        searchResultRecyclerView.setVisibility(View.VISIBLE);
+                        searchResultAdapter.notifyDataSetChanged();
+                        Toast.makeText(this, "Tìm thấy " + searchResultList.size() + " kết quả", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    progressBar.setVisibility(View.GONE);
+                    noResultTextView.setVisibility(View.VISIBLE);
+                    noResultTextView.setText("Lỗi khi tìm kiếm. Vui lòng thử lại.");
+                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void showHistoryAndTopSearch() {
+        searchResultRecyclerView.setVisibility(View.GONE);
+        noResultTextView.setVisibility(View.GONE);
+        historyRecyclerView.setVisibility(View.VISIBLE);
+        topSearchRecyclerView.setVisibility(View.VISIBLE);
+    }
+
     private void addToSearchHistory(String query){
-        for (int i = 0; i < historyList.size();i++){
+        for (int i = 0; i < historyList.size(); i++){
             if(historyList.get(i).getTitle().equals(query)){
                 historyList.remove(i);
                 break;
@@ -218,6 +352,7 @@ public class SearchActivity extends AppCompatActivity {
         saveHistory();
         historyAdapter.notifyDataSetChanged();
     }
+
     private void deleteItem(int position) {
         if (position >= 0 && position < historyList.size()) {
             historyList.remove(position);
@@ -226,7 +361,8 @@ public class SearchActivity extends AppCompatActivity {
             Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
         }
     }
-    private void cLearALLItem(){
+
+    private void clearAllItem(){
         if(historyList.isEmpty()){
             Toast.makeText(this, "Lịch sử trống", Toast.LENGTH_SHORT).show();
             return;
@@ -235,6 +371,33 @@ public class SearchActivity extends AppCompatActivity {
         historyAdapter.notifyDataSetChanged();
         saveHistory();
         Toast.makeText(this, "Đã xóa lịch sử tìm kiếm", Toast.LENGTH_SHORT).show();
+    }
+    private void incrementSearchCount(String documentId, String title) {
+        db.collection("stories")
+                .document(documentId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Long currentSearchCount = documentSnapshot.getLong("search");
+                        long newSearchCount = (currentSearchCount != null) ? currentSearchCount + 1 : 1;
+
+                        db.collection("stories")
+                                .document(documentId)
+                                .update("search", newSearchCount)
+                                .addOnSuccessListener(aVoid -> {
+                                    android.util.Log.d("SearchActivity",
+                                            "Updated search count for '" + title + "': " + newSearchCount);
+                                })
+                                .addOnFailureListener(e -> {
+                                    android.util.Log.e("SearchActivity",
+                                            "Failed to update search count for '" + title + "': " + e.getMessage());
+                                });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    android.util.Log.e("SearchActivity",
+                            "Failed to get document for search count update: " + e.getMessage());
+                });
     }
     @Override
     protected void onPause() {

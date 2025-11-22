@@ -15,9 +15,12 @@ public class Story {
     private double ratingAvg;
     private String author;
     private Date lastUpdated;
+    private long search; // Số lần tìm kiếm
+
     public Story() {}
 
-    public Story(String title,long chapter, String author, String coverImageUrl, List<String> genres, String status, long viewCount, double ratingAvg, String description) {
+    public Story(String title, long chapter, String author, String coverImageUrl, List<String> genres,
+                 String status, long viewCount, double ratingAvg, String description) {
         this.title = title;
         this.description = description;
         this.coverImageUrl = coverImageUrl;
@@ -27,11 +30,10 @@ public class Story {
         this.viewCount = viewCount;
         this.ratingAvg = ratingAvg;
         this.author = author;
-        // lastUpdated sẽ được gán tự động
+        this.search = 0; // Mặc định = 0
     }
 
-    // --- Bắt đầu Getters và Setters ---
-    // (Bấm Alt + Insert để tự động tạo)
+    // --- Getters và Setters ---
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -44,11 +46,12 @@ public class Story {
 
     public List<String> getGenres() { return genres; }
     public void setGenres(List<String> genres) { this.genres = genres; }
+
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }
+
     public long getChapter() { return chapter; }
     public void setChapter(long chapter) { this.chapter = chapter; }
-
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
@@ -58,7 +61,11 @@ public class Story {
 
     public double getRatingAvg() { return ratingAvg; }
     public void setRatingAvg(double ratingAvg) { this.ratingAvg = ratingAvg; }
-    @ServerTimestamp // Tự động gán thời gian của server
+
+    public long getSearch() { return search; }
+    public void setSearch(long search) { this.search = search; }
+
+    @ServerTimestamp
     public Date getLastUpdated() { return lastUpdated; }
     public void setLastUpdated(Date lastUpdated) { this.lastUpdated = lastUpdated; }
 }

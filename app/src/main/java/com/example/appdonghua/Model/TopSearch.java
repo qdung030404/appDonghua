@@ -1,19 +1,19 @@
 package com.example.appdonghua.Model;
 
 public class TopSearch {
-    private int Image;
+    private String ImageUrl;
     private String topSearchBookCover;
-    public TopSearch(int Image, String topSearchBookCover) {
-        this.Image = Image;
+    public TopSearch(String imageUrl, String topSearchBookCover) {
+        this.ImageUrl = imageUrl;
         this.topSearchBookCover = topSearchBookCover;
     }
 
 
-    public int getImage() {
-        return Image;
+    public String getImageUrl() {
+        return ImageUrl;
     }
-    public void setImage(int image) {
-        Image = image;
+    public void setImage(String image) {
+        ImageUrl = image;
     }
     public String gettopSearchBookCover() {
         return topSearchBookCover;

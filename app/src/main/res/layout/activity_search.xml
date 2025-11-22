@@ -78,6 +78,34 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!-- No Result TextView -->
+            <TextView
+                android:id="@+id/noResultTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@color/white" />
+
+            <!-- Search Result RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/searchResultRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/historyLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
 
@@ -91,9 +119,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/history"
                 android:text="Lịch sử tìm kiếm"
-                android:layout_marginLeft="5dp"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -102,14 +130,15 @@
                 android:id="@+id/clearAllButton"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_trash"
-                android:scaleType="centerInside"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="20dp"
-                android:background="@color/background"
+                android:background="@android:color/transparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_trash"
                 app:tint="@color/white" />
 
         </RelativeLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/historyRecyclerView"
             android:layout_width="match_parent"
@@ -117,6 +146,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp" />
         <RelativeLayout
+            android:id="@+id/topSearchLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
