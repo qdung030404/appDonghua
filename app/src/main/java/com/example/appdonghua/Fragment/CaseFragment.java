@@ -33,6 +33,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CaseFragment extends Fragment {
@@ -282,7 +283,7 @@ public class CaseFragment extends Fragment {
                                         image,
                                         title,
                                         viewCount != null ? viewCount : 0,
-                                        genre != null ? genre : "Truyện tranh",
+                                        new ArrayList<>(Arrays.asList(genre != null ? genre : "Truyện tranh")),
                                         chapterCount != null ? chapterCount : 0,
                                         author != null ? author : "Đang cập nhật",
                                         description != null ? description : "Đang cập nhật mô tả..."
@@ -332,7 +333,7 @@ public class CaseFragment extends Fragment {
                                         image,
                                         title,
                                         viewCount != null ? viewCount : 0,
-                                        genre != null ? genre : "Truyện tranh",
+                                        new ArrayList<>(Arrays.asList(genre != null ? genre : "Truyện tranh")),
                                         chapterCount != null ? chapterCount : 0,
                                         author != null ? author : "Đang cập nhật",
                                         description != null ? description : "Đang cập nhật mô tả..."

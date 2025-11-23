@@ -1,6 +1,10 @@
 package com.example.appdonghua.Model;
 
 import com.google.firebase.firestore.ServerTimestamp;
+
+import org.checkerframework.checker.units.qual.A;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +13,7 @@ public class Story {
     private String description;
     private long chapter;
     private String coverImageUrl;
-    private List<String> genres; // Mảng thể loại
+    private ArrayList<String> genres; // Mảng thể loại
     private String status;
     private long viewCount;
     private double ratingAvg;
@@ -19,7 +23,7 @@ public class Story {
 
     public Story() {}
 
-    public Story(String title, long chapter, String author, String coverImageUrl, List<String> genres,
+    public Story(String title, long chapter, String author, String coverImageUrl, ArrayList<String> genres,
                  String status, long viewCount, double ratingAvg, String description) {
         this.title = title;
         this.description = description;
@@ -44,8 +48,8 @@ public class Story {
     public String getCoverImageUrl() { return coverImageUrl; }
     public void setCoverImageUrl(String coverImageUrl) { this.coverImageUrl = coverImageUrl; }
 
-    public List<String> getGenres() { return genres; }
-    public void setGenres(List<String> genres) { this.genres = genres; }
+    public ArrayList<String> getGenres() { return genres; }
+    public void setGenres(ArrayList<String> genres) { this.genres = genres; }
 
     public String getAuthor() { return author; }
     public void setAuthor(String author) { this.author = author; }

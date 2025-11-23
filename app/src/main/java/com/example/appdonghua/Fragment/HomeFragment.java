@@ -156,7 +156,7 @@ public class HomeFragment extends Fragment {
                                 story.getCoverImageUrl(),
                                 story.getTitle(),
                                 story.getViewCount(),
-                                genre,
+                                story.getGenres(),
                                 story.getChapter(),
                                 story.getAuthor(),
                                 story.getDescription()
@@ -189,7 +189,7 @@ public class HomeFragment extends Fragment {
                                 story.getCoverImageUrl(),
                                 story.getTitle(),
                                 story.getViewCount(),
-                                genre,
+                                story.getGenres(),
                                 story.getChapter(),
                                 story.getAuthor(),
                                 story.getDescription()
@@ -220,7 +220,7 @@ public class HomeFragment extends Fragment {
                                 story.getCoverImageUrl(),
                                 story.getTitle(),
                                 story.getViewCount(),
-                                genre,
+                                story.getGenres(),
                                 story.getChapter(),
                                 story.getAuthor(),
                                 story.getDescription()
@@ -279,7 +279,7 @@ public class HomeFragment extends Fragment {
                                 story.getCoverImageUrl(),
                                 story.getTitle(),
                                 story.getViewCount(),
-                                genre,
+                                story.getGenres(),
                                 story.getChapter(),
                                 story.getAuthor(),
                                 story.getDescription()

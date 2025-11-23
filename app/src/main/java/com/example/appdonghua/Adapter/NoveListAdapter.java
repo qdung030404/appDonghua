@@ -65,7 +65,7 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
         holder.bookTitle.setText(novelList.getTitle());
         // (Đảm bảo model của bạn có các hàm get này)
         holder.viewCount.setText(" " + RankingAdapter.formatNumber((int) novelList.getViewCount()));
-        holder.bookCategory.setText(novelList.getGenre());
+        holder.bookCategory.setText(String.join(", ", novelList.getGenre()));
         holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
         holder.chapterCount.setText(" chương " + novelList.getChapterCount());
 
@@ -75,7 +75,6 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
             public void onClick(View v) {
                 // Lấy context từ view, giờ sẽ không bị null
                 Context context = v.getContext();
-
                 Intent intent = new Intent(context, ComicInfoActivity.class);
 
                 // Gửi String URL, không gửi int
@@ -86,7 +85,7 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
                 intent.putExtra("CHAPTER", novelList.getChapterCount());
                 intent.putExtra("AUTHOR", novelList.getAuthor());
                 intent.putExtra("DESCRIPTION", novelList.getDescription());
-
+                intent.putStringArrayListExtra("GENRES", novelList.getGenre());
 
                 context.startActivity(intent);
             }

@@ -300,7 +300,7 @@ public class SearchActivity extends AppCompatActivity {
                                     story.getCoverImageUrl(),
                                     story.getTitle(),
                                     story.getViewCount(),
-                                    genre,
+                                    story.getGenres(),
                                     story.getChapter(),
                                     story.getAuthor(),
                                     story.getDescription()

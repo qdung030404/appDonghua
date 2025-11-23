@@ -1,16 +1,18 @@
 package com.example.appdonghua.Model;
 
+import java.util.ArrayList;
+
 public class NovelList {
      private String imageUrl; // THAY ĐỔI: từ int thành String
      private String title;
      private long viewCount; // THAY ĐỔI: từ int thành long
-     private String genre;
+     private ArrayList<String> genre;
      private long chapterCount;
      private String author;
      private String description;
 
 
-     public NovelList(String imageUrl, String title, long viewCount, String genre, long chapterCount, String author, String description) {
+     public NovelList(String imageUrl, String title, long viewCount, ArrayList<String> genre, long chapterCount, String author, String description) {
           this.imageUrl = imageUrl;
           this.title = title;
           this.viewCount = viewCount;
@@ -26,8 +28,8 @@ public class NovelList {
      public String getTitle() { return title; }
      public void setViewCount(long viewCount) { this.viewCount = viewCount; }
      public long getViewCount() { return viewCount; }
-     public void setGenre(String genre) { this.genre = genre; }
-     public String getGenre() { return genre; }
+     public void setGenre(ArrayList<String> genre) { this.genre = genre; }
+     public ArrayList<String> getGenre() { return genre; }
      public void setChapterCount(long chapterCount) { this.chapterCount = chapterCount; }
      public long getChapterCount() { return chapterCount; }
      public void setAuthor(String author) { this.author = author; }

@@ -37,7 +37,7 @@ public class ComicInfoActivity extends AppCompatActivity {
     // Views
     private ImageButton backButton, favoriteButton, expandButton;
     private ImageView imageCover;
-    private TextView texTitle, tvViews, author, status, description, chapterCount;
+    private TextView texTitle, tvViews, author, status, description, chapterCount, tvGenres;
     private RecyclerView rvChapters;
     private Button viewAllButton;
     // Data
@@ -101,6 +101,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         chapterCount = findViewById(R.id.chapterCount);
         rvChapters = findViewById(R.id.rvChapters);
         viewAllButton = findViewById(R.id.viewAllButton);
+        tvGenres = findViewById(R.id.tvGenres);
     }
 
     // --- HÀM MỚI: Nhận dữ liệu từ HomeFragment ---
@@ -123,6 +124,12 @@ public class ComicInfoActivity extends AppCompatActivity {
         author.setText("Tác giả: " + (strAuthor != null ? strAuthor : "Đang cập nhật"));
         tvViews.setText(formatNumber(lViews) + " Views");
         chapterCount.setText(strChapterCount  + " chương");
+        if (genres != null && !genres.isEmpty()) {
+            String genresText = String.join(", ", genres);
+            tvGenres.setText(genresText);
+        } else {
+            tvGenres.setText("Chưa phân loại");
+        }
         if (strDescription != null && !strDescription.isEmpty()) {
             description.setText(strDescription);
         } else {
