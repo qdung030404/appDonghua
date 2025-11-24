@@ -81,7 +81,6 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
                 intent.putExtra("IMAGE_URL", novelList.getImageUrl());
                 intent.putExtra("TITLE", novelList.getTitle());
                 intent.putExtra("VIEWS", novelList.getViewCount());
-                intent.putExtra("CATEGORY", novelList.getGenre());
                 intent.putExtra("CHAPTER", novelList.getChapterCount());
                 intent.putExtra("AUTHOR", novelList.getAuthor());
                 intent.putExtra("DESCRIPTION", novelList.getDescription());

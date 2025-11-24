@@ -15,9 +15,21 @@ import java.util.List;
 
 public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHolder> {
     private List<Chapter> chapters;
+    private OnChapterClickListener listener;
+
+    // Interface để xử lý sự kiện click
+    public interface OnChapterClickListener {
+        void onChapterClick(Chapter chapter, int position);
+    }
 
     public ChapterAdapter(List<Chapter> chapters) {
         this.chapters = chapters;
+    }
+
+    // Constructor với listener
+    public ChapterAdapter(List<Chapter> chapters, OnChapterClickListener listener) {
+        this.chapters = chapters;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,11 +43,13 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chapter chapter = chapters.get(position);
         holder.tvChapter.setText(chapter.getChapter());
-        holder.tvView.setText(String.valueOf(chapter.getViews()));
+        holder.tvView.setText(String.valueOf(chapter.getViews()) + " lượt xem");
 
-        // Thêm sự kiện click vào chương nếu cần
+        // Thêm sự kiện click vào chương
         holder.itemView.setOnClickListener(v -> {
-            // Xử lý khi bấm vào một chương (ví dụ: mở màn hình đọc)
+            if (listener != null) {
+                listener.onChapterClick(chapter, position);
+            }
         });
     }
 
@@ -45,6 +59,7 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHold
     }
 
     public void setHighlightedPosition(int position) {
+        // Có thể implement để highlight chương đang đọc
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

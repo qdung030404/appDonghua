@@ -270,7 +270,7 @@ public class CaseFragment extends Fragment {
                             String image = doc.getString("coverImageUrl");
                             String author = doc.getString("author");
                             String description = doc.getString("description");
-                            String genre = doc.getString("genre");
+                            ArrayList<String> genreList = getGenreFromDocument(doc);
                             Long viewCount = doc.getLong("viewCount");
                             Long chapterCount = doc.getLong("chapterCount");
 
@@ -283,7 +283,7 @@ public class CaseFragment extends Fragment {
                                         image,
                                         title,
                                         viewCount != null ? viewCount : 0,
-                                        new ArrayList<>(Arrays.asList(genre != null ? genre : "Truyện tranh")),
+                                        genreList,
                                         chapterCount != null ? chapterCount : 0,
                                         author != null ? author : "Đang cập nhật",
                                         description != null ? description : "Đang cập nhật mô tả..."
@@ -322,7 +322,7 @@ public class CaseFragment extends Fragment {
                             String image = doc.getString("coverImageUrl");
                             String author = doc.getString("author");
                             String description = doc.getString("description");
-                            String genre = doc.getString("genre");
+                            ArrayList<String> genreList = getGenreFromDocument(doc);
                             Long viewCount = doc.getLong("viewCount");
                             Long chapterCount = doc.getLong("chapterCount");
 
@@ -333,7 +333,7 @@ public class CaseFragment extends Fragment {
                                         image,
                                         title,
                                         viewCount != null ? viewCount : 0,
-                                        new ArrayList<>(Arrays.asList(genre != null ? genre : "Truyện tranh")),
+                                        genreList,
                                         chapterCount != null ? chapterCount : 0,
                                         author != null ? author : "Đang cập nhật",
                                         description != null ? description : "Đang cập nhật mô tả..."
@@ -347,6 +347,21 @@ public class CaseFragment extends Fragment {
                     showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
                     Log.e("CaseFragment", "Error loading saved items", e);
                 });
+    }
+    private ArrayList<String> getGenreFromDocument(QueryDocumentSnapshot doc) {
+        try {
+            ArrayList<String> genreList = (ArrayList<String>) doc.get("genre");
+            if (genreList != null && !genreList.isEmpty()) {
+                return genreList;
+            }
+        } catch (Exception e) {
+            Log.e("CaseFragment", "Error getting genre: " + e.getMessage());
+        }
+
+        // Trả về giá trị mặc định
+        ArrayList<String> defaultList = new ArrayList<>();
+        defaultList.add("Truyện tranh");
+        return defaultList;
     }
     // Hàm hiển thị thông báo trống
     private void showEmpty(String message) {

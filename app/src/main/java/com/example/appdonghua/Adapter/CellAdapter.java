@@ -131,7 +131,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
                     intent.putExtra("TITLE", novelList.getTitle());
                     intent.putExtra("IMAGE_URL", novelList.getImageUrl());
                     intent.putExtra("AUTHOR", novelList.getAuthor());
-                    intent.putExtra("CATEGORY", novelList.getGenre());
+                    intent.putExtra("GENRES", novelList.getGenre());
                     intent.putExtra("VIEWS", novelList.getViewCount());
                     intent.putExtra("CHAPTER", novelList.getChapterCount());
                     intent.putExtra("DESCRIPTION", novelList.getDescription());
@@ -140,7 +140,7 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
                     intent.putExtra("TITLE", cell.getTitle());
                     intent.putExtra("IMAGE_URL", cell.getImageUrl());
                     intent.putExtra("AUTHOR", "Đang cập nhật");
-                    intent.putExtra("CATEGORY", "Truyện tranh");
+                    intent.putExtra("GENRES", "Truyện tranh");
                     intent.putExtra("VIEWS", 0);
                     intent.putExtra("CHAPTER", "0");
                     intent.putExtra("DESCRIPTION", "Đang cập nhật mô tả...");

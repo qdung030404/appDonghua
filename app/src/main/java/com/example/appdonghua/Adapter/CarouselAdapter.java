@@ -72,7 +72,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
                 intent.putExtra("TITLE", novelList.getTitle());
                 intent.putExtra("IMAGE_URL", novelList.getImageUrl());
                 intent.putExtra("AUTHOR", novelList.getAuthor());
-                intent.putExtra("CATEGORY", novelList.getGenre());
+                intent.putExtra("GENRES", novelList.getGenre());
                 intent.putExtra("VIEWS", novelList.getViewCount());
                 intent.putExtra("CHAPTER", novelList.getChapterCount());
                 intent.putExtra("DESCRIPTION", novelList.getDescription());
@@ -81,7 +81,7 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
                 intent.putExtra("TITLE", "Đang cập nhật");
                 intent.putExtra("IMAGE_URL", carousel.getImageUrl());
                 intent.putExtra("AUTHOR", "Đang cập nhật");
-                intent.putExtra("CATEGORY", "Truyện tranh");
+                intent.putExtra("GENRES", "Truyện tranh");
                 intent.putExtra("VIEWS", 0);
                 intent.putExtra("CHAPTER", "0");
                 intent.putExtra("DESCRIPTION", "Đang cập nhật mô tả...");

@@ -39,7 +39,7 @@ public class ComicInfoActivity extends AppCompatActivity {
     private ImageView imageCover;
     private TextView texTitle, tvViews, author, status, description, chapterCount, tvGenres;
     private RecyclerView rvChapters;
-    private Button viewAllButton;
+    private Button viewAllButton, readButton;
     // Data
     private ChapterAdapter chapterAdapter;
     private List<Chapter> allChapters;
@@ -101,6 +101,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         chapterCount = findViewById(R.id.chapterCount);
         rvChapters = findViewById(R.id.rvChapters);
         viewAllButton = findViewById(R.id.viewAllButton);
+        readButton = findViewById(R.id.readButton);
         tvGenres = findViewById(R.id.tvGenres);
     }
 
@@ -157,6 +158,10 @@ public class ComicInfoActivity extends AppCompatActivity {
         expandButton.setOnClickListener(v -> toggle());
         viewAllButton.setOnClickListener(v -> {
             showAllChapters();
+        });
+        readButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ComicInfoActivity.this, ReadActivity.class);
+            startActivity(intent);
         });
     }
 
