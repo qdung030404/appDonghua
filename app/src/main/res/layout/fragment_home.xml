@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/app_background"
     tools:context=".Fragment.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -15,7 +15,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@color/background"
+            android:background="@color/app_background"
             android:layout_height="64dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
@@ -44,7 +44,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/ranking_Button"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/app_icon_tint" />
 
             <ImageButton
                 android:id="@+id/ranking_Button"
@@ -58,7 +58,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/app_icon_tint" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="Lịch ra chương"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -114,7 +114,7 @@
                     android:layout_width="60dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="12dp"
-                    android:background="@color/white" />
+                    android:background="@color/app_divider" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/date_Button"
@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="Có thể bạn sẽ thích"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -155,7 +155,7 @@
                     android:layout_width="60dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="12dp"
-                    android:background="@color/white" />
+                    android:background="@color/app_divider" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -180,7 +180,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:text="Hot"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -188,7 +188,7 @@
                     android:layout_width="60dp"
                     android:layout_height="3dp"
                     android:layout_marginBottom="12dp"
-                    android:background="@color/white" />
+                    android:background="@color/app_divider" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/scollView"

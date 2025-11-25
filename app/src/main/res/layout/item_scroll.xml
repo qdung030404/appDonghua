@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="#5F639D"
+    app:cardBackgroundColor="@color/app_card_background"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Thế Giới Hoàn Mỹ"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="2"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Tác giả: Thần Đông"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="12sp"
                 android:alpha="0.7" />
 
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Thể loại: Huyền Huyễn"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="12sp"
                 android:alpha="0.7" />
 
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👁 30k"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_secondary"
                     android:textSize="12sp" />
 
                 <TextView
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
                     android:text="📖 120 chương"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
 

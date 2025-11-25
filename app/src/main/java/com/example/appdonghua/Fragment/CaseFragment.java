@@ -184,16 +184,16 @@ public class CaseFragment extends Fragment {
     private TextView createMenuItem(String id, String name) {
         TextView textView = new TextView(getContext());
         textView.setText(name);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTextSize(14);
-        textView.setGravity(Gravity.CENTER);
+        textView.setGravity(getResources().getColor(R.color.app_text_primary));
         textView.setPadding(20, 20, 20, 30);
         textView.setTag(id);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(10, 10, 10, 0);
+        params.setMargins(10, 10, 10, 10);
         textView.setLayoutParams(params);
         textView.setOnClickListener(v -> {
             onMenuItemClick(textView);
@@ -213,16 +213,16 @@ public class CaseFragment extends Fragment {
 
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(18);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.round_conner);
+        textView.setBackgroundResource(R.drawable.btnbg);
     }
 
     private void setUnselectedStyle(TextView textView) {
         textView.setTextSize(14);
         textView.setBackgroundColor(Color.TRANSPARENT);
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
     }
 
     private void handleMenuSelection(String itemId) {

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/background"
+    android:background="@color/app_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.SplashActivity">
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Version 1.0"
-        android:textColor="@color/white"
+        android:textColor="@color/app_text_primary"
         android:textSize="14sp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

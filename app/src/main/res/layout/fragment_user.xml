@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/app_background"
     tools:context=".Fragment.UserFragment">
 
     <!-- Layout khi chưa đăng nhập -->
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:text="Chào mừng bạn!"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -52,7 +52,7 @@
                 android:gravity="center"
                 android:lineSpacingExtra="4dp"
                 android:text="Đăng nhập để trải nghiệm đầy đủ tính năng và lưu lại các bộ truyện yêu thích của bạn"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_secondary"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -69,8 +69,8 @@
                 android:text="Đăng nhập"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:textColor="@color/background"
-                android:backgroundTint="@color/white"
+                android:textColor="@color/app_text_primary"
+                android:backgroundTint="@color/board_color"
                 android:letterSpacing="0.02"
                 android:elevation="4dp"
                 android:layout_marginBottom="16dp"/>
@@ -87,14 +87,14 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#33FFFFFF" />
+                    android:background="@color/app_divider" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="hoặc"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_secondary"
                     android:alpha="0.6"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp" />
@@ -103,7 +103,7 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#33FFFFFF" />
+                    android:background="@color/app_divider" />
             </LinearLayout>
 
             <Button

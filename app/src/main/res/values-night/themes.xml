@@ -1,7 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.AppDonghua" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="colorPrimary">#1E1E1E</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">#2C2C2C</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Background colors -->
+        <item name="android:colorBackground">#121212</item>
+        <item name="colorOnBackground">@color/white</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">@color/white</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">#121212</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">#121212</item>
+
+        <!-- Card background -->
+        <item name="cardBackgroundColor">#1E1E1E</item>
     </style>
+    <style name="Theme.AppDonghua" parent="Base.Theme.AppDonghua" />
 </resources>

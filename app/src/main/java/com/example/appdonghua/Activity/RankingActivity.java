@@ -73,7 +73,7 @@ public class RankingActivity extends AppCompatActivity {
     private TextView createCategoryTextView(String categoryId, String categoryName) {
         TextView textView = new TextView(this);
         textView.setText(categoryName);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
         textView.setPadding(10, 50, 20, 50);
@@ -110,14 +110,14 @@ public class RankingActivity extends AppCompatActivity {
 
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(16);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
         textView.setBackgroundResource(R.drawable.btnbg);
     }
 
     private void setUnselectedStyle(TextView textView) {
         textView.setTextSize(14);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
         textView.setBackgroundColor(Color.TRANSPARENT);
     }

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="#5F639D"
+    app:cardBackgroundColor="@color/app_card_background"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -25,7 +25,6 @@
                 android:id="@+id/bookCover"
                 android:layout_width="60dp"
                 android:layout_height="90dp"
-
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_2" />
 
@@ -42,7 +41,9 @@
                 android:layout_height="20dp"
                 android:gravity="center"
                 android:text="4"
-                android:textColor="@color/black"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="3dp"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:visibility="gone"
@@ -60,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Thế Giới Hoàn Mỹ"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="1"
@@ -73,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Tác giả: Thần Đông"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="12sp"
                 android:alpha="0.7" />
 
@@ -83,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="Thể loại: Huyền Huyễn"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="12sp"
                 android:alpha="0.7" />
 
@@ -98,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="👁 30k"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_secondary"
                     android:textSize="10sp" />
 
                 <TextView
@@ -107,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:text="📖 120 chương"
                     android:layout_marginLeft="5dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_secondary"
                     android:textSize="10sp" />
             </LinearLayout>
 

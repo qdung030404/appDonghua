@@ -5,14 +5,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#5F639D"
+    android:background="@color/app_background"
     tools:context=".Fragment.CaseFragment">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
+        android:background="@color/app_background"
         android:paddingTop="10dp">
 
 
@@ -41,13 +41,13 @@
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"
             android:text="Sửa"
-            android:textColor="@color/white"
+            android:textColor="@color/app_text_primary"
             android:textSize="16sp"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#5F639D" />
+        android:background="@color/app_divider" />
 
     <FrameLayout
         android:id="@+id/content_container"
@@ -71,13 +71,17 @@
             android:textSize="16sp"
             android:visibility="gone" />
     </FrameLayout>
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/app_divider"/>
     <RelativeLayout
         android:id="@+id/bottom_edit_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/background"
         android:visibility="gone">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -87,25 +91,26 @@
                 android:layout_width="127dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/background"
+                android:background="@color/app_background"
                 app:backgroundTintMode="screen"
                 app:backgroundTint="@null"
-                android:text="Chọn Tất Cả" />
+                android:text="Chọn Tất Cả"
+                android:textColor="@color/app_text_primary"/>
 
             <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/white"/>
+            android:background="@color/app_divider"/>
             <Button
                 android:id="@+id/deleteButton"
                 android:layout_width="127dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/background"
+                android:background="@color/app_background"
                 app:backgroundTintMode="screen"
                 app:backgroundTint="@null"
                 android:text="Xóa"
-                android:textColor="@color/red"/>
+                android:textColor="@color/error_color"/>
 
         </LinearLayout>
     </RelativeLayout>

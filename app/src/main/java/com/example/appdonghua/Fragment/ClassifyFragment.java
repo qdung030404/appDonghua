@@ -140,7 +140,7 @@ public class ClassifyFragment extends Fragment {
     private TextView createFilterTextView(String filterId, String filterName) {
         TextView textView = new TextView(getContext());
         textView.setText(filterName);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
         textView.setPadding(40, 25, 40, 25);
@@ -183,14 +183,14 @@ public class ClassifyFragment extends Fragment {
 
     private void setSelectedFilterStyle(TextView textView) {
         textView.setTextSize(15);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
         textView.setBackgroundResource(R.drawable.btnbg);
     }
 
     private void setUnselectedFilterStyle(TextView textView) {
         textView.setTextSize(14);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
         textView.setBackgroundColor(Color.TRANSPARENT);
     }
@@ -198,7 +198,7 @@ public class ClassifyFragment extends Fragment {
     private TextView createCategoryTextView(String categoryId, String categoryName) {
         TextView textView = new TextView(getContext());
         textView.setText(categoryName);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTextSize(14);
         textView.setGravity(Gravity.CENTER);
         textView.setPadding(20, 30, 20, 30);
@@ -240,15 +240,15 @@ public class ClassifyFragment extends Fragment {
     }
 
     private void setSelectedStyle(TextView textView) {
-        textView.setTextSize(16);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(14);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
         textView.setBackgroundResource(R.drawable.btnbg);
     }
 
     private void setUnselectedStyle(TextView textView) {
-        textView.setTextSize(14);
-        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(12);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
         textView.setBackgroundColor(Color.TRANSPARENT);
     }

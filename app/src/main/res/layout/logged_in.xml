@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/app_background"
     android:fillViewport="true">
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:layout_height="72dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:background="@color/background">
+            android:background="@color/app_background">
 
             <ImageButton
                 android:id="@+id/search_Button"
@@ -28,19 +28,19 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_notification"
-                app:tint="@color/white" />
+                app:tint="@color/app_icon_tint" />
 
             <ImageButton
-                android:id="@+id/ranking_Button"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_toStartOf="@id/search_Button"
+                android:id="@+id/settingButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/search_Button"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic__setting"
-                app:tint="@color/white" />
+                app:tint="@color/app_icon_tint" />
         </RelativeLayout>
 
         <!-- Thông tin người dùng -->
@@ -75,7 +75,7 @@
                     android:text="Tên người dùng"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/app_text_primary" />
 
                 <TextView
                     android:id="@+id/tv_email"
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:text="email@example.com"
                     android:textSize="14sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:alpha="0.8"
                     android:layout_marginTop="6dp" />
 
@@ -115,7 +115,7 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_heart"
                     android:contentDescription="Favorites"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -123,7 +123,7 @@
                     android:layout_weight="1"
                     android:text="Phim yêu thích"
                     android:textSize="16sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
 
                 <ImageView
@@ -131,14 +131,14 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_text_secondary" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#33FFFFFF"
+                android:background="@color/app_divider"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp" />
 
@@ -156,7 +156,7 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_history"
                     android:contentDescription="History"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -164,7 +164,7 @@
                     android:layout_weight="1"
                     android:text="Lịch sử xem"
                     android:textSize="16sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
 
                 <ImageView
@@ -172,14 +172,14 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_text_secondary" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#33FFFFFF"
+                android:background="@color/app_divider"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp" />
 
@@ -197,7 +197,7 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_download"
                     android:contentDescription="Downloads"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -205,7 +205,7 @@
                     android:layout_weight="1"
                     android:text="Tải xuống"
                     android:textSize="16sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
 
                 <ImageView
@@ -213,7 +213,7 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_text_primary" />
 
             </LinearLayout>
         </LinearLayout>
@@ -244,7 +244,7 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_feedback"
                     android:contentDescription="Settings"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -252,7 +252,7 @@
                     android:layout_weight="1"
                     android:text="Ý kiến phản hồi"
                     android:textSize="16sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
 
                 <ImageView
@@ -260,14 +260,14 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_text_secondary" />
 
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#33FFFFFF"
+                android:background="@color/app_divider"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp" />
 
@@ -285,7 +285,7 @@
                     android:layout_height="28dp"
                     android:src="@drawable/ic_circle_info"
                     android:contentDescription="About"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -293,7 +293,7 @@
                     android:layout_weight="1"
                     android:text="Về chúng tôi"
                     android:textSize="16sp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
 
                 <ImageView
@@ -301,50 +301,9 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
-                    app:tint="@color/white" />
+                    app:tint="@color/app_text_secondary" />
 
             </LinearLayout>
         </LinearLayout>
-
-        <!-- Nút Đăng xuất -->
-        <LinearLayout
-            android:id="@+id/layout_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/rounded_card_background"
-            android:elevation="4dp">
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_logout"
-                android:contentDescription="Logout"
-                app:tint="#FF5252" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Đăng xuất"
-                android:textSize="16sp"
-                android:textColor="#FF5252"
-                android:textStyle="bold"
-                android:layout_marginStart="16dp" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_arrow_right"
-                android:contentDescription="Arrow"
-                app:tint="#FF5252" />
-
-        </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

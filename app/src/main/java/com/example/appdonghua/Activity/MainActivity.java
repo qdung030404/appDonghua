@@ -1,9 +1,11 @@
 package com.example.appdonghua.Activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,7 +23,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     ViewPager vp;
     ChipNavigationBar bottom_nav;
-
+    public static final String PREFS_NAME = "AppSettings";
+    public static final String KEY_NIGHT_MODE = "night_mode";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
         init();
+        applyNightMode();
     }
 
     private void init(){
@@ -89,6 +93,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void applyNightMode() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
 
+        if (isNightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
 
 }

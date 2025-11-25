@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -85,7 +86,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             holder.rankingText.setVisibility(View.VISIBLE);
             holder.rankingText.setText(String.valueOf(rank));
             holder.rankingText.setBackgroundResource(R.drawable.ranking_circle);
-            holder.rankingText.setTextColor(Color.BLACK);
+            holder.rankingText.setTextColor(ContextCompat.getColor(context, R.color.app_text_primary));
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

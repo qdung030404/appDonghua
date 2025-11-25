@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="#5F639D"
+    app:cardBackgroundColor="@color/board_color"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
@@ -20,7 +20,7 @@
             android:text="Thế Giới Hoàn Mỹ"
             android:layout_weight="10"
             android:gravity="center_vertical"
-            android:textColor="@color/white"
+            android:textColor="@color/app_text_primary"
             android:textSize="16sp"
             android:textStyle="bold"
             android:maxLines="2"
@@ -33,7 +33,7 @@
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_close"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/white" />
+            app:tint="@color/app_icon_tint" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

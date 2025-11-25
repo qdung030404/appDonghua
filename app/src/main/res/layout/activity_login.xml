@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/app_background"
     android:fillViewport="true"
     tools:context=".Activity.LoginActivity">
 
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đăng nhập"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chào mừng trở lại"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_secondary"
                 android:textSize="16sp"
                 android:alpha="0.7"
                 android:layout_marginTop="8dp" />
@@ -62,7 +62,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
@@ -72,8 +72,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:hint="Nhập email của bạn"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="@color/app_text_secondary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mật khẩu"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -96,8 +96,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:hint="Nhập mật khẩu"
-                android:textColor="@color/white"
-                android:textColorHint="@color/white"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="@color/app_text_secondary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -116,8 +116,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ghi nhớ đăng nhập"
-                    android:textColor="@color/white"
-                    android:buttonTint="@color/white"
+                    android:textColor="@color/app_text_primary"
+                    android:buttonTint="@color/app_text_secondary"
                     android:layout_weight="1" />
 
             </LinearLayout>
@@ -127,8 +127,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:text="ĐĂNG NHẬP"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/background"
+                android:backgroundTint="@color/app_background"
+                android:textColor="@color/app_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
@@ -148,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chưa có tài khoản? "
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:alpha="0.7" />
 
@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đăng ký ngay"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:clickable="true"
@@ -177,13 +177,13 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#33FFFFFF" />
+                android:background="@color/app_divider" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hoặc đăng nhập với"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="14sp"
                 android:alpha="0.7"
                 android:layout_marginStart="16dp"
@@ -193,7 +193,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="#33FFFFFF" />
+                android:background="@color/app_divider" />
 
         </LinearLayout>
 
@@ -213,7 +213,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
-                app:tint="@color/white" />
+                app:tint="@color/app_icon_tint" />
 
         </LinearLayout>
 

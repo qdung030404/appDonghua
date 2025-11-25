@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/app_background"
     tools:context=".Activity.RankingActivity">
 
     <!-- Enhanced Toolbar with elevation and padding -->
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         app:cardElevation="4dp"
         app:cardCornerRadius="0dp"
-        app:cardBackgroundColor="@color/background">
+        app:cardBackgroundColor="@color/app_background">
 
         <RelativeLayout
             android:id="@+id/tool_bar"
@@ -34,7 +34,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_arrow_left"
-                app:tint="@color/white"
+                app:tint="@color/app_icon_tint"
                 android:contentDescription="Back" />
 
             <TextView
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Bảng Xếp Hạng"
-                android:textColor="@android:color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.02" />
@@ -66,7 +66,7 @@
             android:layout_margin="8dp"
             app:cardElevation="10dp"
             app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/background">
+            app:cardBackgroundColor="@color/app_background">
 
             <ScrollView
                 android:id="@+id/menu_scroll_view"
@@ -95,7 +95,7 @@
             android:layout_marginStart="0dp"
             app:cardElevation="3dp"
             app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/background">
+            app:cardBackgroundColor="@color/app_background">
 
             <FrameLayout
                 android:id="@+id/fragment_container"
