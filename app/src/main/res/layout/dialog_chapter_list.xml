@@ -5,23 +5,6 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Tiêu đề -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Chọn chương"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        android:gravity="center"
-        android:paddingBottom="12dp" />
-
-    <!-- Đường phân cách -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC" />
-
     <!-- RecyclerView hiển thị danh sách chương -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChapters"

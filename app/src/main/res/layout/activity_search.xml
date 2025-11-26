@@ -66,7 +66,7 @@
             android:background="@android:color/transparent"
             android:visibility="gone"
             app:srcCompat="@drawable/ic_close"
-            app:tint="@color/white" />
+            app:tint="@color/app_icon_tint" />
 
     </RelativeLayout>
     <LinearLayout

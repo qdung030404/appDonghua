@@ -1,4 +1,4 @@
-package com.example.appdonghua;
+package com.example.appdonghua.Utils;
 
 import android.app.Application;
 import android.content.SharedPreferences;

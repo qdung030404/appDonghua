@@ -1,7 +1,11 @@
 package com.example.appdonghua.Activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -23,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingActivity extends AppCompatActivity {
     ImageButton backButton;
-    LinearLayout layoutLogout;
+    LinearLayout layoutLogout, notificationLayout, languageLayout;
     Switch switchNightMode;
 
     private FirebaseAuth mAuth;
@@ -59,10 +63,12 @@ public class SettingActivity extends AppCompatActivity {
     private void init() {
         backButton = findViewById(R.id.backButton);
         layoutLogout = findViewById(R.id.layout_logout);
+        notificationLayout = findViewById(R.id.notification);
+        languageLayout = findViewById(R.id.language);
         switchNightMode = findViewById(R.id.switchNightMode);
 
         backButton.setOnClickListener(v -> finish());
-
+        notificationLayout.setOnClickListener(v -> openNotificationSettings());
         // Xử lý sự kiện click đăng xuất
         layoutLogout.setOnClickListener(v -> showLogoutDialog());
 
@@ -70,8 +76,48 @@ public class SettingActivity extends AppCompatActivity {
         switchNightMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             setNightMode(isChecked);
         });
+        languageLayout.setOnClickListener(v -> showLanguageDialog());
     }
+    private void openNotificationSettings() {
+        try {
+            Intent intent = new Intent();
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                // Android 8.0 trở lên - mở App Notification Settings
+                intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
+            } else {
+                // Android 7.1 trở xuống - mở App Info Settings
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+            }
+
+            startActivity(intent);
+
+        } catch (Exception e) {
+            // Fallback: nếu không mở được notification settings, mở app info
+            try {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } catch (Exception ex) {
+                Toast.makeText(this, "Không thể mở cài đặt thông báo", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void showLanguageDialog() {
+        String[] languages = {"Tiếng Việt", "English"};
+        int selectedLanguage = 0;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Chọn ngôn ngữ");
+        builder.setSingleChoiceItems(languages, selectedLanguage, (dialog, which) -> {
+            String selected = languages[which];
+            Toast.makeText(this, "Chọn ngôn ngữ: " + selected, Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Hủy", null);
+        builder.show();
+    }
     private void loadNightModeSetting() {
         // Lấy trạng thái chế độ ban đêm đã lưu
         boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);

@@ -33,7 +33,7 @@ public class ReadActivity extends AppCompatActivity {
 
     private ConstraintLayout mainLayout;
     private LinearLayout bottomMenuBar;
-    private ImageButton btnPreviousChapter, btnNextChapter, btnSelectChapter, btnToggleDarkMode;
+    private ImageButton btnPreviousChapter, btnNextChapter, btnSelectChapter, btnToggleDarkMode, btnBack;
     private TextView tvContent;
     private View touchInterceptor;
     private GestureDetector gestureDetector;
@@ -70,6 +70,7 @@ public class ReadActivity extends AppCompatActivity {
         btnNextChapter = findViewById(R.id.btnNextChapter);
         btnSelectChapter = findViewById(R.id.btnSelectChapter);
         btnToggleDarkMode = findViewById(R.id.btnToggleDarkMode);
+        btnBack = findViewById(R.id.btnBack);
         tvContent = findViewById(R.id.tvContent);
         touchInterceptor = findViewById(R.id.touchInterceptor);
     }
@@ -136,6 +137,7 @@ public class ReadActivity extends AppCompatActivity {
         btnToggleDarkMode.setOnClickListener(v -> {
             toggleDarkMode();
         });
+        btnBack.setOnClickListener(v -> finish());
     }
 
     private void showChapterListDialog() {
@@ -143,7 +145,6 @@ public class ReadActivity extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_chapter_list);
 
-        // Thiết lập kích thước dialog
         dialog.getWindow().setLayout(
                 (getResources().getDisplayMetrics().widthPixels ),
                 (int) (getResources().getDisplayMetrics().heightPixels * 0.6)
@@ -242,12 +243,9 @@ public class ReadActivity extends AppCompatActivity {
             // Chế độ tối
             mainLayout.setBackgroundResource(R.color.background);
             tvContent.setTextColor(getResources().getColor(android.R.color.white));
-
-            // Menu bar - Dark theme
-            bottomMenuBar.setBackgroundResource(R.color.background); // Màu xám đen
-
-            // ImageButton tint - Light color
-            btnPreviousChapter.setColorFilter(0xFFFFFFFF); // Trắng
+            bottomMenuBar.setBackgroundResource(R.color.background);
+            btnBack.setColorFilter(0xFFFFFFFF);
+            btnPreviousChapter.setColorFilter(0xFFFFFFFF);
             btnNextChapter.setColorFilter(0xFFFFFFFF);
             btnSelectChapter.setColorFilter(0xFFFFFFFF);
             btnToggleDarkMode.setColorFilter(0xFFFFFFFF);
@@ -257,12 +255,9 @@ public class ReadActivity extends AppCompatActivity {
             // Chế độ sáng
             mainLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
             tvContent.setTextColor(getResources().getColor(android.R.color.black));
-
-            // Menu bar - Light theme
-            bottomMenuBar.setBackgroundColor(0xFFF5F5F5); // Màu xám nhạt
-
-            // ImageButton tint - Dark color
-            btnPreviousChapter.setColorFilter(0xFF333333); // Đen
+            bottomMenuBar.setBackgroundColor(0xFFF5F5F5);
+            btnBack.setColorFilter(0xFF333333);
+            btnPreviousChapter.setColorFilter(0xFF333333);
             btnNextChapter.setColorFilter(0xFF333333);
             btnSelectChapter.setColorFilter(0xFF333333);
             btnToggleDarkMode.setColorFilter(0xFF333333);

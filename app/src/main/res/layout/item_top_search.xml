@@ -63,7 +63,7 @@
                 android:layout_height="match_parent"
                 android:text="Thế Giới Hoàn Mỹ"
                 android:gravity="center_vertical"
-                android:textColor="@color/white"
+                android:textColor="@color/app_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:maxLines="2"

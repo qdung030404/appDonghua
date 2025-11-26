@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Chưa có dữ liệu"
-            android:textColor="@android:color/white"
+            android:textColor="@color/app_text_primary"
             android:textSize="16sp"
             android:visibility="gone" />
     </FrameLayout>
@@ -79,7 +79,7 @@
         android:id="@+id/bottom_edit_bar"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/background"
+        android:background="@color/app_background"
         android:visibility="gone">
 
         <LinearLayout

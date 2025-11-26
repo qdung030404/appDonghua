@@ -39,7 +39,7 @@
                 android:layout_toStartOf="@id/search_Button"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic__setting"
+                android:src="@drawable/ic_setting"
                 app:tint="@color/app_icon_tint" />
         </RelativeLayout>
 
