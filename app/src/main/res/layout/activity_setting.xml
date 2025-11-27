@@ -69,26 +69,26 @@
                 android:id="@+id/account"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground">
+                android:orientation="horizontal"
+                android:padding="20dp">
 
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Tài Khoản và bảo mật"
-                    android:textSize="16sp"
+                    android:text="Tài Khoản"
                     android:textColor="@color/app_text_primary"
-                    android:layout_marginStart="16dp" />
+                    android:textSize="16sp" />
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
+                    android:src="@drawable/ic_arrow_right"
                     app:tint="@color/app_text_secondary" />
 
             </LinearLayout>
@@ -182,10 +182,10 @@
                     android:layout_marginStart="16dp" />
 
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="17dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"
                     android:contentDescription="Arrow"
+                    android:src="@drawable/ic_arrow_right"
                     app:tint="@color/app_text_secondary" />
 
             </LinearLayout>

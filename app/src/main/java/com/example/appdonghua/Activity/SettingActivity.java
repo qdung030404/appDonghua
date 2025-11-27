@@ -27,7 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingActivity extends AppCompatActivity {
     ImageButton backButton;
-    LinearLayout layoutLogout, notificationLayout, languageLayout;
+    LinearLayout layoutLogout, languageLayout, account;
     Switch switchNightMode;
 
     private FirebaseAuth mAuth;
@@ -63,12 +63,11 @@ public class SettingActivity extends AppCompatActivity {
     private void init() {
         backButton = findViewById(R.id.backButton);
         layoutLogout = findViewById(R.id.layout_logout);
-        notificationLayout = findViewById(R.id.notification);
         languageLayout = findViewById(R.id.language);
         switchNightMode = findViewById(R.id.switchNightMode);
+        account = findViewById(R.id.account);
 
         backButton.setOnClickListener(v -> finish());
-        notificationLayout.setOnClickListener(v -> openNotificationSettings());
         // Xử lý sự kiện click đăng xuất
         layoutLogout.setOnClickListener(v -> showLogoutDialog());
 
@@ -77,6 +76,10 @@ public class SettingActivity extends AppCompatActivity {
             setNightMode(isChecked);
         });
         languageLayout.setOnClickListener(v -> showLanguageDialog());
+        account.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingActivity.this, AccountActivity.class);
+            startActivity(intent);
+        });
     }
     private void openNotificationSettings() {
         try {
