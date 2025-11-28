@@ -42,7 +42,7 @@ public class ReadActivity extends AppCompatActivity {
 
     private List<Chapter> chapterList;
     private int currentChapterIndex = 0;
-
+    private int totalChapters;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +56,7 @@ public class ReadActivity extends AppCompatActivity {
         });
 
         initViews();
+        getIntentData();
         loadChapterData();
         setupGestureDetector();
         setupClickListeners();
@@ -74,20 +75,20 @@ public class ReadActivity extends AppCompatActivity {
         tvContent = findViewById(R.id.tvContent);
         touchInterceptor = findViewById(R.id.touchInterceptor);
     }
-
+    private void getIntentData() {
+        if (getIntent() != null) {
+            currentChapterIndex = getIntent().getIntExtra("CHAPTER_INDEX", 0);
+            totalChapters = getIntent().getIntExtra("TOTAL_CHAPTERS", 0);
+        }
+    }
     private void loadChapterData() {
         // Dữ liệu mẫu - Thay bằng dữ liệu thực từ database hoặc API
         chapterList = new ArrayList<>();
-        chapterList.add(new Chapter("Chương 1: Khởi đầu cuộc hành trình", 1250));
-        chapterList.add(new Chapter("Chương 2: Cuộc gặp gỡ định mệnh", 1150));
-        chapterList.add(new Chapter("Chương 3: Thử thách đầu tiên", 980));
-        chapterList.add(new Chapter("Chương 4: Bí mật bị vạch trần", 875));
-        chapterList.add(new Chapter("Chương 5: Quyết chiến", 720));
-        chapterList.add(new Chapter("Chương 6: Hồi kết", 650));
-        chapterList.add(new Chapter("Chương 7: Khởi đầu mới", 550));
-        chapterList.add(new Chapter("Chương 8: Cuộc phiêu lưu tiếp theo", 480));
-        chapterList.add(new Chapter("Chương 9: Thử thách lớn", 420));
-        chapterList.add(new Chapter("Chương 10: Kết thúc hành trình", 350));
+        if (totalChapters > 0) {
+            for (int i = 1; i <= totalChapters; i++) {
+                chapterList.add(new Chapter("Chapter " + i, i * 100));
+            }
+        }
     }
 
     private void setupGestureDetector() {

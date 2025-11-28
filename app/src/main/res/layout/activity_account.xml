@@ -99,7 +99,36 @@
                 android:background="@color/app_divider"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp" />
+            <LinearLayout
+                android:id="@+id/changePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:paddingEnd="20dp"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground"
+                android:visibility="gone">
 
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Thay đổi mật khẩu"
+                    android:textSize="16sp"
+                    android:textColor="@color/app_text_primary"
+                    android:layout_marginStart="16dp" />
+
+                <ImageView
+                    android:layout_width="17dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="Arrow"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/app_text_secondary" />
+
+            </LinearLayout>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

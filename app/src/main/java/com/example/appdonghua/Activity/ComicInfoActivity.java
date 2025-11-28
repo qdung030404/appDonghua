@@ -203,16 +203,28 @@ public class ComicInfoActivity extends AppCompatActivity {
             initialChapters = allChapters;
         }
 
-        chapterAdapter = new ChapterAdapter(initialChapters);
+        chapterAdapter = new ChapterAdapter(initialChapters, (chapter, position) -> {
+            int actualPosition = allChapters.indexOf(chapter);
+            openReadActivity(chapter, actualPosition);
+        });
         rvChapters.setAdapter(chapterAdapter);
         showingAllChapters = false;
     }
 
     private void showAllChapters() {
-        chapterAdapter = new ChapterAdapter(allChapters);
+        chapterAdapter = new ChapterAdapter(allChapters, (chapter, position) -> {
+            openReadActivity(chapter, position);
+        });
         rvChapters.setAdapter(chapterAdapter);
         showingAllChapters = true;
         viewAllButton.setVisibility(View.GONE); // Hide button when showing all
+    }
+    private void openReadActivity(Chapter chapter, int position){
+        Intent intent = new Intent(ComicInfoActivity.this, ReadActivity.class);
+        intent.putExtra("CHAPTER_INDEX", position);
+        intent.putExtra("CHAPTER_NAME", chapter.getChapter());
+        intent.putExtra("TOTAL_CHAPTERS", allChapters.size());
+        startActivity(intent);
     }
     private List<Chapter> generateChapter(int count){
         List<Chapter> chapters = new ArrayList<>();

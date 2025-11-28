@@ -3,6 +3,7 @@ package com.example.appdonghua.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class AccountActivity extends AppCompatActivity {
     private ImageButton backButton;
-    private LinearLayout layoutDeleteAcc;
+    private LinearLayout layoutDeleteAcc, layoutChangePassword;
     private FirebaseAuth mAuth;
     private TextView loginMethodText;
 
@@ -42,6 +43,7 @@ public class AccountActivity extends AppCompatActivity {
     private void initViews() {
         backButton = findViewById(R.id.backButton);
         layoutDeleteAcc = findViewById(R.id.layoutDeleteAcc);
+        layoutChangePassword = findViewById(R.id.changePassword);
         loginMethodText = findViewById(R.id.loginMethodText);
         loginMethod();
     }
@@ -66,8 +68,14 @@ public class AccountActivity extends AppCompatActivity {
                 }
             }
             loginMethodText.setText(loginMethod);
+            if (loginMethod.equals("Email")) {
+                layoutChangePassword.setVisibility(View.VISIBLE);
+            }else {
+                layoutChangePassword.setVisibility(View.GONE);
+            }
         }
     }
+
     private void deleteAccountDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Xóa Tài Khoản");
