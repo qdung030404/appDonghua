@@ -39,8 +39,8 @@ android {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
-
-    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("com.google.firebase:firebase-messaging:25.0.1")
+    implementation("com.google.firebase:firebase-auth:24.0.1")
     implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation(libs.firebase.storage)

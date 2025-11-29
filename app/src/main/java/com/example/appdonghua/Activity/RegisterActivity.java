@@ -113,40 +113,6 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    private void setupListeners() {
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleRegister();
-            }
-        });
-
-        tvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Chuyển về màn hình đăng nhập
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        btnGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleGoogleRegister();
-            }
-        });
-    }
-
     private void handleRegister() {
         String username = etUsername.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
@@ -285,6 +251,41 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void setupListeners() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleRegister();
+            }
+        });
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Chuyển về màn hình đăng nhập
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleGoogleRegister();
+            }
+        });
+    }
+
+
 
     private void saveLoginInfo(String email, String username, String loginMethod) {
         SharedPreferences.Editor editor = sharedPreferences.edit();

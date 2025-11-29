@@ -110,9 +110,9 @@ public class RankingActivity extends AppCompatActivity {
 
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(16);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextColor(getResources().getColor(R.color.white));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btnbg);
+        textView.setBackgroundResource(R.drawable.btn_bg);
     }
 
     private void setUnselectedStyle(TextView textView) {

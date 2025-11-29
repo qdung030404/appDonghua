@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Adapter.ChapterAdapter;
+import com.example.appdonghua.Helper.NotificationHelper;
 import com.example.appdonghua.Model.Chapter;
 import com.example.appdonghua.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ComicInfoActivity extends AppCompatActivity {
-
-    // Views
     private ImageButton backButton, favoriteButton, expandButton;
     private ImageView imageCover;
     private TextView texTitle, tvViews, author, status, description, chapterCount, tvGenres;
@@ -56,6 +55,9 @@ public class ComicInfoActivity extends AppCompatActivity {
     // Firebase
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private int lastReadChapterIndex = -1;
+    private String lastReadChapterName = "";
+    private NotificationHelper notificationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,6 @@ public class ComicInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comic_info);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            // Lưu ý: layout của bạn dùng CoordinatorLayout làm gốc, nhưng ID là main?
-            // Nếu XML gốc không có ID "main", dòng này sẽ crash.
-            // Hãy đảm bảo trong activity_comic_info.xml dòng đầu tiên có android:id="@+id/main"
             if (v != null) {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -77,7 +76,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         // Khởi tạo Firebase
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
+        notificationHelper = new NotificationHelper(this);
         initViews();
         getIntentData();
         setupUI();
@@ -86,8 +85,8 @@ public class ComicInfoActivity extends AppCompatActivity {
 
         addToHistory();
         checkSaved();
+        loadReadingProgress();
     }
-
     private void initViews(){
         backButton = findViewById(R.id.backButton);
         favoriteButton = findViewById(R.id.FavoriteButton);
@@ -104,8 +103,6 @@ public class ComicInfoActivity extends AppCompatActivity {
         readButton = findViewById(R.id.readButton);
         tvGenres = findViewById(R.id.tvGenres);
     }
-
-    // --- HÀM MỚI: Nhận dữ liệu từ HomeFragment ---
     private void getIntentData() {
         Intent intent = getIntent();
         if (intent != null) {
@@ -118,64 +115,45 @@ public class ComicInfoActivity extends AppCompatActivity {
             genres = intent.getStringArrayListExtra("GENRES");
         }
     }
+    private void loadReadingProgress() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || strTitle == null) {
+            readButton.setText("Đọc truyện");
+            return;
+        }
 
-    // --- HÀM MỚI: Hiển thị dữ liệu ---
-    private void setupUI() {
-        texTitle.setText(strTitle);
-        author.setText("Tác giả: " + (strAuthor != null ? strAuthor : "Đang cập nhật"));
-        tvViews.setText(formatNumber(lViews) + " Views");
-        chapterCount.setText(strChapterCount  + " chương");
-        if (genres != null && !genres.isEmpty()) {
-            String genresText = String.join(", ", genres);
-            tvGenres.setText(genresText);
-        } else {
-            tvGenres.setText("Chưa phân loại");
-        }
-        if (strDescription != null && !strDescription.isEmpty()) {
-            description.setText(strDescription);
-        } else {
-            description.setText("Đang cập nhật mô tả cho truyện này...");
-        }
-        if (strImage != null) {
-            Glide.with(this).load(strImage).into(imageCover);
-        }
+        db.collection("users").document(currentUser.getUid())
+                .collection("history").document(strTitle)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // Kiểm tra xem có field lastChapterIndex không
+                        if (documentSnapshot.contains("lastChapterIndex")) {
+                            Long chapterIndex = documentSnapshot.getLong("lastChapterIndex");
+                            if (chapterIndex != null) {
+                                lastReadChapterIndex = chapterIndex.intValue();
+                            }
+
+                            lastReadChapterName = documentSnapshot.getString("lastChapterName");
+
+                            // Cập nhật text button
+                            if (lastReadChapterIndex > 0) {
+                                readButton.setText("Tiếp tục đọc");
+                            } else {
+                                readButton.setText("Đọc truyện");
+                            }
+                        } else {
+                            readButton.setText("Đọc truyện");
+                        }
+                    } else {
+                        readButton.setText("Đọc truyện");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("Firestore", "Error loading progress", e);
+                    readButton.setText("Đọc truyện");
+                });
     }
-
-    private void setupListener(){
-        backButton.setOnClickListener(v -> finish());
-
-        favoriteButton.setOnClickListener(v -> {
-            isFavorite = !isFavorite;
-            if (isFavorite) {
-                favoriteButton.setImageResource(R.drawable.ic_bookmark_solid);
-                addToSave();
-            } else {
-                favoriteButton.setImageResource(R.drawable.ic_bookmark_regular);
-                unSave();
-            }
-        });
-
-        expandButton.setOnClickListener(v -> toggle());
-        viewAllButton.setOnClickListener(v -> {
-            showAllChapters();
-        });
-        readButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ComicInfoActivity.this, ReadActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    private void toggle(){
-        isExpanded = !isExpanded;
-        if (isExpanded) {
-            description.setMaxLines(3);
-            expandButton.setRotation(0);
-        } else {
-            description.setMaxLines(Integer.MAX_VALUE);
-            expandButton.setRotation(180);
-        }
-    }
-
     private void setupChapter(){
         // SỬA: Cấu hình RecyclerView
         rvChapters.setLayoutManager(new LinearLayoutManager(this));
@@ -219,22 +197,88 @@ public class ComicInfoActivity extends AppCompatActivity {
         showingAllChapters = true;
         viewAllButton.setVisibility(View.GONE); // Hide button when showing all
     }
+    private List<Chapter> generateChapter(int count){
+        List<Chapter> chapters = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            chapters.add(new Chapter(String.valueOf(i + 1), i + 100));
+        }
+        return chapters;
+    }
+    private void setupUI() {
+        texTitle.setText(strTitle);
+        author.setText("Tác giả: " + (strAuthor != null ? strAuthor : "Đang cập nhật"));
+        tvViews.setText(formatNumber(lViews) + " Views");
+        chapterCount.setText(strChapterCount  + " chương");
+        if (genres != null && !genres.isEmpty()) {
+            String genresText = String.join(", ", genres);
+            tvGenres.setText(genresText);
+        } else {
+            tvGenres.setText("Chưa phân loại");
+        }
+        if (strDescription != null && !strDescription.isEmpty()) {
+            description.setText(strDescription);
+        } else {
+            description.setText("Đang cập nhật mô tả cho truyện này...");
+        }
+        if (strImage != null) {
+            Glide.with(this).load(strImage).into(imageCover);
+        }
+    }
+
+    private void setupListener(){
+        backButton.setOnClickListener(v -> finish());
+
+        favoriteButton.setOnClickListener(v -> {
+            isFavorite = !isFavorite;
+            if (isFavorite) {
+                favoriteButton.setImageResource(R.drawable.ic_bookmark_solid);
+                sendReminderNotification();
+                addToSave();
+            } else {
+                favoriteButton.setImageResource(R.drawable.ic_bookmark_regular);
+                unSave();
+            }
+        });
+
+        expandButton.setOnClickListener(v -> toggle());
+        viewAllButton.setOnClickListener(v -> {
+            showAllChapters();
+        });
+        readButton.setOnClickListener(v -> {
+            if (allChapters != null && !allChapters.isEmpty()) {
+                int chapterIndex = 0;
+
+                // Nếu có progress thì tiếp tục từ đó
+                if (lastReadChapterIndex >= 0 && lastReadChapterIndex < allChapters.size()) {
+                    chapterIndex = lastReadChapterIndex;
+                }
+
+                Chapter chapter = allChapters.get(chapterIndex);
+                openReadActivity(chapter, chapterIndex);
+            } else {
+                Toast.makeText(ComicInfoActivity.this, "Chưa có chương để đọc", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void toggle(){
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+            description.setMaxLines(3);
+            expandButton.setRotation(0);
+        } else {
+            description.setMaxLines(Integer.MAX_VALUE);
+            expandButton.setRotation(180);
+        }
+    }
     private void openReadActivity(Chapter chapter, int position){
         Intent intent = new Intent(ComicInfoActivity.this, ReadActivity.class);
         intent.putExtra("CHAPTER_INDEX", position);
         intent.putExtra("CHAPTER_NAME", chapter.getChapter());
         intent.putExtra("TOTAL_CHAPTERS", allChapters.size());
+        intent.putExtra("COMIC_TITLE", strTitle);
         startActivity(intent);
     }
-    private List<Chapter> generateChapter(int count){
-        List<Chapter> chapters = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            chapters.add(new Chapter("Chapter " + (i + 1), i + 100));
-        }
-        return chapters;
-    }
-
-    // Hàm lưu lịch sử
     private void addToHistory() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null || strTitle == null) return;
@@ -267,7 +311,7 @@ public class ComicInfoActivity extends AppCompatActivity {
         saveData.put("timestamp", FieldValue.serverTimestamp());
         db.collection("users").document(currentUser.getUid())
                 .collection("save").document(strTitle).set(saveData);
-        Toast.makeText(ComicInfoActivity.this, "Đã thêm vào danh sách yêu thích", Toast.LENGTH_SHORT).show();
+
     }
     private void unSave(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -300,7 +344,6 @@ public class ComicInfoActivity extends AppCompatActivity {
                     Log.w("Firestore", "Error checking favorite status", e);
                 });
     }
-    // Hàm format số view (copy từ RankingAdapter sang cho tiện)
     public static String formatNumber(long number) {
         if (number >= 1000000) {
             return String.format("%.1fM", number / 1000000.0);
@@ -309,5 +352,16 @@ public class ComicInfoActivity extends AppCompatActivity {
         } else {
             return String.valueOf(number);
         }
+    }
+    private void sendReminderNotification() {
+        notificationHelper.sendActionNotification(
+                "Đã lưu",
+                "Truyện đã được lưu vào tủ sách"
+        );
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadReadingProgress();
     }
 }

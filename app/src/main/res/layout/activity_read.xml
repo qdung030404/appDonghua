@@ -8,8 +8,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.ReadActivity">
-
-  <!-- Khu vực hiển thị nội dung đọc -->
   <ScrollView
       android:id="@+id/scrollViewContent"
       android:layout_width="match_parent"
@@ -19,31 +17,19 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/tvContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:textSize="18sp"
-        android:lineSpacingExtra="4dp"
-        android:textColor="@color/app_text_primary"
-        android:text="Nội dung chương sẽ hiển thị ở đây..." />
+
+      <TextView
+          android:id="@+id/tvContent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="16dp"
+          android:textSize="18sp"
+          android:lineSpacingExtra="4dp"
+          android:textColor="@color/app_text_primary"
+          android:text="Nội dung chương sẽ hiển thị ở đây..." />
 
   </ScrollView>
 
-  <!-- View trong suốt để bắt sự kiện double tap -->
-  <View
-      android:id="@+id/touchInterceptor"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:clickable="true"
-      android:focusable="true"
-      app:layout_constraintTop_toTopOf="parent"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent" />
-
-  <!-- Menu Bottom Bar (ẩn mặc định) -->
   <LinearLayout
       android:id="@+id/bottomMenuBar"
       android:layout_width="match_parent"

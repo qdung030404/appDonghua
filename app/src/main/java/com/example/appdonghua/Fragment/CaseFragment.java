@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.appdonghua.Activity.LoginActivity;
 import com.example.appdonghua.Adapter.CellAdapter;
+import com.example.appdonghua.Helper.NotificationHelper;
 import com.example.appdonghua.Model.Cell;
 import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
@@ -35,6 +36,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class CaseFragment extends Fragment {
 
@@ -60,6 +62,7 @@ public class CaseFragment extends Fragment {
             {"save", "Đã Lưu"}, // Tương lai bạn làm tính năng Favorites
             {"download", "Tải Xuống"} // Tương lai bạn làm tính năng Download
     };
+    private NotificationHelper notificationHelper;
 
     public CaseFragment() {
         // Required empty public constructor
@@ -69,6 +72,7 @@ public class CaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Khởi tạo Firebase
+        notificationHelper = new NotificationHelper(requireContext());
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
     }
@@ -124,13 +128,18 @@ public class CaseFragment extends Fragment {
         });
         deleteButton.setOnClickListener(v -> {
             if( adapter != null && adapter.isSelectedItem()){
+                final int selectedCount = adapter.getSelectedCount();
                 new AlertDialog.Builder(getContext()).setTitle("Xác Nhận")
-                        .setMessage("Bạn có chắc muốn xóa " + adapter.getSelectedCount() + " mục?")
+                        .setMessage("Bạn có chắc muốn xóa " + selectedCount + " mục?")
                         .setPositiveButton("Có", (dialog, which) -> {
                             adapter.deleteSelectedItems();
                             adapter.unSelectAll();
-                            Toast.makeText(getContext(), "Đã xóa thành công", Toast.LENGTH_SHORT).show();
+                            notificationHelper.sendActionNotification(
+                                    "",
+                                    "Đã xóa " +  selectedCount + " truyện khỏi tủ sách"
+                            );
                         }).setNegativeButton("Không", null).show();
+
             }else {
                 Toast.makeText(getContext(), "Chưa chọn item nào", Toast.LENGTH_SHORT).show();
             }
@@ -213,9 +222,9 @@ public class CaseFragment extends Fragment {
 
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(18);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextColor(getResources().getColor(R.color.white));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btnbg);
+        textView.setBackgroundResource(R.drawable.btn_bg);
     }
 
     private void setUnselectedStyle(TextView textView) {
@@ -363,7 +372,6 @@ public class CaseFragment extends Fragment {
         defaultList.add("Truyện tranh");
         return defaultList;
     }
-    // Hàm hiển thị thông báo trống
     private void showEmpty(String message) {
         caseRecyclerView.setVisibility(View.GONE);
         emptyTextView.setVisibility(View.VISIBLE);

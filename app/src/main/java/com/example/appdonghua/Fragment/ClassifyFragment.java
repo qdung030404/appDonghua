@@ -171,21 +171,14 @@ public class ClassifyFragment extends Fragment {
         setSelectedFilterStyle(clickedTextView);
         selectedFilterView = clickedTextView;
 
-        // Xử lý khi click filter
-        String filterId = (String) clickedTextView.getTag();
-        String filterName = clickedTextView.getText().toString();
-
-        Toast.makeText(getContext(), "Lọc theo: " + filterName, Toast.LENGTH_SHORT).show();
-
-        // Load content dựa trên filter được chọn
         loadContent();
     }
 
     private void setSelectedFilterStyle(TextView textView) {
         textView.setTextSize(15);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextColor(getResources().getColor(R.color.white));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btnbg);
+        textView.setBackgroundResource(R.drawable.btn_bg);
     }
 
     private void setUnselectedFilterStyle(TextView textView) {
@@ -229,21 +222,15 @@ public class ClassifyFragment extends Fragment {
         setSelectedStyle(clickedTextView);
         selectedTextView = clickedTextView;
 
-        // Xử lý khi click category
-        String categoryId = (String) clickedTextView.getTag();
-        String categoryName = clickedTextView.getText().toString();
-
-        Toast.makeText(getContext(), "Đã chọn: " + categoryName, Toast.LENGTH_SHORT).show();
-
         // Load content dựa trên category được chọn
         loadContent();
     }
 
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(14);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextColor(getResources().getColor(R.color.white));
         textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btnbg);
+        textView.setBackgroundResource(R.drawable.btn_bg);
     }
 
     private void setUnselectedStyle(TextView textView) {
@@ -268,9 +255,6 @@ public class ClassifyFragment extends Fragment {
         // Lấy category và filter hiện tại
         String categoryId = selectedTextView != null ? (String) selectedTextView.getTag() : "all";
         String filterId = selectedFilterView != null ? (String) selectedFilterView.getTag() : "hot";
-
-        // Hiển thị loading (có thể thêm ProgressBar)
-        Toast.makeText(getContext(), "Đang tải dữ liệu...", Toast.LENGTH_SHORT).show();
 
         // Fetch data từ Firestore
         fetchDataFromFirestore(categoryId, filterId);
@@ -337,12 +321,6 @@ public class ClassifyFragment extends Fragment {
 
                     // Cập nhật UI
                     updateRecyclerView();
-
-                    if (getContext() != null) {
-                        Toast.makeText(getContext(),
-                                "Đã tải " + contentList.size() + " kết quả",
-                                Toast.LENGTH_SHORT).show();
-                    }
                 })
                 .addOnFailureListener(e -> {
                     if (getContext() != null) {

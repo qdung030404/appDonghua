@@ -12,7 +12,7 @@
     <color name="app_divider">#AFAFAF</color>
     <color name="app_icon_tint">@color/background</color>
     <color name="board_color">#DBDBDB</color>
-    <!-- Accent Colors -->
+    color
     <color name="error_color">#FF5252</color>
     <color name="success_color">#4CAF50</color>
 

@@ -12,8 +12,8 @@
         android:layout_margin="2dp"
         android:paddingEnd="8dp"
         android:text="date"
-        android:textColor="@color/app_text_primary"
-        android:background="@drawable/btnbg"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_bg"
         app:backgroundTintMode="screen"
         app:backgroundTint="@null"
         android:textSize="14sp" />

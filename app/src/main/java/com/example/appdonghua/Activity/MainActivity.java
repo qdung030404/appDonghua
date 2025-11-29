@@ -2,29 +2,23 @@ package com.example.appdonghua.Activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.appdonghua.Adapter.ViewPagerAdapter;
-import com.example.appdonghua.Model.Story;
+import com.example.appdonghua.Helper.NotificationHelper;
 import com.example.appdonghua.R;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ViewPager vp;
     ChipNavigationBar bottom_nav;
-    public static final String PREFS_NAME = "AppSettings";
-    public static final String KEY_NIGHT_MODE = "night_mode";
+    private NotificationHelper notificationHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +28,9 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        notificationHelper = new NotificationHelper(this);
         init();
-        applyNightMode();
+        checkAndShowNotification();
     }
 
     private void init(){
@@ -93,14 +88,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    private void applyNightMode() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
+    private void checkAndShowNotification() {
+        SharedPreferences prefs = getSharedPreferences("AppSettings", MODE_PRIVATE);
+        boolean isNotificationEnabled = prefs.getBoolean("notification_enabled", true);
 
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        if (isNotificationEnabled) {
+            notificationHelper.sendNotification(
+                    "AppDonghua",
+                    "Chào mừng bạn đến với AppDonghua!"
+            );
+
+
         }
     }
 
