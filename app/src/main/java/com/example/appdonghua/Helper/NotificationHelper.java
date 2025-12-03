@@ -12,6 +12,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.example.appdonghua.Activity.MainActivity;
+import com.example.appdonghua.Fragment.CaseFragment;
 import com.example.appdonghua.R;
 
 public class NotificationHelper {
@@ -58,8 +59,7 @@ public class NotificationHelper {
                 PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Action button 1
-        Intent actionIntent1 = new Intent(context, MainActivity.class);
+        Intent actionIntent1 = new Intent(context, CaseFragment.class);
         actionIntent1.putExtra("action", "view");
         PendingIntent actionPendingIntent1 = PendingIntent.getActivity(
                 context,

@@ -59,8 +59,8 @@ public class CaseFragment extends Fragment {
     private ArrayList<NovelList> novelList;
     private String[][] menuItems = {
             {"history", "Lịch Sử"},
-            {"save", "Đã Lưu"}, // Tương lai bạn làm tính năng Favorites
-            {"download", "Tải Xuống"} // Tương lai bạn làm tính năng Download
+            {"save", "Đã Lưu"},
+            {"download", "Tải Xuống"}
     };
     private NotificationHelper notificationHelper;
 
@@ -134,8 +134,8 @@ public class CaseFragment extends Fragment {
                         .setPositiveButton("Có", (dialog, which) -> {
                             adapter.deleteSelectedItems();
                             adapter.unSelectAll();
-                            notificationHelper.sendActionNotification(
-                                    "",
+                            notificationHelper.sendNotification(
+                                    "Đã xóa thành công",
                                     "Đã xóa " +  selectedCount + " truyện khỏi tủ sách"
                             );
                         }).setNegativeButton("Không", null).show();
@@ -248,8 +248,7 @@ public class CaseFragment extends Fragment {
 
                 break;
             case "download":
-                // loadDownloadsData(); // Làm sau
-                showEmpty("Chưa có truyện tải xuống");
+                loadDownloadData();
                 break;
         }
     }
@@ -357,6 +356,60 @@ public class CaseFragment extends Fragment {
                     Log.e("CaseFragment", "Error loading saved items", e);
                 });
     }
+    private void loadDownloadData(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            showEmpty("Vui lòng đăng nhập để xem truyện đã tải xuống");
+            return;
+        }
+        db.collection("users").document(user.getUid())
+                .collection("download")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        showEmpty("Bạn chưa tải xuống truyện nào");
+                    } else {
+                        hideEmpty();
+                        cellList.clear();
+                        novelList.clear();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            processDocument(doc);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(e -> {
+                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
+                    Log.e("CaseFragment", "Error loading downloads", e);
+                });;
+    }
+    private void processDocument(QueryDocumentSnapshot doc) {
+        String title = doc.getString("title");
+        String image = doc.getString("coverImageUrl");
+        if (currentTab.equals("download")){
+            String localPath = doc.getString("localCoverPath");
+            if (localPath != null && !localPath.isEmpty()) {
+                image = "file://" + localPath;
+            }
+        }
+        String author = doc.getString("author");
+        String description = doc.getString("description");
+        ArrayList<String> genreList = getGenreFromDocument(doc);
+        Long viewCount = doc.getLong("viewCount");
+        Long chapterCount = doc.getLong("chapterCount");
+        if (title != null && image != null) {
+            cellList.add(new Cell(image, title));
+            novelList.add(new NovelList(
+                    image,
+                    title,
+                    viewCount != null ? viewCount : 0,
+                    genreList,
+                    chapterCount != null ? chapterCount : 0,
+                    author != null ? author : "Đang cập nhật",
+                    description != null ? description : "Đang cập nhật mô tả..."
+            ));
+        }
+    }
     private ArrayList<String> getGenreFromDocument(QueryDocumentSnapshot doc) {
         try {
             ArrayList<String> genreList = (ArrayList<String>) doc.get("genre");
@@ -382,5 +435,13 @@ public class CaseFragment extends Fragment {
     private void hideEmpty() {
         caseRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (selectedTextView != null) {
+            String itemId = (String) selectedTextView.getTag();
+            handleMenuSelection(itemId);
+        }
     }
 }

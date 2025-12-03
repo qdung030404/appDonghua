@@ -114,7 +114,7 @@ public class ReadActivity extends AppCompatActivity {
     private void setupClickListeners() {
         btnPreviousChapter.setOnClickListener(v -> {
             if (currentChapterIndex > 0) {
-                changeChapterWithAnimation(currentChapterIndex - 1, true);
+                changeChapter(false);
             } else {
                 Toast.makeText(this, "Đây là chương đầu tiên", Toast.LENGTH_SHORT).show();
             }
@@ -123,7 +123,7 @@ public class ReadActivity extends AppCompatActivity {
 
         btnNextChapter.setOnClickListener(v -> {
             if (currentChapterIndex < chapterList.size() - 1) {
-                changeChapterWithAnimation(currentChapterIndex + 1, false);
+                changeChapter(true);
             } else {
                 Toast.makeText(this, "Đây là chương cuối cùng", Toast.LENGTH_SHORT).show();
             }
@@ -153,71 +153,60 @@ public class ReadActivity extends AppCompatActivity {
                 int diff = (view.getBottom() - (scrollViewContent.getHeight() + scrollViewContent.getScrollY()));
 
                 if (diff <= 10 && diff >= 0){
-                    nextChapter();
+                    changeChapter(true);
                 }
                 if (scrollY == 0 && scrollTopBuffer > SCROLL_THRESHOLD) {
-                    previousChapter();
+                    changeChapter(false);
 
                 }
                 scrollTopBuffer = scrollY;
             }
         });
     }
-    private void previousChapter() {
-        if (isChangeChapter) {
-            return;
-        }
-        if (currentChapterIndex > 0) {
-            isChangeChapter = true;
-            tvContent.animate().alpha(0f).setDuration(500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            currentChapterIndex--;
-                            displayChapter(currentChapterIndex);
-                            scrollViewContent.post(new Runnable(){
-                                @Override
-                                public void run() {
-                                    scrollViewContent.scrollTo(0, 0);
-                                }
-                            });
-                            tvContent.animate().alpha(1f).setDuration(500)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            isChangeChapter = false;
-                                        }
-                                    }).start();
-                        }
-                    }).start();
-        }
-    }
 
-    private void nextChapter(){
+    private void changeChapter(boolean isNext) {
         if (isChangeChapter) {
             return;
         }
-        if (currentChapterIndex < chapterList.size() - 1) {
-            isChangeChapter = true;
-            tvContent.animate().alpha(0f).setDuration(500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            currentChapterIndex++;
-                            displayChapter(currentChapterIndex);
-                            scrollViewContent.scrollTo(0,0);
-                            tvContent.animate().alpha(1f).setDuration(500)
-                                    .setListener(new AnimatorListenerAdapter() {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation) {
-                                            isChangeChapter = false;
-                                        }
-                                    }).start();
-                        }
-                    }).start();
-        }else {
-            Toast.makeText(this, "Đây là chương cuối cùng", Toast.LENGTH_SHORT).show();
+
+        // Kiểm tra điều kiện chuyển chương
+        if ((isNext && currentChapterIndex >= chapterList.size() - 1) ||
+                (!isNext && currentChapterIndex <= 0)) {
+            if (isNext) {
+                Toast.makeText(this, "Đây là chương cuối cùng", Toast.LENGTH_SHORT).show();
+            }
+            return;
         }
+
+        isChangeChapter = true;
+        tvContent.animate().alpha(0f).setDuration(500)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        // Thay đổi chỉ số chương
+                        currentChapterIndex += isNext ? 1 : -1;
+
+                        // Hiển thị chương mới
+                        displayChapter(currentChapterIndex);
+
+                        // Scroll về đầu trang
+                        scrollViewContent.post(new Runnable(){
+                            @Override
+                            public void run() {
+                                scrollViewContent.scrollTo(0, 0);
+                            }
+                        });
+
+                        // Hiệu ứng fade in
+                        tvContent.animate().alpha(1f).setDuration(500)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        isChangeChapter = false;
+                                    }
+                                }).start();
+                    }
+                }).start();
     }
     private void changeChapterWithAnimation(int newChapterIndex, boolean isGoingBack) {
         if (isChangeChapter) {
