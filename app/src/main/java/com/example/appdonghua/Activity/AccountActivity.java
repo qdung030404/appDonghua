@@ -2,6 +2,7 @@ package com.example.appdonghua.Activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -25,6 +26,8 @@ public class AccountActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private TextView loginMethodText;
 
+    // ==================== LIFECYCLE METHODS ====================
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,9 @@ public class AccountActivity extends AppCompatActivity {
         setListeners();
 
     }
+
+    // ==================== INITIALIZATION METHODS ====================
+
     private void initViews() {
         backButton = findViewById(R.id.backButton);
         layoutDeleteAcc = findViewById(R.id.layoutDeleteAcc);
@@ -47,11 +53,15 @@ public class AccountActivity extends AppCompatActivity {
         loginMethodText = findViewById(R.id.loginMethodText);
         loginMethod();
     }
+
     private void setListeners() {
         backButton.setOnClickListener(v -> finish());
         layoutDeleteAcc.setOnClickListener(v -> deleteAccountDialog());
-
+        layoutChangePassword.setOnClickListener(v -> startActivity(new Intent(AccountActivity.this, ChangePasswordActivity.class)));
     }
+
+    // ==================== LOGIN METHOD DETECTION ====================
+
     private void loginMethod() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -76,6 +86,8 @@ public class AccountActivity extends AppCompatActivity {
         }
     }
 
+    // ==================== DELETE ACCOUNT ====================
+
     private void deleteAccountDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Xóa Tài Khoản");
@@ -95,6 +107,7 @@ public class AccountActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     private void deleteAccount() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {

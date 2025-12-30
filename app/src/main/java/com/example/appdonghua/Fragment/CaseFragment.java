@@ -1,17 +1,18 @@
 package com.example.appdonghua.Fragment;
 
 import android.app.AlertDialog;
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.appdonghua.Activity.LoginActivity;
 import com.example.appdonghua.Adapter.CellAdapter;
 import com.example.appdonghua.Helper.NotificationHelper;
 import com.example.appdonghua.Model.Cell;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,9 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class CaseFragment extends Fragment {
 
@@ -47,7 +45,6 @@ public class CaseFragment extends Fragment {
     RecyclerView caseRecyclerView;
     RelativeLayout bottomEditBar;
 
-
     // --- Firebase ---
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -56,13 +53,14 @@ public class CaseFragment extends Fragment {
     private CellAdapter adapter;
     private ArrayList<Cell> cellList;
     private String currentTab = "history";
-    private ArrayList<NovelList> novelList;
+    private ArrayList<Story> storyList;
     private String[][] menuItems = {
             {"history", "Lịch Sử"},
             {"save", "Đã Lưu"},
-            {"download", "Tải Xuống"}
     };
     private NotificationHelper notificationHelper;
+
+    // ==================== LIFECYCLE METHODS ====================
 
     public CaseFragment() {
         // Required empty public constructor
@@ -82,17 +80,39 @@ public class CaseFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_case, container, false);
         init(view);
-        setupRecyclerView(); // Cài đặt danh sách
+        setupRecyclerView();
         setupMenuItems();
 
-        // Mặc định load tab đầu tiên (History)
-        if (case_menu.getChildCount() > 0) {
-            // Giả lập click vào tab đầu tiên để load data
-            case_menu.getChildAt(0).performClick();
-        }
         steupListener();
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (selectedTextView != null) {
+            String itemId = (String) selectedTextView.getTag();
+            handleMenuSelection(itemId);
+        }
+        if (getActivity() != null) {
+            SharedPreferences prefs = getActivity().getSharedPreferences("CaseFragmentPrefs", Context.MODE_PRIVATE);
+            String pendingTab = prefs.getString("pending_tab", null);
+
+            if (pendingTab != null) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    selectTabById(pendingTab);
+                }, 100);
+
+                prefs.edit().remove("pending_tab").apply();
+            } else {
+                if (cellList.isEmpty() && case_menu.getChildCount() > 0) {
+                    case_menu.getChildAt(0).performClick();
+                }
+            }
+        }
+    }
+
+    // ==================== INITIALIZATION METHODS ====================
 
     private void init(View view){
         case_menu = view.findViewById(R.id.case_menu);
@@ -104,6 +124,30 @@ public class CaseFragment extends Fragment {
         deleteButton = view.findViewById(R.id.deleteButton);
 
     }
+
+    private void setupRecyclerView() {
+        // Sử dụng GridLayoutManager 3 cột (giống HomeFragment)
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
+        caseRecyclerView.setLayoutManager(layoutManager);
+
+        cellList = new ArrayList<>();
+        storyList = new ArrayList<>();
+        adapter = new CellAdapter(cellList, storyList);
+        caseRecyclerView.setAdapter(adapter);
+        adapter.setOnDeleteItemsListener(titles -> deleteFromFirebase(titles));
+    }
+
+    private void setupMenuItems(){
+        for (String[] item : menuItems) {
+            TextView textView = createMenuItem(item[0], item[1]);
+            case_menu.addView(textView);
+        }
+        if (case_menu.getChildCount() > 0) {
+            selectedTextView = (TextView) case_menu.getChildAt(0);
+            setSelectedStyle(selectedTextView);
+        }
+    }
+
     private void steupListener() {
         editButton.setOnClickListener(v -> {
             adapter.toggleEdit();
@@ -146,6 +190,224 @@ public class CaseFragment extends Fragment {
         });
 
     }
+
+    // ==================== CREATE UI ELEMENTS ====================
+
+    private TextView createMenuItem(String id, String name) {
+        TextView textView = new TextView(getContext());
+        textView.setText(name);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextSize(14);
+        textView.setGravity(getResources().getColor(R.color.app_text_primary));
+        textView.setPadding(40, 30, 40, 30);
+        textView.setTag(id);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(10, 10, 10, 30);
+        textView.setLayoutParams(params);
+        textView.setOnClickListener(v -> {
+            onMenuItemClick(textView);
+        });
+        return textView;
+    }
+
+    // ==================== CLICK HANDLERS ====================
+
+    private void onMenuItemClick(TextView clickedView) {
+        if (selectedTextView != null) {
+            setUnselectedStyle(selectedTextView);
+        }
+        setSelectedStyle(clickedView);
+        selectedTextView = clickedView;
+        String itemId = (String) clickedView.getTag();
+        handleMenuSelection(itemId);
+    }
+
+    private void selectTabById(String tabId) {
+        // Duyệt qua tất cả các TextView trong case_menu
+        for (int i = 0; i < case_menu.getChildCount(); i++) {
+            View child = case_menu.getChildAt(i);
+            if (child instanceof TextView) {
+                TextView textView = (TextView) child;
+                String tag = (String) textView.getTag();
+
+                // Nếu tìm thấy tab có tag khớp với tabId
+                if (tag != null && tag.equals(tabId)) {
+                    textView.performClick(); // Giả lập click vào tab
+                    return;
+                }
+            }
+        }
+
+        // Nếu không tìm thấy tab, load tab đầu tiên
+        if (case_menu.getChildCount() > 0) {
+            case_menu.getChildAt(0).performClick();
+        }
+    }
+
+    // ==================== STYLING METHODS ====================
+
+    private void setSelectedStyle(TextView textView) {
+        textView.setTextSize(18);
+        textView.setTextColor(getResources().getColor(R.color.white));
+        textView.setTypeface(null, android.graphics.Typeface.BOLD);
+        textView.setBackgroundResource(R.drawable.btn_bg);
+
+    }
+
+    private void setUnselectedStyle(TextView textView) {
+        textView.setTextSize(14);
+        textView.setBackgroundColor(Color.TRANSPARENT);
+        textView.setTypeface(null, android.graphics.Typeface.NORMAL);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+    }
+
+    // ==================== MENU SELECTION HANDLER ====================
+
+    private void handleMenuSelection(String itemId) {
+        currentTab = itemId;
+        cellList.clear();
+        adapter.notifyDataSetChanged();
+
+        switch (itemId) {
+            case "history":
+                loadHistoryData();
+                break;
+            case "save":
+                loadSaveData();
+                break;
+        }
+    }
+
+    // ==================== DATA LOADING FROM FIREBASE ====================
+
+    // --- HÀM QUAN TRỌNG: Tải Lịch Sử ---
+    private void loadHistoryData() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            showEmpty("Vui lòng đăng nhập để xem lịch sử");
+            return;
+        }
+
+        db.collection("users").document(user.getUid())
+                .collection("history")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        showEmpty("Bạn chưa xem truyện nào");
+                    } else {
+                        hideEmpty();
+                        cellList.clear();
+                        storyList.clear();
+
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            String title = doc.getString("title");
+                            String image = doc.getString("coverImageUrl");
+                            String author = doc.getString("author");
+                            String description = doc.getString("description");
+                            ArrayList<String> genreList = getGenreFromDocument(doc);
+                            Long viewCount = doc.getLong("viewCount");
+                            Long chapterCount = doc.getLong("chapterCount");
+
+                            if (title != null && image != null) {
+                                // Thêm Cell cho hiển thị grid
+                                cellList.add(new Cell(image, title));
+
+                                // Thêm NovelList để truyền đầy đủ thông tin khi click
+                                Story story = new Story(
+                                        image,
+                                        title,
+                                        viewCount != null ? viewCount : 0,
+                                        genreList,
+                                        chapterCount != null ? chapterCount : 0,
+                                        author != null ? author : "Đang cập nhật",
+                                        description != null ? description : "Đang cập nhật mô tả..."
+                                );
+                                storyList.add(story);
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
+                    Log.e("CaseFragment", "Error loading history", e);
+                });
+    }
+
+    private void loadSaveData(){
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            showEmpty("Vui lòng đăng nhập để xem truyện đã lưu");
+            return;
+        }
+
+        db.collection("users").document(user.getUid())
+                .collection("save")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        showEmpty("Bạn chưa lưu truyện nào");
+                    } else {
+                        hideEmpty();
+                        cellList.clear();
+                        storyList.clear();
+
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            String title = doc.getString("title");
+                            String image = doc.getString("coverImageUrl");
+                            String author = doc.getString("author");
+                            String description = doc.getString("description");
+                            ArrayList<String> genreList = getGenreFromDocument(doc);
+                            Long viewCount = doc.getLong("viewCount");
+                            Long chapterCount = doc.getLong("chapterCount");
+
+                            if (title != null && image != null) {
+                                cellList.add(new Cell(image, title));
+
+                                Story story = new Story(
+                                        image,
+                                        title,
+                                        viewCount != null ? viewCount : 0,
+                                        genreList,
+                                        chapterCount != null ? chapterCount : 0,
+                                        author != null ? author : "Đang cập nhật",
+                                        description != null ? description : "Đang cập nhật mô tả..."
+                                );
+                                storyList.add(story);
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
+                    Log.e("CaseFragment", "Error loading saved items", e);
+                });
+    }
+    // ==================== DATA PROCESSING ====================
+    private ArrayList<String> getGenreFromDocument(QueryDocumentSnapshot doc) {
+        try {
+            ArrayList<String> genreList = (ArrayList<String>) doc.get("genre");
+            if (genreList != null && !genreList.isEmpty()) {
+                return genreList;
+            }
+        } catch (Exception e) {
+            Log.e("CaseFragment", "Error getting genre: " + e.getMessage());
+        }
+
+        // Trả về giá trị mặc định
+        ArrayList<String> defaultList = new ArrayList<>();
+        defaultList.add("Truyện tranh");
+        return defaultList;
+    }
+
+    // ==================== FIREBASE OPERATIONS ====================
+
     private void deleteFromFirebase(List<String> titles) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null || titles.isEmpty()) return;
@@ -166,265 +428,9 @@ public class CaseFragment extends Fragment {
                     });
         }
     }
-    private void setupRecyclerView() {
-        // Sử dụng GridLayoutManager 3 cột (giống HomeFragment)
-        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        caseRecyclerView.setLayoutManager(layoutManager);
 
-        cellList = new ArrayList<>();
-        novelList = new ArrayList<>(); // Khởi tạo novelList
-        adapter = new CellAdapter(cellList, novelList); // Truyền cả 2 list
-        caseRecyclerView.setAdapter(adapter);
-        adapter.setOnDeleteItemsListener(titles -> deleteFromFirebase(titles));
-    }
+    // ==================== UI HELPER METHODS ====================
 
-    private void setupMenuItems(){
-        for (String[] item : menuItems) {
-            TextView textView = createMenuItem(item[0], item[1]);
-            case_menu.addView(textView);
-        }
-        // Set style mặc định cho item đầu tiên (nhưng việc load data sẽ do performClick ở onCreateView lo)
-        if (case_menu.getChildCount() > 0) {
-            selectedTextView = (TextView) case_menu.getChildAt(0);
-            setSelectedStyle(selectedTextView);
-        }
-    }
-
-    private TextView createMenuItem(String id, String name) {
-        TextView textView = new TextView(getContext());
-        textView.setText(name);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
-        textView.setTextSize(14);
-        textView.setGravity(getResources().getColor(R.color.app_text_primary));
-        textView.setPadding(20, 20, 20, 30);
-        textView.setTag(id);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(10, 10, 10, 10);
-        textView.setLayoutParams(params);
-        textView.setOnClickListener(v -> {
-            onMenuItemClick(textView);
-        });
-        return textView;
-    }
-
-    private void onMenuItemClick(TextView clickedView) {
-        if (selectedTextView != null) {
-            setUnselectedStyle(selectedTextView);
-        }
-        setSelectedStyle(clickedView);
-        selectedTextView = clickedView;
-        String itemId = (String) clickedView.getTag();
-        handleMenuSelection(itemId);
-    }
-
-    private void setSelectedStyle(TextView textView) {
-        textView.setTextSize(18);
-        textView.setTextColor(getResources().getColor(R.color.white));
-        textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btn_bg);
-    }
-
-    private void setUnselectedStyle(TextView textView) {
-        textView.setTextSize(14);
-        textView.setBackgroundColor(Color.TRANSPARENT);
-        textView.setTypeface(null, android.graphics.Typeface.NORMAL);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
-    }
-
-    private void handleMenuSelection(String itemId) {
-        currentTab = itemId;
-        cellList.clear();
-        adapter.notifyDataSetChanged();
-
-        switch (itemId) {
-            case "history":
-                loadHistoryData();
-                break;
-            case "save":
-                loadSaveData();
-
-                break;
-            case "download":
-                loadDownloadData();
-                break;
-        }
-    }
-
-    // --- HÀM QUAN TRỌNG: Tải Lịch Sử ---
-    private void loadHistoryData() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            showEmpty("Vui lòng đăng nhập để xem lịch sử");
-            return;
-        }
-
-        db.collection("users").document(user.getUid())
-                .collection("history")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        showEmpty("Bạn chưa xem truyện nào");
-                    } else {
-                        hideEmpty();
-                        cellList.clear();
-                        novelList.clear();
-
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            String title = doc.getString("title");
-                            String image = doc.getString("coverImageUrl");
-                            String author = doc.getString("author");
-                            String description = doc.getString("description");
-                            ArrayList<String> genreList = getGenreFromDocument(doc);
-                            Long viewCount = doc.getLong("viewCount");
-                            Long chapterCount = doc.getLong("chapterCount");
-
-                            if (title != null && image != null) {
-                                // Thêm Cell cho hiển thị grid
-                                cellList.add(new Cell(image, title));
-
-                                // Thêm NovelList để truyền đầy đủ thông tin khi click
-                                novelList.add(new NovelList(
-                                        image,
-                                        title,
-                                        viewCount != null ? viewCount : 0,
-                                        genreList,
-                                        chapterCount != null ? chapterCount : 0,
-                                        author != null ? author : "Đang cập nhật",
-                                        description != null ? description : "Đang cập nhật mô tả..."
-                                ));
-                            }
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
-                    Log.e("CaseFragment", "Error loading history", e);
-                });
-    }
-    private void loadSaveData(){
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            showEmpty("Vui lòng đăng nhập để xem truyện đã lưu");
-            return;
-        }
-
-        db.collection("users").document(user.getUid())
-                .collection("save")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        showEmpty("Bạn chưa lưu truyện nào");
-                    } else {
-                        hideEmpty();
-                        cellList.clear();
-                        novelList.clear();
-
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            String title = doc.getString("title");
-                            String image = doc.getString("coverImageUrl");
-                            String author = doc.getString("author");
-                            String description = doc.getString("description");
-                            ArrayList<String> genreList = getGenreFromDocument(doc);
-                            Long viewCount = doc.getLong("viewCount");
-                            Long chapterCount = doc.getLong("chapterCount");
-
-                            if (title != null && image != null) {
-                                cellList.add(new Cell(image, title));
-
-                                novelList.add(new NovelList(
-                                        image,
-                                        title,
-                                        viewCount != null ? viewCount : 0,
-                                        genreList,
-                                        chapterCount != null ? chapterCount : 0,
-                                        author != null ? author : "Đang cập nhật",
-                                        description != null ? description : "Đang cập nhật mô tả..."
-                                ));
-                            }
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
-                    Log.e("CaseFragment", "Error loading saved items", e);
-                });
-    }
-    private void loadDownloadData(){
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user == null) {
-            showEmpty("Vui lòng đăng nhập để xem truyện đã tải xuống");
-            return;
-        }
-        db.collection("users").document(user.getUid())
-                .collection("download")
-                .orderBy("timestamp", Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (queryDocumentSnapshots.isEmpty()) {
-                        showEmpty("Bạn chưa tải xuống truyện nào");
-                    } else {
-                        hideEmpty();
-                        cellList.clear();
-                        novelList.clear();
-                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                            processDocument(doc);
-                        }
-                        adapter.notifyDataSetChanged();
-                    }
-                }).addOnFailureListener(e -> {
-                    showEmpty("Lỗi tải dữ liệu: " + e.getMessage());
-                    Log.e("CaseFragment", "Error loading downloads", e);
-                });;
-    }
-    private void processDocument(QueryDocumentSnapshot doc) {
-        String title = doc.getString("title");
-        String image = doc.getString("coverImageUrl");
-        if (currentTab.equals("download")){
-            String localPath = doc.getString("localCoverPath");
-            if (localPath != null && !localPath.isEmpty()) {
-                image = "file://" + localPath;
-            }
-        }
-        String author = doc.getString("author");
-        String description = doc.getString("description");
-        ArrayList<String> genreList = getGenreFromDocument(doc);
-        Long viewCount = doc.getLong("viewCount");
-        Long chapterCount = doc.getLong("chapterCount");
-        if (title != null && image != null) {
-            cellList.add(new Cell(image, title));
-            novelList.add(new NovelList(
-                    image,
-                    title,
-                    viewCount != null ? viewCount : 0,
-                    genreList,
-                    chapterCount != null ? chapterCount : 0,
-                    author != null ? author : "Đang cập nhật",
-                    description != null ? description : "Đang cập nhật mô tả..."
-            ));
-        }
-    }
-    private ArrayList<String> getGenreFromDocument(QueryDocumentSnapshot doc) {
-        try {
-            ArrayList<String> genreList = (ArrayList<String>) doc.get("genre");
-            if (genreList != null && !genreList.isEmpty()) {
-                return genreList;
-            }
-        } catch (Exception e) {
-            Log.e("CaseFragment", "Error getting genre: " + e.getMessage());
-        }
-
-        // Trả về giá trị mặc định
-        ArrayList<String> defaultList = new ArrayList<>();
-        defaultList.add("Truyện tranh");
-        return defaultList;
-    }
     private void showEmpty(String message) {
         caseRecyclerView.setVisibility(View.GONE);
         emptyTextView.setVisibility(View.VISIBLE);
@@ -435,13 +441,5 @@ public class CaseFragment extends Fragment {
     private void hideEmpty() {
         caseRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (selectedTextView != null) {
-            String itemId = (String) selectedTextView.getTag();
-            handleMenuSelection(itemId);
-        }
     }
 }

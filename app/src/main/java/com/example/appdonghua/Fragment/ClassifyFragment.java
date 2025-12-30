@@ -10,13 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.appdonghua.Adapter.NoveListAdapter;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Adapter.StoryAdapter;
 import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,15 +24,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 public class ClassifyFragment extends Fragment {
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     private String[][] categories = {
             {"all", "Toàn Bộ"},
-            {"do_thi", "Đô Thị"},
+            {"rebirth", "Trọng Sinh"},
             {"magical", "Huyền Huyễn"},
             {"xuyen_khong", "Xuyên Không"},
             {"tien_hiep", "Tiên Hiệp"},
             {"mechanic", "Khoa Huyễn"}
     };
-
     private GridLayout sortMenu;
     private LinearLayout filterMenu;
     private TextView selectedTextView;
@@ -42,36 +41,17 @@ public class ClassifyFragment extends Fragment {
     private androidx.recyclerview.widget.RecyclerView contentRecyclerView;
 
     private FirebaseFirestore db;
-    private ArrayList<NovelList> contentList;
-    private NoveListAdapter adapter;
+    private ArrayList<Story> contentList;
+    private StoryAdapter adapter;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    private String mParam1;
-    private String mParam2;
+    // ==================== LIFECYCLE METHODS ====================
 
     public ClassifyFragment() {
         // Required empty public constructor
     }
-
-    public static ClassifyFragment newInstance(String param1, String param2) {
-        ClassifyFragment fragment = new ClassifyFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
         // Khởi tạo Firestore
         db = FirebaseFirestore.getInstance();
         contentList = new ArrayList<>();
@@ -92,11 +72,26 @@ public class ClassifyFragment extends Fragment {
         return view;
     }
 
+    // ==================== INITIALIZATION METHODS ====================
+
     private void init(View view) {
         sortMenu = view.findViewById(R.id.sortMenu);
         filterMenu = view.findViewById(R.id.filterMenu);
         contentRecyclerView = view.findViewById(R.id.contentRecyclerView);
     }
+
+    private void setupContentRecyclerView() {
+        // Setup RecyclerView với LinearLayoutManager
+        androidx.recyclerview.widget.LinearLayoutManager layoutManager =
+                new androidx.recyclerview.widget.LinearLayoutManager(getContext());
+        contentRecyclerView.setLayoutManager(layoutManager);
+
+        // Khởi tạo adapter
+        adapter = new StoryAdapter(contentList);
+        contentRecyclerView.setAdapter(adapter);
+    }
+
+    // ==================== SETUP CATEGORIES & FILTER ====================
 
     private void setupCategories() {
         // Xóa các view cũ (nếu có)
@@ -134,7 +129,33 @@ public class ClassifyFragment extends Fragment {
 
         // Mặc định chọn "Hot nhất"
         selectedFilterView = hotView;
-        setSelectedFilterStyle(selectedFilterView);
+        setSelectedStyle(selectedFilterView);
+    }
+
+    // ==================== CREATE UI ELEMENTS ====================
+
+    private TextView createCategoryTextView(String categoryId, String categoryName) {
+        TextView textView = new TextView(getContext());
+        textView.setText(categoryName);
+        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
+        textView.setTextSize(14);
+        textView.setGravity(Gravity.CENTER);
+        textView.setPadding(20, 30, 20, 30);
+        textView.setTag(categoryId);
+
+        // Setup GridLayout params
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+        params.setMargins(8, 8, 8, 8);
+        textView.setLayoutParams(params);
+
+        textView.setOnClickListener(v -> {
+            onCategoryClick(textView);
+        });
+
+        return textView;
     }
 
     private TextView createFilterTextView(String filterId, String filterName) {
@@ -161,56 +182,7 @@ public class ClassifyFragment extends Fragment {
         return textView;
     }
 
-    private void onFilterClick(TextView clickedTextView) {
-        // Reset style của filter trước đó
-        if (selectedFilterView != null) {
-            setUnselectedFilterStyle(selectedFilterView);
-        }
-
-        // Set style cho filter mới
-        setSelectedFilterStyle(clickedTextView);
-        selectedFilterView = clickedTextView;
-
-        loadContent();
-    }
-
-    private void setSelectedFilterStyle(TextView textView) {
-        textView.setTextSize(15);
-        textView.setTextColor(getResources().getColor(R.color.white));
-        textView.setTypeface(null, android.graphics.Typeface.BOLD);
-        textView.setBackgroundResource(R.drawable.btn_bg);
-    }
-
-    private void setUnselectedFilterStyle(TextView textView) {
-        textView.setTextSize(14);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
-        textView.setTypeface(null, android.graphics.Typeface.NORMAL);
-        textView.setBackgroundColor(Color.TRANSPARENT);
-    }
-
-    private TextView createCategoryTextView(String categoryId, String categoryName) {
-        TextView textView = new TextView(getContext());
-        textView.setText(categoryName);
-        textView.setTextColor(getResources().getColor(R.color.app_text_primary));
-        textView.setTextSize(14);
-        textView.setGravity(Gravity.CENTER);
-        textView.setPadding(20, 30, 20, 30);
-        textView.setTag(categoryId);
-
-        // Setup GridLayout params
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = 0;
-        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-        params.setMargins(8, 8, 8, 8);
-        textView.setLayoutParams(params);
-
-        textView.setOnClickListener(v -> {
-            onCategoryClick(textView);
-        });
-
-        return textView;
-    }
+    // ==================== CLICK HANDLERS ====================
 
     private void onCategoryClick(TextView clickedTextView) {
         // Reset style của item trước đó
@@ -226,6 +198,21 @@ public class ClassifyFragment extends Fragment {
         loadContent();
     }
 
+    private void onFilterClick(TextView clickedTextView) {
+        // Reset style của filter trước đó
+        if (selectedFilterView != null) {
+            setUnselectedStyle(selectedFilterView);
+        }
+
+        // Set style cho filter mới
+        setSelectedStyle(clickedTextView);
+        selectedFilterView = clickedTextView;
+
+        loadContent();
+    }
+
+    // ==================== STYLING METHODS ====================
+
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(14);
         textView.setTextColor(getResources().getColor(R.color.white));
@@ -239,17 +226,7 @@ public class ClassifyFragment extends Fragment {
         textView.setTypeface(null, android.graphics.Typeface.NORMAL);
         textView.setBackgroundColor(Color.TRANSPARENT);
     }
-
-    private void setupContentRecyclerView() {
-        // Setup RecyclerView với LinearLayoutManager
-        androidx.recyclerview.widget.LinearLayoutManager layoutManager =
-                new androidx.recyclerview.widget.LinearLayoutManager(getContext());
-        contentRecyclerView.setLayoutManager(layoutManager);
-
-        // Khởi tạo adapter
-        adapter = new NoveListAdapter(contentList);
-        contentRecyclerView.setAdapter(adapter);
-    }
+    // ==================== DATA LOADING ====================
 
     private void loadContent() {
         // Lấy category và filter hiện tại
@@ -303,17 +280,7 @@ public class ClassifyFragment extends Fragment {
                                     ? story.getGenres().get(0) : "Khác";
 
                             // Tạo NovelList từ Story
-                            NovelList novel = new NovelList(
-                                    story.getCoverImageUrl(),
-                                    story.getTitle(),
-                                    story.getViewCount(),
-                                    story.getGenres(),
-                                    story.getChapter(),
-                                    story.getAuthor(),
-                                    story.getDescription()
-                            );
-
-                            contentList.add(novel);
+                            contentList.add(story);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -331,11 +298,19 @@ public class ClassifyFragment extends Fragment {
                 });
     }
 
+    private void updateRecyclerView() {
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    // ==================== HELPER METHODS ====================
+
     // Helper method để chuyển đổi categoryId sang tên tiếng Việt
     private String getCategoryName(String categoryId) {
         switch (categoryId) {
-            case "do_thi":
-                return "Đô Thị";
+            case "rebirth":
+                return "Trọng Sinh";
             case "magical":
                 return "Huyền Huyễn";
             case "xuyen_khong":
@@ -347,21 +322,5 @@ public class ClassifyFragment extends Fragment {
             default:
                 return "";
         }
-    }
-
-    private void updateRecyclerView() {
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-        }
-    }
-
-    private void loadCategoryContent(String categoryId, String categoryName) {
-        // TODO: Implement logic để load nội dung theo category
-        // Có thể load fragment mới hoặc fetch data từ API
-    }
-
-    private void loadFilterContent(String filterId, String filterName) {
-        // TODO: Implement logic để load nội dung theo filter (hot/complete)
-        // Kết hợp với category đã chọn để filter dữ liệu
     }
 }

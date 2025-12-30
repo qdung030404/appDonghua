@@ -11,16 +11,21 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.LoginActivity;
+import com.example.appdonghua.Activity.MainActivity;
 import com.example.appdonghua.Activity.RegisterActivity;
+import com.example.appdonghua.Activity.SearchActivity;
 import com.example.appdonghua.Activity.SettingActivity;
 import com.example.appdonghua.Model.User;
 import com.example.appdonghua.R;
@@ -32,6 +37,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 public class UserFragment extends Fragment {
     private LinearLayout layoutNotLoggedIn;
     private Button btnLogin, btnRegister;
@@ -39,9 +50,8 @@ public class UserFragment extends Fragment {
     private View layoutLoggedIn;
     private ImageView imgAvatar;
     private TextView tvUsername, tvEmail;
-    private LinearLayout layoutFavorites, layoutHistory, layoutDownloads;
-    private LinearLayout layoutSettings, layoutAbout;
-    private ImageButton searchButton, settingButton;
+    private LinearLayout layoutSetting, layoutBookCase, layoutSearch, layoutFeedback, layoutAbout;
+    private ImageButton settingButton;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -122,21 +132,18 @@ public class UserFragment extends Fragment {
     private void initLoggedInViews() {
         if (layoutLoggedIn == null) return;
 
-        // Header buttons
-        searchButton = layoutLoggedIn.findViewById(R.id.search_Button);
-        settingButton = layoutLoggedIn.findViewById(R.id.settingButton);
-
         // User info
         imgAvatar = layoutLoggedIn.findViewById(R.id.img_avatar);
         tvUsername = layoutLoggedIn.findViewById(R.id.tv_username);
         tvEmail = layoutLoggedIn.findViewById(R.id.tv_email);
 
         // Menu items
-        layoutFavorites = layoutLoggedIn.findViewById(R.id.layout_favorites);
-        layoutHistory = layoutLoggedIn.findViewById(R.id.layout_history);
-        layoutDownloads = layoutLoggedIn.findViewById(R.id.layout_downloads);
-        layoutSettings = layoutLoggedIn.findViewById(R.id.layout_settings);
+        layoutSetting = layoutLoggedIn.findViewById(R.id.layout_setting);
+        layoutBookCase = layoutLoggedIn.findViewById(R.id.layout_book_case);;
         layoutAbout = layoutLoggedIn.findViewById(R.id.layout_about);
+        layoutFeedback = layoutLoggedIn.findViewById(R.id.layout_feedback);
+        layoutSearch = layoutLoggedIn.findViewById(R.id.layout_search);
+
     }
 
     private void loadUserInfo() {
@@ -183,31 +190,37 @@ public class UserFragment extends Fragment {
 
     private void setupLoggedInClickListeners() {
         // Favorites
-        if (layoutFavorites != null) {
-            layoutFavorites.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Phim yêu thích", Toast.LENGTH_SHORT).show();
+        if (layoutBookCase != null) {
+            layoutBookCase.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    MainActivity mainActivity = (MainActivity) getActivity();
+                    // Chuyển ViewPager sang tab bookcase (position 2)
+                    mainActivity.findViewById(R.id.vp);
+                    androidx.viewpager.widget.ViewPager viewPager =
+                            mainActivity.findViewById(R.id.vp);
+                    if (viewPager != null) {
+                        viewPager.setCurrentItem(2); // Position 2 = bookcase tab
+                    }
+                }
             });
         }
 
-        // History
-        if (layoutHistory != null) {
-            layoutHistory.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Lịch sử xem", Toast.LENGTH_SHORT).show();
+        if (layoutSetting != null) {
+            layoutSetting.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), SettingActivity.class);
+                startActivity(intent);
+            });
+        }
+        if (layoutSearch != null) {
+            layoutSearch.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), SearchActivity.class);
+                startActivity(intent);
             });
         }
 
-        // Downloads
-        if (layoutDownloads != null) {
-            layoutDownloads.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Tải xuống", Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        // Settings (Feedback)
-        if (layoutSettings != null) {
-            layoutSettings.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Ý kiến phản hồi", Toast.LENGTH_SHORT).show();
-            });
+        // Feedback
+        if (layoutFeedback != null) {
+            layoutFeedback.setOnClickListener(v -> showFeedBackDialog());
         }
 
         // About
@@ -216,23 +229,63 @@ public class UserFragment extends Fragment {
                 showAboutDialog();
             });
         }
-
-        // Search button
-        if (searchButton != null) {
-            searchButton.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Thông báo", Toast.LENGTH_SHORT).show();
-            });
-        }
-
-        // Settings button
-        if (settingButton != null) {
-            settingButton.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), SettingActivity.class);
-                startActivity(intent);
-            });
-        }
     }
+    private void showFeedBackDialog() {
+        if (getContext() == null) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_feedback, null);
+        builder.setView(dialogView);
 
+        AlertDialog dialog = builder.create();
+        if (dialog.getWindow() == null) return;
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        Spinner feedbackTypeSpinner = dialogView.findViewById(R.id.feedback_type_spinner);
+        EditText feedbackMessage = dialogView.findViewById(R.id.feedback_message);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnSubmit = dialogView.findViewById(R.id.btn_submit);
+
+        String[] feedbackTypes = {"Khác", "Báo lỗi", "Góp ý tính năng", "Phản hồi nội dung", };
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, feedbackTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        feedbackTypeSpinner.setAdapter(adapter);
+
+        if (btnCancel != null) {
+            btnCancel.setOnClickListener(v -> dialog.dismiss());
+        }
+        if (btnSubmit != null) {
+            btnSubmit.setOnClickListener(v -> {
+                String selectedType = feedbackTypeSpinner.getSelectedItem().toString();
+                String message = feedbackMessage.getText().toString();
+                if (message.isEmpty()){
+                    feedbackMessage.setError("Vui lòng nhập nội dung phản hồi");
+                    feedbackMessage.requestFocus();
+                    return;
+                }
+                submitFeedback(selectedType, message);
+
+            });
+        }
+        dialog.show();
+
+    }
+    private void submitFeedback(String type, String message) {
+        if (currentUser == null) return;
+        Map<String, Object> feedback = new HashMap<>();
+        feedback.put("userId", currentUser.getUid());
+        feedback.put("userEmail", currentUser.getEmail());
+        feedback.put("type", type);
+        feedback.put("message", message);
+        feedback.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                Locale.getDefault()).format(new Date()));
+        feedback.put("status", "pending");
+        db.collection("feedback").add(feedback).addOnSuccessListener(documentReference -> {
+            Toast.makeText(getContext(), "Gửi phản hồi thành công\nChúng tôi sẽ xem xét và phản hồi sớm nhất.", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(getContext(), "Lỗi khi gửi phản hồi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+        });
+    }
     private void navigateToLogin() {
         if (getActivity() == null) return;
         Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -244,16 +297,38 @@ public class UserFragment extends Fragment {
         Intent intent = new Intent(getActivity(), RegisterActivity.class);
         startActivity(intent);
     }
-
     private void showAboutDialog() {
         if (getContext() == null) return;
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Về chúng tôi");
-        builder.setMessage("Ứng dụng đọc truyện Đông Hoa.\nPhiên bản: 1.0.0");
-        builder.setPositiveButton("Đóng", null);
-        builder.show();
-    }
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_about, null);
+        builder.setView(dialogView);
 
+        AlertDialog dialog = builder.create();
+        if (dialog.getWindow() == null) return;
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        Button btnClose = dialogView.findViewById(R.id.btn_close);
+        LinearLayout layoutFacebook = dialogView.findViewById(R.id.layout_facebook);
+        LinearLayout layoutInstagram = dialogView.findViewById(R.id.layout_instagram);
+
+        if (btnClose != null) {
+            btnClose.setOnClickListener(v -> dialog.dismiss());
+        }
+        if (layoutFacebook != null){
+            layoutFacebook.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com"));
+                startActivity(intent);
+            });
+        }
+        if (layoutInstagram != null){
+            layoutInstagram.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com"));
+                startActivity(intent);
+            });
+        }
+        dialog.show();
+
+    }
     @Override
     public void onResume() {
         super.onResume();

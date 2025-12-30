@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation("jp.wasabeef:glide-transformations:4.3.0")
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging:25.0.1")

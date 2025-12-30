@@ -32,7 +32,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class SettingActivity extends AppCompatActivity {
     ImageButton backButton;
-    LinearLayout layoutLogout, languageLayout, account, notificationLayout;
+    LinearLayout layoutLogout, account, notificationLayout;
     Switch switchNightMode, switchNotification;
 
     private FirebaseAuth mAuth;
@@ -69,7 +69,6 @@ public class SettingActivity extends AppCompatActivity {
     private void init() {
         backButton = findViewById(R.id.backButton);
         layoutLogout = findViewById(R.id.layout_logout);
-        languageLayout = findViewById(R.id.language);
         switchNightMode = findViewById(R.id.switchNightMode);
         account = findViewById(R.id.account);
         notificationLayout = findViewById(R.id.notification_layout);
@@ -86,7 +85,6 @@ public class SettingActivity extends AppCompatActivity {
             setNotificationEnabled(isChecked);
         });
         notificationLayout.setOnClickListener(v -> openNotificationSettings());
-        languageLayout.setOnClickListener(v -> showLanguageDialog());
         account.setOnClickListener(v -> {
             Intent intent = new Intent(SettingActivity.this, AccountActivity.class);
             startActivity(intent);
@@ -177,19 +175,6 @@ public class SettingActivity extends AppCompatActivity {
             }
         }
     }
-    private void showLanguageDialog() {
-        String[] languages = {"Tiếng Việt", "English"};
-        int selectedLanguage = 0;
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chọn ngôn ngữ");
-        builder.setSingleChoiceItems(languages, selectedLanguage, (dialog, which) -> {
-            String selected = languages[which];
-            Toast.makeText(this, "Chọn ngôn ngữ: " + selected, Toast.LENGTH_SHORT).show();
-            dialog.dismiss();
-        });
-        builder.setNegativeButton("Hủy", null);
-        builder.show();
-    }
     private void loadNightModeSetting() {
         // Lấy trạng thái chế độ ban đêm đã lưu
         boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
@@ -202,15 +187,10 @@ public class SettingActivity extends AppCompatActivity {
         editor.putBoolean(KEY_NIGHT_MODE, isNightMode);
         editor.apply();
 
-        // Áp dụng chế độ ban đêm
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-
-        // Recreate activity để áp dụng theme mới
-        recreate();
+        int nightMode = isNightMode ?
+                AppCompatDelegate.MODE_NIGHT_YES :
+                AppCompatDelegate.MODE_NIGHT_NO;
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 
     private void initGoogleSignInClient() {

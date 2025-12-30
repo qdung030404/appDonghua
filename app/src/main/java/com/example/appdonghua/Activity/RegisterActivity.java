@@ -2,6 +2,7 @@ package com.example.appdonghua.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.appdonghua.Model.User;
 import com.example.appdonghua.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -34,12 +36,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
 
-    private EditText etUsername, etEmail, etPassword, etConfirmPassword;
+    private EditText etEmail, etPassword, etConfirmPassword;
     private CheckBox cbTerms;
     private Button btnRegister;
     private ImageButton btnBack;
@@ -47,15 +52,14 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView tvLogin;
 
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> googleSignInLauncher;
 
     private SharedPreferences sharedPreferences;
     private static final String PREF_NAME = "LoginPrefs";
-    private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
-    private static final String KEY_CURRENT_USERNAME = "current_username";
-    private static final String KEY_USER_EMAIL = "user_email";
-    private static final String KEY_LOGIN_METHOD = "login_method";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_REMEMBER = "remember";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-
+        db = FirebaseFirestore.getInstance();
         // Khởi tạo SharedPreferences
         sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
@@ -75,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        etUsername = findViewById(R.id.et_username);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
@@ -114,24 +117,9 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
     private void handleRegister() {
-        String username = etUsername.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
-
-        // Validate input
-        if (TextUtils.isEmpty(username)) {
-            etUsername.setError("Vui lòng nhập tên đăng nhập");
-            etUsername.requestFocus();
-            return;
-        }
-
-        if (username.length() < 3) {
-            etUsername.setError("Tên đăng nhập phải có ít nhất 3 ký tự");
-            etUsername.requestFocus();
-            return;
-        }
-
         if (TextUtils.isEmpty(email)) {
             etEmail.setError("Vui lòng nhập email");
             etEmail.requestFocus();
@@ -174,10 +162,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Đăng ký với Firebase
-        registerUserWithFirebase(username, email, password);
+        registerUserWithFirebase(email, password);
     }
 
-    private void registerUserWithFirebase(String username, String email, String password) {
+    private void registerUserWithFirebase(String email, String password) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -186,24 +174,9 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            // Cập nhật tên hiển thị
-                            if (user != null) {
-                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(username)
-                                        .build();
+                            // Tạo user profile trên Firestore
+                            createUserProfileIfNotExist(user);
 
-                                user.updateProfile(profileUpdates)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Log.d(TAG, "User profile updated.");
-                                                }
-                                            }
-                                        });
-                            }
-
-                            saveLoginInfo(email, username, "normal");
                             Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                             navigateToHome();
                         } else {
@@ -238,10 +211,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            String username = acct.getDisplayName() != null ? acct.getDisplayName() : acct.getEmail().split("@")[0];
-                            String email = acct.getEmail() != null ? acct.getEmail() : "";
-
-                            saveLoginInfo(email, username, "google");
+                            createUserProfileIfNotExist(user);
                             Toast.makeText(RegisterActivity.this, "Đăng ký Google thành công!", Toast.LENGTH_SHORT).show();
                             navigateToHome();
                         } else {
@@ -284,18 +254,56 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+    private void createUserProfileIfNotExist(FirebaseUser firebaseUser) {
+        if (firebaseUser == null) return;
 
+        String uid = firebaseUser.getUid();
+        String email = firebaseUser.getEmail();
 
+        // Xử lý username: Nếu có displayName thì dùng, không thì lấy phần trước @ trong email
+        String username = firebaseUser.getDisplayName();
+        if (username == null || username.isEmpty()) {
+            // Lấy phần trước @ trong email làm username
+            if (email != null && email.contains("@")) {
+                username = email.split("@")[0];
+            } else {
+                username = "Người dùng"; // Fallback
+            }
+        }
 
-    private void saveLoginInfo(String email, String username, String loginMethod) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_IS_LOGGED_IN, true);
-        editor.putString(KEY_USER_EMAIL, email);
-        editor.putString(KEY_CURRENT_USERNAME, username);
-        editor.putString(KEY_LOGIN_METHOD, loginMethod);
-        editor.apply();
+        String finalAvatarUrl;
+        String defaultAvatarUrl = "https://emerald-accepted-barnacle-132.mypinata.cloud/ipfs/bafkreiev5kbmz2cdp35axx42pvafhhoygl5apokg5wwtsoefnbdiytftye";
+        Uri googleAvatarUri = firebaseUser.getPhotoUrl();
+
+        if (googleAvatarUri != null) {
+            finalAvatarUrl = googleAvatarUri.toString();
+        } else {
+            finalAvatarUrl = defaultAvatarUrl;
+        }
+
+        String finalUsername = username; // Tạo biến final để dùng trong lambda
+
+        // Tạo DocumentReference
+        DocumentReference userRef = db.collection("users").document(uid);
+
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document == null || !document.exists()) {
+                    // Tạo mới user
+                    User newUser = new User(uid, finalUsername, email, finalAvatarUrl);
+
+                    userRef.set(newUser)
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "Hồ sơ user đã được tạo!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Lỗi khi tạo hồ sơ", e));
+                } else {
+                    Log.d(TAG, "User đã tồn tại, không tạo mới.");
+                }
+            } else {
+                Log.w(TAG, "Lỗi khi kiểm tra user: ", task.getException());
+            }
+        });
     }
-
     private void navigateToHome() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -13,30 +13,40 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.ComicInfoActivity;
 import com.example.appdonghua.Model.Carousel;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
+import com.example.appdonghua.Utils.ScreenUtils;
 
 import java.util.List;
 
 public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHolder>{
     public List<Carousel> carouselItem;
-    private List<NovelList> novelLists;
+    private List<Story> stories;
+    private int carouselWidth;
+    private int carouselHeight;
 
     public CarouselAdapter(List<Carousel> carouselItems) {
         this.carouselItem = carouselItems;
-        this.novelLists = null;
+        this.stories = null;
     }
 
-    public CarouselAdapter(List<Carousel> carouselItems, List<NovelList> novelLists) {
+    public CarouselAdapter(List<Carousel> carouselItems, List<Story> stories) {
         this.carouselItem = carouselItems;
-        this.novelLists = novelLists;
+        this.stories = stories;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_carousel, parent, false);
-        return new ViewHolder(view);
+        Context context = parent.getContext();
+        ScreenUtils.ImageDimensions dims = ScreenUtils.calculateCarouselDimensions(context);
+        carouselWidth = dims.width;
+        carouselHeight = dims.height;
+
+
+
+        return new ViewHolder(view, carouselWidth, carouselHeight);
     }
 
     @Override
@@ -65,17 +75,16 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
             Context context1 = v.getContext();
             Intent intent = new Intent(context1, ComicInfoActivity.class); // Chuyển sang màn hình chi tiết
 
-            if (novelLists != null && position < novelLists.size()) {
-                NovelList novelList = novelLists.get(position);
+            if (stories != null && position < stories.size()) {  // ✅ THAY ĐỔI
+                Story story = stories.get(position);  // ✅ THAY ĐỔI
 
-                // Gửi dữ liệu đầy đủ từ NovelList
-                intent.putExtra("TITLE", novelList.getTitle());
-                intent.putExtra("IMAGE_URL", novelList.getImageUrl());
-                intent.putExtra("AUTHOR", novelList.getAuthor());
-                intent.putExtra("GENRES", novelList.getGenre());
-                intent.putExtra("VIEWS", novelList.getViewCount());
-                intent.putExtra("CHAPTER", novelList.getChapterCount());
-                intent.putExtra("DESCRIPTION", novelList.getDescription());
+                intent.putExtra("TITLE", story.getTitle());
+                intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
+                intent.putExtra("AUTHOR", story.getAuthor());
+                intent.putStringArrayListExtra("GENRES", story.getGenres());  // ✅ THAY ĐỔI
+                intent.putExtra("VIEWS", story.getViewCount());
+                intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                intent.putExtra("DESCRIPTION", story.getDescription());
             } else {
                 // Fallback: Chỉ gửi dữ liệu cơ bản từ Carousel
                 intent.putExtra("TITLE", "Đang cập nhật");
@@ -99,9 +108,14 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView iv_carousel;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, int carouselWidth, int carouselHeight) {
             super(itemView);
             iv_carousel = itemView.findViewById(R.id.iv_carousel);
+            ViewGroup.LayoutParams params = iv_carousel.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            iv_carousel.setLayoutParams(params);
+            iv_carousel.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
     }
 }

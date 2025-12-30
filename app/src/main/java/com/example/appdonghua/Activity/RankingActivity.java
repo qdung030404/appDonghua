@@ -34,6 +34,8 @@ public class RankingActivity extends AppCompatActivity {
             {"mechanic", "Khoa Huyễn"}
     };
 
+    // ==================== LIFECYCLE METHODS ====================
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +52,18 @@ public class RankingActivity extends AppCompatActivity {
         loadFragment("all"); // Mặc định load tất cả
     }
 
+    // ==================== INITIALIZATION METHODS ====================
+
     private void init(){
         filterButton = findViewById(R.id.filter_Button);
         backButton = findViewById(R.id.backButton);
     }
+
+    private void setupListener(){
+        backButton.setOnClickListener(v -> finish());
+    }
+
+    // ==================== SETUP CATEGORIES ====================
 
     private void setupCategories() {
         // Xóa các view cũ (nếu có)
@@ -69,6 +79,8 @@ public class RankingActivity extends AppCompatActivity {
             setSelectedStyle(selectedTextView);
         }
     }
+
+    // ==================== CREATE UI ELEMENTS ====================
 
     private TextView createCategoryTextView(String categoryId, String categoryName) {
         TextView textView = new TextView(this);
@@ -93,6 +105,8 @@ public class RankingActivity extends AppCompatActivity {
         return textView;
     }
 
+    // ==================== CLICK HANDLERS ====================
+
     private void onCategoryClick(TextView clickedTextView) {
         // Reset style của item trước đó
         if (selectedTextView != null) {
@@ -108,6 +122,8 @@ public class RankingActivity extends AppCompatActivity {
         loadFragment(category);
     }
 
+    // ==================== STYLING METHODS ====================
+
     private void setSelectedStyle(TextView textView) {
         textView.setTextSize(16);
         textView.setTextColor(getResources().getColor(R.color.white));
@@ -122,9 +138,7 @@ public class RankingActivity extends AppCompatActivity {
         textView.setBackgroundColor(Color.TRANSPARENT);
     }
 
-    private void setupListener(){
-        backButton.setOnClickListener(v -> finish());
-    }
+    // ==================== FRAGMENT MANAGEMENT ====================
 
     private void loadFragment(String category) {
         RankingBoardFragment fragment = RankingBoardFragment.newInstance(category);

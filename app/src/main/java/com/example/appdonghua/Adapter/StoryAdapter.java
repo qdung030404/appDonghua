@@ -1,5 +1,6 @@
 package com.example.appdonghua.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -11,19 +12,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide; // <-- THÊM IMPORT NÀY
+import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.ComicInfoActivity;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
+import com.example.appdonghua.Utils.ScreenUtils;
 
 import java.util.ArrayList;
 
-public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHolder>{
-    private ArrayList<NovelList> item;
-
-
-
-    public NoveListAdapter(ArrayList<NovelList> items){this.item = items;}
+public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
+    private ArrayList<Story> item;
+    private int imageWidth;
+    private int imageHeight;
+    public StoryAdapter(ArrayList<Story> items){this.item = items;}
 
     // (Bạn có thể xóa phần OnItemClickListener này nếu không dùng,
     // vì bạn đang set click listener ở onBindViewHolder)
@@ -32,25 +33,31 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
         this.listener = listener;
     }
     public interface OnItemClickListener {
-        void onItemClick(NovelList novelList, int position);
+        void onItemClick(Story story, int position);
     }
     // -----------------------------------------------------------
-
     @NonNull
     @Override
-    public NoveListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_scroll, parent, false);
-        return new  ViewHolder(view);
+        Context context = parent.getContext();
+        ScreenUtils.ImageDimensions dims = ScreenUtils.calculateHorizontalImageDimensions(context);
+        imageWidth = dims.width;
+        imageHeight = dims.height;
+
+
+        return new ViewHolder(view, imageWidth, imageHeight, context);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull NoveListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull StoryAdapter.ViewHolder holder, int position) {
 
-        NovelList novelList = item.get(position);
+        Story story = item.get(position);
 
         // --- SỬA LỖI TẢI ẢNH ---
         Context context = holder.itemView.getContext(); // Lấy context từ view
-        String imageUrl = novelList.getImageUrl(); // Lấy String URL
+        String imageUrl = story.getCoverImageUrl(); // Lấy String URL
 
         if (context != null && imageUrl != null) {
             Glide.with(context)
@@ -62,12 +69,12 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
         }
         // ------------------------
 
-        holder.bookTitle.setText(novelList.getTitle());
+        holder.bookTitle.setText(story.getTitle());
         // (Đảm bảo model của bạn có các hàm get này)
-        holder.viewCount.setText(" " + RankingAdapter.formatNumber((int) novelList.getViewCount()));
-        holder.bookCategory.setText(String.join(", ", novelList.getGenre()));
-        holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
-        holder.chapterCount.setText(" chương " + novelList.getChapterCount());
+        holder.viewCount.setText(" " + RankingAdapter.formatNumber((int) story.getViewCount()));
+        holder.bookCategory.setText(String.join(", ", story.getGenres()));
+        holder.bookAuthor.setText("Tác giả: " + story.getAuthor());
+        holder.chapterCount.setText(" chương " + story.getChapter());
 
         // --- SỬA LỖI CLICK LISTENER ---
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -78,13 +85,13 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
                 Intent intent = new Intent(context, ComicInfoActivity.class);
 
                 // Gửi String URL, không gửi int
-                intent.putExtra("IMAGE_URL", novelList.getImageUrl());
-                intent.putExtra("TITLE", novelList.getTitle());
-                intent.putExtra("VIEWS", novelList.getViewCount());
-                intent.putExtra("CHAPTER", novelList.getChapterCount());
-                intent.putExtra("AUTHOR", novelList.getAuthor());
-                intent.putExtra("DESCRIPTION", novelList.getDescription());
-                intent.putStringArrayListExtra("GENRES", novelList.getGenre());
+                intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
+                intent.putExtra("TITLE", story.getTitle());
+                intent.putExtra("VIEWS", story.getViewCount());
+                intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                intent.putExtra("AUTHOR", story.getAuthor());
+                intent.putExtra("DESCRIPTION", story.getDescription());
+                intent.putStringArrayListExtra("GENRES", story.getGenres());
 
                 context.startActivity(intent);
             }
@@ -96,10 +103,10 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
         return item != null ? item.size() : 0; // Thêm check null
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         ImageView bookCover;
         TextView bookTitle, viewCount, bookCategory, bookAuthor, chapterCount ;
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, int imageWidth, int imageHeight, Context context) {
             super(itemView);
             bookCover = itemView.findViewById(R.id.bookCover);
             bookTitle = itemView.findViewById(R.id.bookTitle);
@@ -107,6 +114,18 @@ public class NoveListAdapter extends RecyclerView.Adapter<NoveListAdapter.ViewHo
             bookCategory = itemView.findViewById(R.id.bookCategory);
             bookAuthor = itemView.findViewById(R.id.bookAuthor);
             chapterCount = itemView.findViewById(R.id.chapterCount);
+            ViewGroup.LayoutParams params = bookCover.getLayoutParams();
+            params.width = imageWidth;
+            params.height = imageHeight;
+            bookCover.setLayoutParams(params);
+
+            // Điều chỉnh text size dựa trên màn hình
+            ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
+            bookTitle.setTextSize(textSize.title);
+            bookAuthor.setTextSize(textSize.subtitle);
+            bookCategory.setTextSize(textSize.subtitle);
+            viewCount.setTextSize(textSize.body);
+            chapterCount.setTextSize(textSize.body);
         }
     }
 }

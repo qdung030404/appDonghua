@@ -39,7 +39,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
-    private TextView tvRegister;
+    private static final String TAG = "LoginActivity";
+    private static final String PREF_NAME = "LoginPrefs";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_REMEMBER = "remember";
+
+    private TextView tvRegister, tvForgotPassword;
     private EditText emailInput, passwordInput;
     private Button loginBtn;
     private CheckBox rememberMe;
@@ -49,12 +54,11 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> googleSignInLauncher;
-    private static final String TAG = "LoginActivity";
 
     private SharedPreferences sharedPreferences;
-    private static final String PREF_NAME = "LoginPrefs";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_REMEMBER = "remember";
+
+    // ==================== LIFECYCLE METHODS ====================
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,14 +90,19 @@ public class LoginActivity extends AppCompatActivity {
         loadSavedCredentials(); // Tải email cho "Remember Me"
         setupClickListeners();
     }
+
+    // ==================== INITIALIZATION METHODS ====================
+
     private void initViews() {
         emailInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
         loginBtn = findViewById(R.id.login_btn);
         rememberMe = findViewById(R.id.rememberMe);
         googleBtn = findViewById(R.id.google_btn);
-        tvRegister = findViewById(R.id.tv_register); // Giữ nguyên
+        tvRegister = findViewById(R.id.tv_register);
+        tvForgotPassword = findViewById(R.id.tv_forgot_password);
     }
+
     private void initGoogleSignIn() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -101,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
+
     private void initGoogleSignInLauncher() {
         googleSignInLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -120,43 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void handleGoogleLogin() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        googleSignInLauncher.launch(signInIntent);
-    }
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-
-                            createUserProfileIfNotExist(user); // 1. Tạo hồ sơ
-                            if (acct.getEmail() != null) {
-                                saveRememberMe(acct.getEmail()); // 2. Chỉ lưu "Remember Me"
-                            }
-
-                            Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công!", Toast.LENGTH_SHORT).show();
-                            navigateToHome();
-                        } else {
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Xác thực Google thất bại.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-    private void loadSavedCredentials() {
-        if (sharedPreferences.getBoolean(KEY_REMEMBER, false)) {
-            String savedEmail = sharedPreferences.getString(KEY_USERNAME, "");
-            emailInput.setText(savedEmail);
-            rememberMe.setChecked(true);
-        }
-    }
     private void setupClickListeners() {
         loginBtn.setOnClickListener(v -> handleLogin());
         googleBtn.setOnClickListener(v -> handleGoogleLogin());
@@ -167,7 +141,40 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        tvForgotPassword.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
+    // ==================== REMEMBER ME FUNCTIONALITY ====================
+
+    private void loadSavedCredentials() {
+        if (sharedPreferences.getBoolean(KEY_REMEMBER, false)) {
+            String savedEmail = sharedPreferences.getString(KEY_USERNAME, "");
+            emailInput.setText(savedEmail);
+            rememberMe.setChecked(true);
+        }
+    }
+
+    private void saveRememberMe(String email) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (rememberMe.isChecked()) {
+            editor.putString(KEY_USERNAME, email); // Chỉ lưu email
+            editor.putBoolean(KEY_REMEMBER, true);
+        } else {
+            editor.remove(KEY_USERNAME);
+            editor.putBoolean(KEY_REMEMBER, false);
+        }
+        editor.apply();
+    }
+
+    // ==================== EMAIL/PASSWORD LOGIN ====================
+
     private void handleLogin() {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -199,23 +206,55 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void saveRememberMe(String email) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if (rememberMe.isChecked()) {
-            editor.putString(KEY_USERNAME, email); // Chỉ lưu email
-            editor.putBoolean(KEY_REMEMBER, true);
-        } else {
-            editor.remove(KEY_USERNAME);
-            editor.putBoolean(KEY_REMEMBER, false);
-        }
-        editor.apply();
+
+    // ==================== GOOGLE LOGIN ====================
+
+    private void handleGoogleLogin() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        googleSignInLauncher.launch(signInIntent);
     }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            createUserProfileIfNotExist(user); // 1. Tạo hồ sơ
+                            if (acct.getEmail() != null) {
+                                saveRememberMe(acct.getEmail()); // 2. Chỉ lưu "Remember Me"
+                            }
+
+                            Toast.makeText(LoginActivity.this, "Đăng nhập Google thành công!", Toast.LENGTH_SHORT).show();
+                            navigateToHome();
+                        } else {
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Xác thực Google thất bại.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    // ==================== USER PROFILE CREATION ====================
+
     private void createUserProfileIfNotExist(FirebaseUser firebaseUser) {
         if (firebaseUser == null) return;
 
         String uid = firebaseUser.getUid();
-        String username = firebaseUser.getDisplayName();
         String email = firebaseUser.getEmail();
+        String username = firebaseUser.getDisplayName();
+        if(username == null || username.isEmpty()){
+            assert email != null;
+            username = email.split("@")[0];
+        }else {
+            username = "Người dùng";
+        }
         String finalAvatarUrl;
         String defaultAvatarUrl = "https://emerald-accepted-barnacle-132.mypinata.cloud/ipfs/bafkreiev5kbmz2cdp35axx42pvafhhoygl5apokg5wwtsoefnbdiytftye";
         Uri googleAvatarUri = firebaseUser.getPhotoUrl();
@@ -228,7 +267,7 @@ public class LoginActivity extends AppCompatActivity {
             // dùng link Pinata mặc định của bạn
             finalAvatarUrl = defaultAvatarUrl;
         }
-
+        String finalUsername = username;
 
         // Tạo DocumentReference
         DocumentReference userRef = db.collection("users").document(uid);
@@ -238,7 +277,7 @@ public class LoginActivity extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 if (document == null || !document.exists()) {
                     // --- TÀI LIỆU CHƯA TỒN TẠI -> Tạo mới ---
-                    User newUser = new User(uid, username, email, finalAvatarUrl);
+                    User newUser = new User(uid, finalUsername, email, finalAvatarUrl);
 
                     userRef.set(newUser)
                             .addOnSuccessListener(aVoid -> Log.d(TAG, "Hồ sơ user đã được tạo!"))
@@ -254,6 +293,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    // ==================== NAVIGATION ====================
 
     private void navigateToHome() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);

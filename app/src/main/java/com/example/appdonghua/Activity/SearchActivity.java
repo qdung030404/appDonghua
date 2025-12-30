@@ -23,11 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appdonghua.Adapter.SearchHistoryAdapter;
 import com.example.appdonghua.Adapter.TopSearchAdapter;
-import com.example.appdonghua.Adapter.NoveListAdapter;
+import com.example.appdonghua.Adapter.StoryAdapter;
 import com.example.appdonghua.Model.SearchHistory;
 import com.example.appdonghua.Model.TopSearch;
 import com.example.appdonghua.Model.Story;
-import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -45,10 +44,10 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerView historyRecyclerView, topSearchRecyclerView, searchResultRecyclerView;
     private SearchHistoryAdapter historyAdapter;
     private TopSearchAdapter topSearchAdapter;
-    private NoveListAdapter searchResultAdapter;
+    private StoryAdapter searchResultAdapter;
     private ArrayList<SearchHistory> historyList;
     private ArrayList<TopSearch> topSearchList;
-    private ArrayList<NovelList> searchResultList;
+    private ArrayList<Story> searchResultList;
     private SharedPreferences sharedPreferences;
     private FirebaseFirestore db;
     private ProgressBar progressBar;
@@ -167,7 +166,7 @@ public class SearchActivity extends AppCompatActivity {
     private void setupRecyclerViews(){
         // Search result list
         searchResultList = new ArrayList<>();
-        searchResultAdapter = new NoveListAdapter(searchResultList);
+        searchResultAdapter = new StoryAdapter(searchResultList);
         searchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         searchResultRecyclerView.setAdapter(searchResultAdapter);
         searchResultRecyclerView.setVisibility(View.GONE);
@@ -296,17 +295,7 @@ public class SearchActivity extends AppCompatActivity {
                             String genre = story.getGenres() != null && !story.getGenres().isEmpty()
                                     ? story.getGenres().get(0) : "Chưa phân loại";
 
-                            NovelList novelList = new NovelList(
-                                    story.getCoverImageUrl(),
-                                    story.getTitle(),
-                                    story.getViewCount(),
-                                    story.getGenres(),
-                                    story.getChapter(),
-                                    story.getAuthor(),
-                                    story.getDescription()
-                            );
-
-                            searchResultList.add(novelList);
+                            searchResultList.add(story);
                         }
                     }
 

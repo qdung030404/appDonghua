@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.appdonghua.Adapter.RankingAdapter;
-import com.example.appdonghua.Model.NovelList;
 import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,7 +61,7 @@ public class RankingBoardFragment extends Fragment {
     }
 
     private void setupRankingList(){
-        ArrayList<NovelList> items = new ArrayList<>();
+        ArrayList<Story> items = new ArrayList<>();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rankingRecyclerView.setLayoutManager(layoutManager);
@@ -136,21 +135,13 @@ public class RankingBoardFragment extends Fragment {
 
         query.get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<NovelList> items = new ArrayList<>();
+                    ArrayList<Story> items = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         Story story = doc.toObject(Story.class);
                         String genre = (story.getGenres() != null && !story.getGenres().isEmpty())
                                 ? story.getGenres().get(0) : "Khác";
 
-                        items.add(new NovelList(
-                                story.getCoverImageUrl(),
-                                story.getTitle(),
-                                story.getViewCount(),
-                                story.getGenres(),
-                                story.getChapter(),
-                                story.getAuthor(),
-                                story.getDescription()
-                        ));
+                        items.add(story);
                     }
 
                     if (items.isEmpty()) {
@@ -164,7 +155,7 @@ public class RankingBoardFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching data for category " + category + ": " + e.getMessage());
                     // Thêm dữ liệu mẫu khi có lỗi
-                    ArrayList<NovelList> sampleItems = new ArrayList<>();
+                    ArrayList<Story> sampleItems = new ArrayList<>();
                     adapter.updateData(sampleItems);
                 });
     }

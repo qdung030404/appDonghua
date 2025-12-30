@@ -1,8 +1,8 @@
 package com.example.appdonghua.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.ComicInfoActivity;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
+import com.example.appdonghua.Utils.ScreenUtils;
 
 import java.util.ArrayList;
 
 public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHolder> {
-    private ArrayList<NovelList> items;
+    private ArrayList<Story> items;
 
-    public RankingAdapter(ArrayList<NovelList> items) {
+    public RankingAdapter(ArrayList<Story> items) {
         this.items = items;
     }
 
@@ -31,19 +32,24 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     @Override
     public RankingAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ranking, parent, false);
-        return new ViewHolder(view);
+        Context context = parent.getContext();
+
+        ScreenUtils.ImageDimensions dimensions = ScreenUtils.calculateRankingImageDimensions(context);
+
+        return new ViewHolder(view, dimensions.width, dimensions.height, context);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RankingAdapter.ViewHolder holder, int position) {
-        NovelList novelList = items.get(position);
-        if (novelList == null) return;
+        Story story = items.get(position);
+        if (story == null) return;
 
         int rank = position + 1;
 
         // Tải ảnh với Glide
         Context context = holder.itemView.getContext();
-        String imageUrl = novelList.getImageUrl();
+        String imageUrl = story.getCoverImageUrl();
 
         if (context != null && imageUrl != null) {
             Glide.with(context)
@@ -55,11 +61,11 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         }
 
         // Thiết lập thông tin truyện
-        holder.bookTitle.setText(novelList.getTitle());
-        holder.bookAuthor.setText("Tác giả: " + novelList.getAuthor());
-        holder.bookCategory.setText(String.join(", ", novelList.getGenre()));
-        holder.viewCount.setText("Views: \n" + formatNumber(novelList.getViewCount()));
-        holder.chapterCount.setText("Chương:\n " + novelList.getChapterCount());
+        holder.bookTitle.setText(story.getTitle());
+        holder.bookAuthor.setText("Tác giả: " + story.getAuthor());
+        holder.bookCategory.setText(String.join(", ", story.getGenres()));
+        holder.viewCount.setText("Views: \n" + formatNumber(story.getViewCount()));
+        holder.chapterCount.setText("Chương:\n " + story.getChapter());
 
         // Đổi màu cho top 3
         if (rank == 1) {
@@ -96,13 +102,13 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
                 Intent intent = new Intent(context, ComicInfoActivity.class);
 
                 // Truyền dữ liệu truyện
-                intent.putExtra("IMAGE_URL", novelList.getImageUrl());
-                intent.putExtra("TITLE", novelList.getTitle());
-                intent.putExtra("VIEWS", novelList.getViewCount());
-                intent.putExtra("CATEGORY", novelList.getGenre());
-                intent.putExtra("CHAPTER", novelList.getChapterCount());
-                intent.putExtra("AUTHOR", novelList.getAuthor());
-                intent.putExtra("DESCRIPTION", novelList.getDescription());
+                intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
+                intent.putExtra("TITLE", story.getTitle());
+                intent.putExtra("VIEWS", story.getViewCount());
+                intent.putStringArrayListExtra("GENRES", story.getGenres());
+                intent.putExtra("CHAPTER", story.getChapter());
+                intent.putExtra("AUTHOR", story.getAuthor());
+                intent.putExtra("DESCRIPTION", story.getDescription());
 
                 context.startActivity(intent);
             }
@@ -133,7 +139,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
     }
 
     // Phương thức cập nhật dữ liệu
-    public void updateData(ArrayList<NovelList> newItems) {
+    public void updateData(ArrayList<Story> newItems) {
         this.items = newItems;
         notifyDataSetChanged();
     }
@@ -142,7 +148,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         TextView bookTitle, bookAuthor, bookCategory, viewCount, chapterCount,rankingText;
         ImageView bookCover, rankingNumber;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, int imageWidth, int imageHeight, Context context) {
             super(itemView);
             rankingNumber = itemView.findViewById(R.id.rankingNumber);
             bookCover = itemView.findViewById(R.id.bookCover);
@@ -152,6 +158,19 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             viewCount = itemView.findViewById(R.id.viewCount);
             chapterCount = itemView.findViewById(R.id.chapterCount);
             rankingText = itemView.findViewById(R.id.rankingText);
+
+            ViewGroup.LayoutParams params = bookCover.getLayoutParams();
+            params.width = imageWidth;
+            params.height = imageHeight;
+            bookCover.setLayoutParams(params);
+
+            // ✅ SỬ DỤNG ScreenUtils cho text size
+            ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
+            bookTitle.setTextSize(textSize.title);
+            bookAuthor.setTextSize(textSize.subtitle);
+            bookCategory.setTextSize(textSize.subtitle);
+            viewCount.setTextSize(textSize.caption);
+            chapterCount.setTextSize(textSize.caption);
         }
     }
 }

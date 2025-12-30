@@ -2,6 +2,7 @@ package com.example.appdonghua.Adapter;
 
 import android.content.Context; // Thêm import này
 import android.content.Intent;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -15,8 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide; // Thêm import này
 import com.example.appdonghua.Activity.ComicInfoActivity;
 import com.example.appdonghua.Model.Cell;
-import com.example.appdonghua.Model.NovelList;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
+import com.example.appdonghua.Utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,10 +26,14 @@ import java.util.List;
 import java.util.Set;
 
 public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
+
     private List<Cell> cells;
-    private List<NovelList> novelLists;
+    private List<Story> stories;
     public boolean isEditMode = false;
     private Set<Integer> seLectedItem = new HashSet<>();
+    private static final int SPAN_COUNT = 3;
+    private int itemWidth;
+    private int itemHeight;
     public interface OnDeleteItemsListener {
         void onDeleteItems(List<String> titles);
     }
@@ -39,11 +45,20 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
 
     public CellAdapter(List<Cell> cells){
         this.cells = cells;
-        this.novelLists = new ArrayList<>();
+        this.stories = new ArrayList<>();
     }
-    public CellAdapter(List<Cell> cells, List<NovelList> novelLists){
+    public CellAdapter(List<Cell> cells, List<Story> stories){
         this.cells = cells;
-        this.novelLists = novelLists;
+        this.stories = stories;
+    }
+    private void itemDimension(Context context){
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int screenWidth = displayMetrics.widthPixels;
+        int containerPadding = (int) (32 * displayMetrics.density); // 16dp * 2 bên
+        int itemPadding = (int) (16 * displayMetrics.density * SPAN_COUNT); // 8dp * 2 * 3
+        int totalPadding = containerPadding + itemPadding;
+        itemWidth = (screenWidth - totalPadding) / SPAN_COUNT;
+        itemHeight = (int) (itemWidth * 1.5);
     }
     public void toggleEdit(){
         isEditMode = !isEditMode;
@@ -111,7 +126,19 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
     @Override
     public CellAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cell, parent, false);
-        return new ViewHolder(view);
+        Context context = parent.getContext();
+        ScreenUtils.ImageDimensions dims = ScreenUtils.calculateGridImageDimensions(context, SPAN_COUNT);
+        itemWidth = dims.width;
+        itemHeight = dims.height;
+
+        // Set kích thước cho item
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        if (params instanceof RecyclerView.LayoutParams) {
+            params.width = itemWidth;
+            view.setLayoutParams(params);
+        }
+
+        return new ViewHolder(view, itemHeight, context);
     }
 
     @Override
@@ -124,17 +151,16 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
                 Context context = v.getContext();
                 Intent intent = new Intent(context, ComicInfoActivity.class); // Chuyển sang màn hình chi tiết
 
-                if (novelLists != null && position < novelLists.size()) {
-                    NovelList novelList = novelLists.get(position);
+                if (stories != null && position < stories.size()) {  // ✅ THAY ĐỔI
+                    Story story = stories.get(position);  // ✅ THAY ĐỔI
 
-                    // Gửi dữ liệu đầy đủ từ NovelList
-                    intent.putExtra("TITLE", novelList.getTitle());
-                    intent.putExtra("IMAGE_URL", novelList.getImageUrl());
-                    intent.putExtra("AUTHOR", novelList.getAuthor());
-                    intent.putExtra("GENRES", novelList.getGenre());
-                    intent.putExtra("VIEWS", novelList.getViewCount());
-                    intent.putExtra("CHAPTER", novelList.getChapterCount());
-                    intent.putExtra("DESCRIPTION", novelList.getDescription());
+                    intent.putExtra("TITLE", story.getTitle());
+                    intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
+                    intent.putExtra("AUTHOR", story.getAuthor());
+                    intent.putStringArrayListExtra("GENRES", story.getGenres());  // ✅ THAY ĐỔI
+                    intent.putExtra("VIEWS", story.getViewCount());
+                    intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                    intent.putExtra("DESCRIPTION", story.getDescription());
                 } else {
                     // Fallback: Chỉ gửi dữ liệu cơ bản từ Cell
                     intent.putExtra("TITLE", cell.getTitle());
@@ -188,11 +214,23 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
         ImageView imageView;
         TextView textView;
         CheckBox checkbox;
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, int itemHeight, Context context) {
             super(itemView);
             imageView = itemView.findViewById(R.id.comic_img);
             textView = itemView.findViewById(R.id.tvName);
             checkbox = itemView.findViewById(R.id.checkbox);
+            // Set chiều cao cho CardView chứa ảnh
+            View cardView = itemView.findViewById(R.id.comic_img).getParent() instanceof View
+                    ? (View) itemView.findViewById(R.id.comic_img).getParent() : null;
+            if (cardView != null) {
+                ViewGroup.LayoutParams params = cardView.getLayoutParams();
+                params.height = itemHeight;
+                cardView.setLayoutParams(params);
+            }
+
+            // Điều chỉnh text size dựa trên kích thước màn hình
+            ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
+            textView.setTextSize(textSize.body);
         }
     }
 }

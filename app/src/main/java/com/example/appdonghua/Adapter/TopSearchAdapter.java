@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Model.TopSearch;
 import com.example.appdonghua.R;
+import com.example.appdonghua.Utils.ScreenUtils;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,8 @@ public class TopSearchAdapter extends RecyclerView.Adapter<TopSearchAdapter.View
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_top_search, parent, false);
-        return new ViewHolder(view);
+        Context context = parent.getContext();
+        return new ViewHolder(view, context);
     }
 
     @Override
@@ -84,7 +86,6 @@ public class TopSearchAdapter extends RecyclerView.Adapter<TopSearchAdapter.View
             holder.rankingText.setVisibility(View.VISIBLE);
             holder.rankingText.setText(String.valueOf(rank));
             holder.rankingText.setBackgroundResource(R.drawable.ranking_circle);
-            holder.rankingText.setTextColor(Color.BLACK);
         }
     }
 
@@ -98,12 +99,16 @@ public class TopSearchAdapter extends RecyclerView.Adapter<TopSearchAdapter.View
         TextView topSearchTitle, rankingText;
         ImageView topSearchimg;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, Context context) {
             super(itemView);
             rankingNumber = itemView.findViewById(R.id.rankingNumber);
             topSearchTitle = itemView.findViewById(R.id.topSearchTitle);
             topSearchimg = itemView.findViewById(R.id.topSearchBookCover);
             rankingText = itemView.findViewById(R.id.rankingText);
+
+            // ✅ SỬ DỤNG ScreenUtils cho text size
+            ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
+            topSearchTitle.setTextSize(textSize.title);
         }
     }
 }

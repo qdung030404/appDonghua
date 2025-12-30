@@ -78,6 +78,7 @@
             android:paddingBottom="16dp">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/carouselCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -86,10 +87,16 @@
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp">
 
+                <ImageView
+                    android:id="@+id/imageBackgroundCarousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/carousel"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp" />
+                    android:layout_height="wrap_content" />
 
             </com.google.android.material.card.MaterialCardView>
 
@@ -120,9 +127,11 @@
                     android:id="@+id/date_Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:clipToPadding="false"
-                    android:overScrollMode="never" />
+                    android:scrollbars="none" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/comicsByDateRecyclerView"

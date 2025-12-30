@@ -58,8 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_card_background"
@@ -73,7 +72,11 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="20dp">
-
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_user"
+                    app:tint="@color/app_icon_tint" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -145,7 +148,7 @@
                     android:id="@+id/switchNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true" />
+                    android:checked="false" />
             </LinearLayout>
             <View
                 android:layout_width="match_parent"
@@ -162,7 +165,11 @@
                 android:padding="20dp"
                 android:gravity="center_vertical"
                 android:background="?attr/selectableItemBackground">
-
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_dark_mode"
+                    app:tint="@color/app_icon_tint" />
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -177,39 +184,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/app_divider"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp" />
 
-            <LinearLayout
-                android:id="@+id/language"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Ngôn ngữ"
-                    android:textSize="16sp"
-                    android:textColor="@color/app_text_primary"
-                    android:layout_marginStart="16dp" />
-
-                <ImageView
-                    android:layout_width="17dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="Arrow"
-                    android:src="@drawable/ic_arrow_right"
-                    app:tint="@color/app_text_secondary" />
-
-            </LinearLayout>
         </LinearLayout>
         <LinearLayout
             android:layout_below="@id/setting"

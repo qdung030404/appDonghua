@@ -2,6 +2,7 @@ package com.example.appdonghua.Activity;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -11,14 +12,23 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.appdonghua.Adapter.ViewPagerAdapter;
 import com.example.appdonghua.Helper.NotificationHelper;
+import com.example.appdonghua.Model.Story;
 import com.example.appdonghua.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
     ViewPager vp;
     ChipNavigationBar bottom_nav;
     private NotificationHelper notificationHelper;
+    private static final String PREFS_NAME = "CaseFragmentPrefs";
+    private static final String KEY_PENDING_TAB = "pending_tab";
+    private String pendingCaseTab = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,5 +111,4 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 }

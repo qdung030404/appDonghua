@@ -4,10 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <application
         android:name=".Utils.MyApplication"
         android:allowBackup="true"
@@ -19,6 +17,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppDonghua">
         <activity
+            android:name=".Activity.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ChangePasswordActivity"
+            android:exported="false" />
+                <activity
             android:name=".Activity.AccountActivity"
             android:exported="false" />
         <activity
@@ -55,23 +59,20 @@
         <activity
             android:name=".Activity.MainActivity"
             android:exported="false" />
+
         <service
             android:name=".Service.MessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- Metadata cho Firebase -->
+        </service> <!-- Metadata cho Firebase -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/app_text_primary"/>
-
+            android:resource="@color/app_text_primary" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="donghua_channel" />

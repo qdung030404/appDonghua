@@ -17,7 +17,7 @@ public class Chapter {
         this.order = order;
     }
     public String getChapter() {
-        return "Chương" + Chapter;
+        return Chapter;
     }
 
     public void setChapter(String chapter) {

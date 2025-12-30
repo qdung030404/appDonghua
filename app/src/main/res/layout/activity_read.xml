@@ -8,6 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.ReadActivity">
+
   <ScrollView
       android:id="@+id/scrollViewContent"
       android:layout_width="match_parent"
@@ -17,16 +18,15 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-
-      <TextView
-          android:id="@+id/tvContent"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:padding="16dp"
-          android:textSize="18sp"
-          android:lineSpacingExtra="4dp"
-          android:textColor="@color/app_text_primary"
-          android:text="Nội dung chương sẽ hiển thị ở đây..." />
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/app_text_primary"
+        android:text="Nội dung chương sẽ hiển thị ở đây..." />
 
   </ScrollView>
 
@@ -42,7 +42,246 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Thanh điều khiển chương -->
+    <!-- Settings Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/settingsCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Card.Top"
+        app:cardElevation="1dp"
+        android:visibility="gone">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="16dp">
+
+        <!-- Độ sáng -->
+        <TextView
+            android:id="@+id/brightness_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Độ sáng"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+          <ImageView
+              android:layout_width="24dp"
+              android:layout_height="24dp"
+              app:srcCompat="@drawable/brightness"
+              app:tint="@color/app_icon_tint" />
+
+          <SeekBar
+              android:id="@+id/brightness_seekbar"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="12dp"
+              android:layout_marginEnd="12dp"
+              android:layout_weight="1" />
+
+          <ImageView
+              android:layout_width="24dp"
+              android:layout_height="24dp"
+              app:srcCompat="@drawable/sun"
+              app:tint="@color/app_icon_tint" />
+        </LinearLayout>
+
+        <!-- Cỡ chữ -->
+        <TextView
+            android:id="@+id/text_size_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Cỡ chữ"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+          <Button
+              android:id="@+id/zoom_out_button"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:backgroundTint="@color/board_color"
+              android:text="A-"
+              android:textSize="12sp"
+              android:textColor="@color/app_text_primary" />
+
+          <TextView
+              android:id="@+id/text_size"
+              android:layout_width= "wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="10dp"
+              android:layout_marginEnd="10dp"
+              android:gravity="center"
+              android:text="18"
+              android:textSize="14sp"
+              android:textStyle="bold" />
+
+          <Button
+              android:id="@+id/zoom_in_button"
+              android:layout_width="70dp"
+              android:layout_height="48dp"
+              android:backgroundTint="@color/board_color"
+              android:text="A+"
+              android:textSize="18sp"
+              android:textColor="@color/app_text_primary" />
+        </LinearLayout>
+
+        <!-- Màu nền -->
+        <TextView
+            android:id="@+id/background_color_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Màu nền"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="1">
+
+          <Button
+              android:id="@+id/color_button_1"
+              android:layout_width="0dp"
+              android:layout_height="48dp"
+              android:layout_columnWeight="1"
+              android:layout_margin="4dp"
+              android:backgroundTint="@color/white" />
+
+          <Button
+              android:id="@+id/color_button_2"
+              android:layout_width="0dp"
+              android:layout_height="48dp"
+              android:layout_columnWeight="1"
+              android:layout_margin="4dp"
+              android:backgroundTint="#DBDBDB" />
+
+          <Button
+              android:id="@+id/color_button_3"
+              android:layout_width="0dp"
+              android:layout_height="48dp"
+              android:layout_columnWeight="1"
+              android:layout_margin="4dp"
+              android:backgroundTint="#5F639D" />
+
+          <Button
+              android:id="@+id/color_button_4"
+              android:layout_width="0dp"
+              android:layout_height="48dp"
+              android:layout_columnWeight="1"
+              android:layout_margin="4dp"
+              android:backgroundTint="@color/black" />
+        </GridLayout>
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/chapterListCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="300dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Card.Top"
+        app:cardElevation="1dp"
+        android:visibility="gone">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+        <!-- Header with chapter count and sort buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp">
+
+          <TextView
+              android:id="@+id/chapterCount"
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:text="150 chương"
+              android:textColor="@color/app_text_primary"
+              android:textSize="16sp"
+              android:textStyle="bold"/>
+
+          <Button
+              android:id="@+id/sort_latest_button"
+              android:layout_width="wrap_content"
+              android:layout_height="36dp"
+              android:text="Mới nhất"
+              android:textSize="12sp"
+              android:textColor="@color/app_text_primary"
+              android:backgroundTint="@android:color/transparent"
+              android:paddingStart="12dp"
+              android:paddingEnd="12dp"
+              android:minWidth="0dp" />
+
+          <View
+              android:layout_width="1dp"
+              android:layout_height="24dp"
+              android:layout_marginStart="4dp"
+              android:layout_marginEnd="4dp"
+              android:background="@android:color/darker_gray" />
+
+          <Button
+              android:id="@+id/sort_oldest_button"
+              android:layout_width="wrap_content"
+              android:layout_height="36dp"
+              android:text="Cũ nhất"
+              android:textSize="12sp"
+              android:textColor="@color/app_text_primary"
+              android:backgroundTint="@android:color/transparent"
+              android:paddingStart="12dp"
+              android:paddingEnd="12dp"
+              android:minWidth="0dp" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@android:color/darker_gray" />
+        <!-- RecyclerView for chapters -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewChapters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="250dp"
+            android:padding="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical" />
+
+      </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+    <!-- Control Bar -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,6 +299,7 @@
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="Chương trước"
           app:tint="@color/app_icon_tint" />
+
       <ImageButton
           android:id="@+id/btnBack"
           android:layout_width="30dp"
@@ -70,8 +310,9 @@
           android:src="@drawable/ic_home"
           android:scaleType="fitCenter"
           android:background="?attr/selectableItemBackground"
-          android:contentDescription="Chọn chương"
+          android:contentDescription="Trang chủ"
           app:tint="@color/app_icon_tint" />
+
       <!-- Nút chọn chương -->
       <ImageButton
           android:id="@+id/btnSelectChapter"
@@ -85,18 +326,20 @@
           android:background="?attr/selectableItemBackground"
           android:contentDescription="Chọn chương"
           app:tint="@color/app_icon_tint" />
+
       <ImageButton
-          android:id="@+id/btnToggleDarkMode"
+          android:id="@+id/read_setting_button"
           android:layout_width="30dp"
           android:layout_height="30dp"
           android:layout_weight="1"
           android:layout_marginStart="8dp"
           android:layout_marginEnd="8dp"
-          android:src="@drawable/ic_dark_mode"
+          android:src="@drawable/ic_setting"
           android:scaleType="fitCenter"
           android:background="?attr/selectableItemBackgroundBorderless"
-          android:contentDescription="Chế độ sáng/tối"
+          android:contentDescription="Cài đặt"
           app:tint="@color/app_icon_tint" />
+
       <!-- Nút chương sau -->
       <ImageButton
           android:id="@+id/btnNextChapter"
@@ -107,8 +350,6 @@
           android:background="?attr/selectableItemBackgroundBorderless"
           android:contentDescription="Chương sau"
           app:tint="@color/app_icon_tint" />
-      <!-- Nút chuyển đổi chế độ sáng/tối -->
-
 
     </LinearLayout>
 

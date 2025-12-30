@@ -11,34 +11,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header với các nút chức năng -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:background="@color/app_background">
-            <ImageButton
-                android:id="@+id/settingButton"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:layout_alignParentEnd="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_setting"
-                app:tint="@color/app_icon_tint" />
-        </RelativeLayout>
-
         <!-- Thông tin người dùng -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:padding="24dp"
             android:gravity="center_vertical"
-            android:background="@android:color/transparent">
+            android:background="@drawable/rounded_card_background"
+            android:elevation="4dp">
 
             <ImageView
                 android:id="@+id/img_avatar"
@@ -83,14 +67,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/rounded_card_background"
             android:elevation="4dp">
 
             <LinearLayout
-                android:id="@+id/layout_favorites"
+                android:id="@+id/layout_book_case"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -101,7 +85,7 @@
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/ic_heart"
+                    android:src="@drawable/ic_book"
                     android:contentDescription="Favorites"
                     app:tint="@color/app_icon_tint" />
 
@@ -109,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Phim yêu thích"
+                    android:text="Tủ sách"
                     android:textSize="16sp"
                     android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
@@ -131,7 +115,7 @@
                 android:layout_marginEnd="20dp" />
 
             <LinearLayout
-                android:id="@+id/layout_history"
+                android:id="@+id/layout_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -142,7 +126,7 @@
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:src="@drawable/ic_history"
+                    android:src="@drawable/ic_setting"
                     android:contentDescription="History"
                     app:tint="@color/app_icon_tint" />
 
@@ -150,7 +134,47 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Lịch sử xem"
+                    android:text="Cài đặt"
+                    android:textSize="16sp"
+                    android:textColor="@color/app_text_primary"
+                    android:layout_marginStart="16dp" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="Arrow"
+                    app:tint="@color/app_text_secondary" />
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/app_divider"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp" />
+
+            <LinearLayout
+                android:id="@+id/layout_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center_vertical"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_search"
+                    android:contentDescription="History"
+                    app:tint="@color/app_icon_tint" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Tìm kiếm"
                     android:textSize="16sp"
                     android:textColor="@color/app_text_primary"
                     android:layout_marginStart="16dp" />
@@ -164,46 +188,6 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/app_divider"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp" />
-
-            <LinearLayout
-                android:id="@+id/layout_downloads"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical"
-                android:background="?attr/selectableItemBackground">
-
-                <ImageView
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:src="@drawable/ic_download"
-                    android:contentDescription="Downloads"
-                    app:tint="@color/app_icon_tint" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Tải xuống"
-                    android:textSize="16sp"
-                    android:textColor="@color/app_text_primary"
-                    android:layout_marginStart="16dp" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:contentDescription="Arrow"
-                    app:tint="@color/app_text_primary" />
-
-            </LinearLayout>
         </LinearLayout>
 
         <!-- Menu phụ -->
@@ -211,7 +195,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="30dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="24dp"
@@ -219,7 +203,7 @@
             android:elevation="4dp">
 
             <LinearLayout
-                android:id="@+id/layout_settings"
+                android:id="@+id/layout_feedback"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

@@ -16,10 +16,10 @@ public class MyApplication extends Application {
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
 
-        if (isNightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
+        int nightMode = isNightMode ?
+                AppCompatDelegate.MODE_NIGHT_YES :
+                AppCompatDelegate.MODE_NIGHT_NO;
+
+        AppCompatDelegate.setDefaultNightMode(nightMode);
     }
 }

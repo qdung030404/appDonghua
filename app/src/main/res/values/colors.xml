@@ -3,13 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="background">#393D5E</color>
-    <color name="red">#FF0000</color>
     <color name="app_background">@color/white</color>
     <color name="app_surface">#F5F5F5</color>
     <color name="app_card_background">@color/white</color>
     <color name="app_text_primary">@color/black</color>
     <color name="app_text_secondary">#666666</color>
-    <color name="app_divider">#AFAFAF</color>
+    <color name="app_divider">@color/background</color>
     <color name="app_icon_tint">@color/background</color>
     <color name="board_color">#DBDBDB</color>
     color
