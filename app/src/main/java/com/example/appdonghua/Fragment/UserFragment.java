@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.appdonghua.Activity.LoginActivity;
 import com.example.appdonghua.Activity.MainActivity;
+import com.example.appdonghua.Activity.NoteActivity;
 import com.example.appdonghua.Activity.RegisterActivity;
 import com.example.appdonghua.Activity.SearchActivity;
 import com.example.appdonghua.Activity.SettingActivity;
@@ -50,7 +51,7 @@ public class UserFragment extends Fragment {
     private View layoutLoggedIn;
     private ImageView imgAvatar;
     private TextView tvUsername, tvEmail;
-    private LinearLayout layoutSetting, layoutBookCase, layoutSearch, layoutFeedback, layoutAbout;
+    private LinearLayout layoutSetting, layoutNote, layoutBookCase, layoutSearch, layoutFeedback, layoutAbout;
     private ImageButton settingButton;
 
     private FirebaseAuth mAuth;
@@ -139,6 +140,7 @@ public class UserFragment extends Fragment {
 
         // Menu items
         layoutSetting = layoutLoggedIn.findViewById(R.id.layout_setting);
+        layoutNote = layoutLoggedIn.findViewById(R.id.layout_note);
         layoutBookCase = layoutLoggedIn.findViewById(R.id.layout_book_case);;
         layoutAbout = layoutLoggedIn.findViewById(R.id.layout_about);
         layoutFeedback = layoutLoggedIn.findViewById(R.id.layout_feedback);
@@ -208,6 +210,12 @@ public class UserFragment extends Fragment {
         if (layoutSetting != null) {
             layoutSetting.setOnClickListener(v -> {
                 Intent intent = new Intent(getContext(), SettingActivity.class);
+                startActivity(intent);
+            });
+        }
+        if (layoutNote != null) {
+            layoutNote.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), NoteActivity.class);
                 startActivity(intent);
             });
         }

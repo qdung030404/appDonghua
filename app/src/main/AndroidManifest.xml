@@ -48,6 +48,9 @@
             android:name=".Activity.ComicInfoActivity"
             android:exported="false" />
         <activity
+            android:name=".Activity.NoteActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.SplashActivity"
             android:exported="true">
             <intent-filter>
