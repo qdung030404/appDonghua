@@ -39,6 +39,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class SearchActivity extends AppCompatActivity {
+    private static final String PREFS_NAME = "SearchPrefs";
+    private static final String KEY_SEARCH_HISTORY = "searchHistory";
+    private static final int MAX_HISTORY_SIZE = 10;
+
     private EditText searchEditText;
     private ImageButton searchButton, clearButton, backButton, clearAllButton;
     private RecyclerView historyRecyclerView, topSearchRecyclerView, searchResultRecyclerView;
@@ -53,9 +57,7 @@ public class SearchActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView noResultTextView;
 
-    private static final String PREFS_NAME = "SearchPrefs";
-    private static final String KEY_SEARCH_HISTORY = "searchHistory";
-    private static final int MAX_HISTORY_SIZE = 10;
+    // ==================== LIFECYCLE METHODS ====================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,14 @@ public class SearchActivity extends AppCompatActivity {
         setupListeners();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveHistory();
+    }
+
+    // ==================== INITIALIZATION METHODS ====================
+
     private void init(){
         searchEditText = findViewById(R.id.searchEditText);
         searchButton = findViewById(R.id.searchButton);
@@ -94,73 +104,9 @@ public class SearchActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
     }
 
-    private void searchHistory(){
-        String json = sharedPreferences.getString(KEY_SEARCH_HISTORY, null);
-        historyList = new ArrayList<>();
-        if (json != null){
-            try {
-                JSONArray jsonArray = new JSONArray(json);
-                for (int i = 0; i < jsonArray.length(); i++){
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    String title = jsonObject.getString("title");
-                    historyList.add(new SearchHistory(title));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                historyList = new ArrayList<>();
-            }
-        }
-    }
-
-    private void saveHistory() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        JSONArray jsonArray = new JSONArray();
-        try {
-            for (SearchHistory history : historyList) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("title", history.getTitle());
-                jsonArray.put(jsonObject);
-            }
-            editor.putString(KEY_SEARCH_HISTORY, jsonArray.toString());
-            editor.apply();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setupTopSearchData(){
         topSearchList = new ArrayList<>();
         loadTopSearchFromFirestore();
-    }
-
-    private void loadTopSearchFromFirestore() {
-        // Lấy top 10 truyện có lượt xem cao nhất
-        db.collection("stories")
-                .orderBy("search", Query.Direction.DESCENDING)
-                .limit(10)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    topSearchList.clear();
-
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Story story = document.toObject(Story.class);
-
-                        // Tạo TopSearch object với URL ảnh và title
-                        TopSearch topSearch = new TopSearch(
-                                story.getCoverImageUrl(),
-                                story.getTitle()
-                        );
-                        topSearchList.add(topSearch);
-                    }
-
-                    // Cập nhật adapter
-                    if (topSearchAdapter != null) {
-                        topSearchAdapter.notifyDataSetChanged();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Lỗi tải top search: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void setupRecyclerViews(){
@@ -253,6 +199,79 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    // ==================== SEARCH HISTORY MANAGEMENT ====================
+
+    private void searchHistory(){
+        String json = sharedPreferences.getString(KEY_SEARCH_HISTORY, null);
+        historyList = new ArrayList<>();
+        if (json != null){
+            try {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++){
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String title = jsonObject.getString("title");
+                    historyList.add(new SearchHistory(title));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                historyList = new ArrayList<>();
+            }
+        }
+    }
+
+    private void saveHistory() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        JSONArray jsonArray = new JSONArray();
+        try {
+            for (SearchHistory history : historyList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("title", history.getTitle());
+                jsonArray.put(jsonObject);
+            }
+            editor.putString(KEY_SEARCH_HISTORY, jsonArray.toString());
+            editor.apply();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addToSearchHistory(String query){
+        for (int i = 0; i < historyList.size(); i++){
+            if(historyList.get(i).getTitle().equals(query)){
+                historyList.remove(i);
+                break;
+            }
+        }
+        historyList.add(0, new SearchHistory(query));
+        if (historyList.size() > MAX_HISTORY_SIZE) {
+            historyList.remove(historyList.size() - 1);
+        }
+        saveHistory();
+        historyAdapter.notifyDataSetChanged();
+    }
+
+    private void deleteItem(int position) {
+        if (position >= 0 && position < historyList.size()) {
+            historyList.remove(position);
+            historyAdapter.notifyItemRemoved(position);
+            saveHistory();
+            Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void clearAllItem(){
+        if(historyList.isEmpty()){
+            Toast.makeText(this, "Lịch sử trống", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        historyList.clear();
+        historyAdapter.notifyDataSetChanged();
+        saveHistory();
+        Toast.makeText(this, "Đã xóa lịch sử tìm kiếm", Toast.LENGTH_SHORT).show();
+    }
+
+    // ==================== SEARCH FUNCTIONALITY ====================
+
     private void performSearch(String query){
         if (query.isEmpty()) {
             Toast.makeText(this, "Vui lòng nhập từ khóa tìm kiếm", Toast.LENGTH_SHORT).show();
@@ -320,47 +339,40 @@ public class SearchActivity extends AppCompatActivity {
                 });
     }
 
-    private void showHistoryAndTopSearch() {
-        searchResultRecyclerView.setVisibility(View.GONE);
-        noResultTextView.setVisibility(View.GONE);
-        historyRecyclerView.setVisibility(View.VISIBLE);
-        topSearchRecyclerView.setVisibility(View.VISIBLE);
+    // ==================== LOAD TOP SEARCH ====================
+
+    private void loadTopSearchFromFirestore() {
+        // Lấy top 10 truyện có lượt xem cao nhất
+        db.collection("stories")
+                .orderBy("search", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    topSearchList.clear();
+
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Story story = document.toObject(Story.class);
+
+                        // Tạo TopSearch object với URL ảnh và title
+                        TopSearch topSearch = new TopSearch(
+                                story.getCoverImageUrl(),
+                                story.getTitle()
+                        );
+                        topSearchList.add(topSearch);
+                    }
+
+                    // Cập nhật adapter
+                    if (topSearchAdapter != null) {
+                        topSearchAdapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Lỗi tải top search: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
-    private void addToSearchHistory(String query){
-        for (int i = 0; i < historyList.size(); i++){
-            if(historyList.get(i).getTitle().equals(query)){
-                historyList.remove(i);
-                break;
-            }
-        }
-        historyList.add(0, new SearchHistory(query));
-        if (historyList.size() > MAX_HISTORY_SIZE) {
-            historyList.remove(historyList.size() - 1);
-        }
-        saveHistory();
-        historyAdapter.notifyDataSetChanged();
-    }
+    // ==================== FIREBASE OPERATIONS ====================
 
-    private void deleteItem(int position) {
-        if (position >= 0 && position < historyList.size()) {
-            historyList.remove(position);
-            historyAdapter.notifyItemRemoved(position);
-            saveHistory();
-            Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void clearAllItem(){
-        if(historyList.isEmpty()){
-            Toast.makeText(this, "Lịch sử trống", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        historyList.clear();
-        historyAdapter.notifyDataSetChanged();
-        saveHistory();
-        Toast.makeText(this, "Đã xóa lịch sử tìm kiếm", Toast.LENGTH_SHORT).show();
-    }
     private void incrementSearchCount(String documentId, String title) {
         db.collection("stories")
                 .document(documentId)
@@ -388,9 +400,13 @@ public class SearchActivity extends AppCompatActivity {
                             "Failed to get document for search count update: " + e.getMessage());
                 });
     }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveHistory();
+
+    // ==================== UI HELPER METHODS ====================
+
+    private void showHistoryAndTopSearch() {
+        searchResultRecyclerView.setVisibility(View.GONE);
+        noResultTextView.setVisibility(View.GONE);
+        historyRecyclerView.setVisibility(View.VISIBLE);
+        topSearchRecyclerView.setVisibility(View.VISIBLE);
     }
 }
