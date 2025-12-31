@@ -35,7 +35,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,6 +42,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
+    private static final String PREF_NAME = "LoginPrefs";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_REMEMBER = "remember";
 
     private EditText etEmail, etPassword, etConfirmPassword;
     private CheckBox cbTerms;
@@ -57,9 +59,8 @@ public class RegisterActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> googleSignInLauncher;
 
     private SharedPreferences sharedPreferences;
-    private static final String PREF_NAME = "LoginPrefs";
-    private static final String KEY_USERNAME = "username";
-    private static final String KEY_REMEMBER = "remember";
+
+    // ==================== LIFECYCLE METHODS ====================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,8 @@ public class RegisterActivity extends AppCompatActivity {
         initGoogleSignInLauncher();
         setupListeners();
     }
+
+    // ==================== INITIALIZATION METHODS ====================
 
     private void initViews() {
         etEmail = findViewById(R.id.et_email);
@@ -116,6 +119,42 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void setupListeners() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleRegister();
+            }
+        });
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Chuyển về màn hình đăng nhập
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        btnGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleGoogleRegister();
+            }
+        });
+    }
+
+    // ==================== EMAIL/PASSWORD REGISTRATION ====================
+
     private void handleRegister() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -194,6 +233,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    // ==================== GOOGLE REGISTRATION ====================
+
     private void handleGoogleRegister() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         googleSignInLauncher.launch(signInIntent);
@@ -222,38 +263,8 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void setupListeners() {
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    // ==================== USER PROFILE CREATION ====================
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleRegister();
-            }
-        });
-
-        tvLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Chuyển về màn hình đăng nhập
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        btnGoogle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleGoogleRegister();
-            }
-        });
-    }
     private void createUserProfileIfNotExist(FirebaseUser firebaseUser) {
         if (firebaseUser == null) return;
 
@@ -304,6 +315,9 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
+
+    // ==================== NAVIGATION ====================
+
     private void navigateToHome() {
         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

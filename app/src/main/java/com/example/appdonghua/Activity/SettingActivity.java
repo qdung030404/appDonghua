@@ -72,7 +72,6 @@ public class SettingActivity extends AppCompatActivity {
         switchNightMode = findViewById(R.id.switchNightMode);
         account = findViewById(R.id.account);
         notificationLayout = findViewById(R.id.notification_layout);
-        switchNotification = findViewById(R.id.switchNotification);
         backButton.setOnClickListener(v -> finish());
         // Xử lý sự kiện click đăng xuất
         layoutLogout.setOnClickListener(v -> showLogoutDialog());
