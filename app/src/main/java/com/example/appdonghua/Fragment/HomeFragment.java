@@ -160,14 +160,13 @@ public class HomeFragment extends Fragment {
 
     // ==================== FETCH DATA FROM FIREBASE ====================
 
-    // --- 1. Tải Data list cho CAROUSEL ---
     private void fetchCarouselData() {
         db.collection("stories")
                 .whereEqualTo("featured", true)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     carouselItems.clear();
-                    List<Story> stories = new ArrayList<>();  // ✅ THAY ĐỔI
+                    List<Story> stories = new ArrayList<>();
                     List<QueryDocumentSnapshot> allDocs = new ArrayList<>();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
@@ -182,12 +181,12 @@ public class HomeFragment extends Fragment {
                     int limit = Math.min(5, allDocs.size());
                     for (int i = 0; i < limit; i++) {
                         QueryDocumentSnapshot doc = allDocs.get(i);
-                        Story story = doc.toObject(Story.class);  // ✅ THAY ĐỔI
+                        Story story = doc.toObject(Story.class);
                         carouselItems.add(new Carousel(story.getCoverImageUrl()));
-                        stories.add(story);  // ✅ THAY ĐỔI: Không cần tạo NovelList nữa!
+                        stories.add(story);
                     }
 
-                    carouselAdapter = new CarouselAdapter(carouselItems, stories);  // ✅ THAY ĐỔI
+                    carouselAdapter = new CarouselAdapter(carouselItems, stories);
                     carousel.setAdapter(carouselAdapter);
                     setupCarouselScroll();
                 })
@@ -202,19 +201,19 @@ public class HomeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Cell> allItems = new ArrayList<>();
-                    ArrayList<Story> allStories = new ArrayList<>();  // ✅ THAY ĐỔI
+                    ArrayList<Story> allStories = new ArrayList<>();
 
                     // Lấy tất cả items
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Story story = doc.toObject(Story.class);  // ✅ THAY ĐỔI
+                        Story story = doc.toObject(Story.class);
 
-                        allStories.add(story);  // ✅ THAY ĐỔI: Trực tiếp add Story
+                        allStories.add(story);
                         allItems.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
                     }
 
                     // Random và lấy 6 items
                     ArrayList<Cell> randomItems = new ArrayList<>();
-                    ArrayList<Story> randomStories = new ArrayList<>();  // ✅ THAY ĐỔI
+                    ArrayList<Story> randomStories = new ArrayList<>();
 
                     if (allItems.size() > 6) {
                         List<Integer> indices = new ArrayList<>();
@@ -226,14 +225,14 @@ public class HomeFragment extends Fragment {
                         for (int i = 0; i < Math.min(6, indices.size()); i++) {
                             int index = indices.get(i);
                             randomItems.add(allItems.get(index));
-                            randomStories.add(allStories.get(index));  // ✅ THAY ĐỔI
+                            randomStories.add(allStories.get(index));
                         }
                     } else {
                         randomItems = allItems;
-                        randomStories = allStories;  // ✅ THAY ĐỔI
+                        randomStories = allStories;
                     }
 
-                    recommendedAdapter = new CellAdapter(randomItems, randomStories);  // ✅ THAY ĐỔI
+                    recommendedAdapter = new CellAdapter(randomItems, randomStories);
                     recyclerView.setAdapter(recommendedAdapter);
                 })
                 .addOnFailureListener(e -> {
@@ -248,12 +247,12 @@ public class HomeFragment extends Fragment {
                 .limit(5)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<Story> items = new ArrayList<>();  // ✅ THAY ĐỔI
+                    ArrayList<Story> items = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Story story = doc.toObject(Story.class);  // ✅ THAY ĐỔI
-                        items.add(story);  // ✅ THAY ĐỔI: Trực tiếp add Story!
+                        Story story = doc.toObject(Story.class);
+                        items.add(story);
                     }
-                    hotNovelAdapter = new StoryAdapter(items);  // ✅ THAY ĐỔI
+                    hotNovelAdapter = new StoryAdapter(items);
                     hotnovelScrollView.setAdapter(hotNovelAdapter);
                 })
                 .addOnFailureListener(e -> {
@@ -298,13 +297,13 @@ public class HomeFragment extends Fragment {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     ArrayList<Cell> items = new ArrayList<>();
-                    ArrayList<Story> stories = new ArrayList<>();  // ✅ THAY ĐỔI
+                    ArrayList<Story> stories = new ArrayList<>();
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Story story = doc.toObject(Story.class);  // ✅ THAY ĐỔI
-                        stories.add(story);  // ✅ THAY ĐỔI: Trực tiếp add Story
+                        Story story = doc.toObject(Story.class);
+                        stories.add(story);
                         items.add(new Cell(story.getCoverImageUrl(), story.getTitle()));
                     }
-                    comicsByDayAdapter = new CellAdapter(items, stories);  // ✅ THAY ĐỔI
+                    comicsByDayAdapter = new CellAdapter(items, stories);
                     comicsByDateRecyclerView.setAdapter(comicsByDayAdapter);
                 })
                 .addOnFailureListener(e -> {
