@@ -29,8 +29,6 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Tận dụng layout có sẵn hoặc tạo layout mới đơn giản
-        // Nếu lười tạo layout xml, bạn có thể copy đoạn xml bên dưới bài này
         setContentView(R.layout.activity_note);
 
         listView = findViewById(R.id.listViewNote);
@@ -49,10 +47,8 @@ public class NoteActivity extends AppCompatActivity {
         TextView tvEmpty = findViewById(R.id.tv_empty);
         listView.setEmptyView(tvEmpty);
 
-        // Sự kiện thêm ghi chú
         fabAdd.setOnClickListener(v -> showAddDialog());
 
-        // Sự kiện xóa (Giữ lì để xóa)
         listView.setOnItemLongClickListener((parent, view, position, id) -> {
             String selectedItem = noteList.get(position);
             new AlertDialog.Builder(this)
@@ -68,7 +64,6 @@ public class NoteActivity extends AppCompatActivity {
             return true;
         });
 
-        // Nút back trên toolbar (nếu có)
         if(getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -80,7 +75,6 @@ public class NoteActivity extends AppCompatActivity {
 
     private void loadNotes() {
         noteList = db.getAllNotes();
-        // Dùng layout mặc định của Android cho nhanh, đỡ phải tạo custom adapter
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, noteList);
         listView.setAdapter(adapter);
     }
@@ -89,7 +83,6 @@ public class NoteActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Thêm Ghi Chú");
 
-        // Tạo layout nhập liệu bằng code Java (đỡ phải tạo file XML mới)
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(50, 20, 50, 20);
@@ -100,7 +93,7 @@ public class NoteActivity extends AppCompatActivity {
 
         final EditText inputContent = new EditText(this);
         inputContent.setHint("Nội dung");
-        inputContent.setHeight(300); // Cao một chút để nhập nhiều
+        inputContent.setHeight(300);
         layout.addView(inputContent);
 
         builder.setView(layout);

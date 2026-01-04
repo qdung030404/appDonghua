@@ -309,8 +309,8 @@ public class ComicInfoActivity extends AppCompatActivity {
     // ============ CHAPTER MANAGEMENT METHODS ============
     private List<Chapter> generateChapter(int count){
         List<Chapter> chapters = new ArrayList<>();
-        for (int i = count; i > 0; i--) {
-            chapters.add(new Chapter( "Chương " + (i), i + 100));
+        for (int i = 0; i <= count; i++) {
+            chapters.add(new Chapter( "Chương " + (i+1), i + 100));
         }
         return chapters;
     }

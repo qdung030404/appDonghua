@@ -51,42 +51,36 @@ public class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // 1. Lấy item
         Carousel carousel = carouselItem.get(position);
         if (carousel == null) return;
 
-        // 2. Lấy URL ảnh (bây giờ là String)
         String imageUrl = carousel.getImageUrl();
 
-        // 3. Lấy Context từ View
         Context context = holder.itemView.getContext();
 
-        // 4. Dùng Glide để tải ảnh từ URL
         if (imageUrl != null && context != null) {
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.img) // (Tùy chọn) Ảnh tạm khi đang tải
-                    .error(R.drawable.img_1) // (Tùy chọn) Ảnh khi lỗi
+                    .placeholder(R.drawable.img)
+                    .error(R.drawable.img_1)
                     .into(holder.iv_carousel);
         }
 
-        // 5. Thêm sự kiện click cho item - GIỐNG NHƯ CellAdapter
         holder.itemView.setOnClickListener(v -> {
             Context context1 = v.getContext();
-            Intent intent = new Intent(context1, ComicInfoActivity.class); // Chuyển sang màn hình chi tiết
+            Intent intent = new Intent(context1, ComicInfoActivity.class);
 
-            if (stories != null && position < stories.size()) {  // ✅ THAY ĐỔI
-                Story story = stories.get(position);  // ✅ THAY ĐỔI
+            if (stories != null && position < stories.size()) {
+                Story story = stories.get(position);
 
                 intent.putExtra("TITLE", story.getTitle());
                 intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
                 intent.putExtra("AUTHOR", story.getAuthor());
-                intent.putStringArrayListExtra("GENRES", story.getGenres());  // ✅ THAY ĐỔI
+                intent.putStringArrayListExtra("GENRES", story.getGenres());
                 intent.putExtra("VIEWS", story.getViewCount());
-                intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                intent.putExtra("CHAPTER", story.getChapter());
                 intent.putExtra("DESCRIPTION", story.getDescription());
             } else {
-                // Fallback: Chỉ gửi dữ liệu cơ bản từ Carousel
                 intent.putExtra("TITLE", "Đang cập nhật");
                 intent.putExtra("IMAGE_URL", carousel.getImageUrl());
                 intent.putExtra("AUTHOR", "Đang cập nhật");

@@ -88,7 +88,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
                 intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
                 intent.putExtra("TITLE", story.getTitle());
                 intent.putExtra("VIEWS", story.getViewCount());
-                intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                intent.putExtra("CHAPTER", story.getChapter());
                 intent.putExtra("AUTHOR", story.getAuthor());
                 intent.putExtra("DESCRIPTION", story.getDescription());
                 intent.putStringArrayListExtra("GENRES", story.getGenres());
@@ -100,7 +100,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder>{
 
     @Override
     public int getItemCount() {
-        return item != null ? item.size() : 0; // Thêm check null
+        return item != null ? item.size() : 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{

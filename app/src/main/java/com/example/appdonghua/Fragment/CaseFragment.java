@@ -226,22 +226,19 @@ public class CaseFragment extends Fragment {
     }
 
     private void selectTabById(String tabId) {
-        // Duyệt qua tất cả các TextView trong case_menu
         for (int i = 0; i < case_menu.getChildCount(); i++) {
             View child = case_menu.getChildAt(i);
             if (child instanceof TextView) {
                 TextView textView = (TextView) child;
                 String tag = (String) textView.getTag();
 
-                // Nếu tìm thấy tab có tag khớp với tabId
                 if (tag != null && tag.equals(tabId)) {
-                    textView.performClick(); // Giả lập click vào tab
+                    textView.performClick();
                     return;
                 }
             }
         }
 
-        // Nếu không tìm thấy tab, load tab đầu tiên
         if (case_menu.getChildCount() > 0) {
             case_menu.getChildAt(0).performClick();
         }
@@ -283,7 +280,6 @@ public class CaseFragment extends Fragment {
 
     // ==================== DATA LOADING FROM FIREBASE ====================
 
-    // --- HÀM QUAN TRỌNG: Tải Lịch Sử ---
     private void loadHistoryData() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user == null) {
@@ -313,10 +309,8 @@ public class CaseFragment extends Fragment {
                             Long chapterCount = doc.getLong("chapterCount");
 
                             if (title != null && image != null) {
-                                // Thêm Cell cho hiển thị grid
                                 cellList.add(new Cell(image, title));
 
-                                // Thêm NovelList để truyền đầy đủ thông tin khi click
                                 Story story = new Story(
                                         image,
                                         title,
@@ -413,7 +407,7 @@ public class CaseFragment extends Fragment {
         if (user == null || titles.isEmpty()) return;
 
         // Xác định collection dựa vào tab hiện tại
-        String collection = currentTab; // "history" hoặc "save"
+        String collection = currentTab;
 
         for (String title : titles) {
             db.collection("users").document(user.getUid())
@@ -437,7 +431,6 @@ public class CaseFragment extends Fragment {
         emptyTextView.setText(message);
     }
 
-    // Hàm ẩn thông báo trống (hiện list)
     private void hideEmpty() {
         caseRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);

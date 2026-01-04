@@ -106,7 +106,6 @@ public class TopSearchAdapter extends RecyclerView.Adapter<TopSearchAdapter.View
             topSearchimg = itemView.findViewById(R.id.topSearchBookCover);
             rankingText = itemView.findViewById(R.id.rankingText);
 
-            // ✅ SỬ DỤNG ScreenUtils cho text size
             ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
             topSearchTitle.setTextSize(textSize.title);
         }

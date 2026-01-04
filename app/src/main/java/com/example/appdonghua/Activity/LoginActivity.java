@@ -65,29 +65,23 @@ public class LoginActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        // Khởi tạo SharedPreferences (chỉ cho Remember Me)
         sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
         // Khởi tạo Firebase
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance(); // <-- QUAN TRỌNG: Khởi tạo Firestore
+        db = FirebaseFirestore.getInstance();
 
-        // --- THAY ĐỔI LỚN: Kiểm tra đăng nhập ---
-        // Chỉ cần kiểm tra mAuth.getCurrentUser()
-        // Không cần kiểm tra SharedPreferences
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            // Đã đăng nhập, đi thẳng vào Home
             Toast.makeText(this, "Chào mừng trở lại " + currentUser.getEmail(), Toast.LENGTH_SHORT).show();
             navigateToHome();
-            return; // Quan trọng: Dừng thực thi onCreate()
+            return;
         }
 
-        // Nếu chưa đăng nhập, tiếp tục setup
         initViews();
         initGoogleSignIn();
         initGoogleSignInLauncher();
-        loadSavedCredentials(); // Tải email cho "Remember Me"
+        loadSavedCredentials();
         setupClickListeners();
     }
 
@@ -192,7 +186,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            // --- THAY THẾ saveLoginInfo() ---
                             createUserProfileIfNotExist(user); // 1. Tạo hồ sơ trên Firestore
                             saveRememberMe(email); // 2. Chỉ lưu "Remember Me"
 
@@ -263,30 +256,23 @@ public class LoginActivity extends AppCompatActivity {
 
             finalAvatarUrl = googleAvatarUri.toString();
         } else {
-            // Nếu là đăng ký/đăng nhập bằng Email (không có ảnh),
-            // dùng link Pinata mặc định của bạn
             finalAvatarUrl = defaultAvatarUrl;
         }
         String finalUsername = username;
 
-        // Tạo DocumentReference
         DocumentReference userRef = db.collection("users").document(uid);
 
         userRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document == null || !document.exists()) {
-                    // --- TÀI LIỆU CHƯA TỒN TẠI -> Tạo mới ---
                     User newUser = new User(uid, finalUsername, email, finalAvatarUrl);
 
                     userRef.set(newUser)
                             .addOnSuccessListener(aVoid -> Log.d(TAG, "Hồ sơ user đã được tạo!"))
                             .addOnFailureListener(e -> Log.w(TAG, "Lỗi khi tạo hồ sơ", e));
                 } else {
-                    // --- Đã tồn tại -> (Tùy chọn) Cập nhật tên/avatar nếu họ đổi
                     Log.d(TAG, "User đã tồn tại, không tạo mới.");
-                    // Bạn có thể update avatar/username ở đây nếu muốn
-                    // userRef.update("username", username, "avatarUrl", avatarUrl);
                 }
             } else {
                 Log.w(TAG, "Lỗi khi kiểm tra user: ", task.getException());

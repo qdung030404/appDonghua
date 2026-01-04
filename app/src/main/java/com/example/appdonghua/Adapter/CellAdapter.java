@@ -54,8 +54,8 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
     private void itemDimension(Context context){
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
-        int containerPadding = (int) (32 * displayMetrics.density); // 16dp * 2 bên
-        int itemPadding = (int) (16 * displayMetrics.density * SPAN_COUNT); // 8dp * 2 * 3
+        int containerPadding = (int) (32 * displayMetrics.density);
+        int itemPadding = (int) (16 * displayMetrics.density * SPAN_COUNT);
         int totalPadding = containerPadding + itemPadding;
         itemWidth = (screenWidth - totalPadding) / SPAN_COUNT;
         itemHeight = (int) (itemWidth * 1.5);
@@ -131,7 +131,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
         itemWidth = dims.width;
         itemHeight = dims.height;
 
-        // Set kích thước cho item
         ViewGroup.LayoutParams params = view.getLayoutParams();
         if (params instanceof RecyclerView.LayoutParams) {
             params.width = itemWidth;
@@ -149,17 +148,17 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
         holder.itemView.setOnClickListener(v -> {
             if (!isEditMode){
                 Context context = v.getContext();
-                Intent intent = new Intent(context, ComicInfoActivity.class); // Chuyển sang màn hình chi tiết
+                Intent intent = new Intent(context, ComicInfoActivity.class);
 
-                if (stories != null && position < stories.size()) {  // ✅ THAY ĐỔI
-                    Story story = stories.get(position);  // ✅ THAY ĐỔI
+                if (stories != null && position < stories.size()) {
+                    Story story = stories.get(position);
 
                     intent.putExtra("TITLE", story.getTitle());
                     intent.putExtra("IMAGE_URL", story.getCoverImageUrl());
                     intent.putExtra("AUTHOR", story.getAuthor());
-                    intent.putStringArrayListExtra("GENRES", story.getGenres());  // ✅ THAY ĐỔI
+                    intent.putStringArrayListExtra("GENRES", story.getGenres());
                     intent.putExtra("VIEWS", story.getViewCount());
-                    intent.putExtra("CHAPTER", story.getChapter());  // ✅ THAY ĐỔI
+                    intent.putExtra("CHAPTER", story.getChapter());
                     intent.putExtra("DESCRIPTION", story.getDescription());
                 } else {
                     // Fallback: Chỉ gửi dữ liệu cơ bản từ Cell
@@ -188,9 +187,9 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
         if (context != null && imageUrl != null) {
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.img_2) // Ảnh hiển thị trong khi chờ tải
-                    .error(R.drawable.img_2)       // Ảnh hiển thị nếu link lỗi
-                    .centerCrop()                  // Cắt ảnh cho đẹp
+                    .placeholder(R.drawable.img_2)
+                    .error(R.drawable.img_2)
+                    .centerCrop()
                     .into(holder.imageView);
         }
         holder.checkbox.setOnCheckedChangeListener(null);
@@ -219,7 +218,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
             imageView = itemView.findViewById(R.id.comic_img);
             textView = itemView.findViewById(R.id.tvName);
             checkbox = itemView.findViewById(R.id.checkbox);
-            // Set chiều cao cho CardView chứa ảnh
             View cardView = itemView.findViewById(R.id.comic_img).getParent() instanceof View
                     ? (View) itemView.findViewById(R.id.comic_img).getParent() : null;
             if (cardView != null) {
@@ -228,7 +226,6 @@ public class CellAdapter extends RecyclerView.Adapter<CellAdapter.ViewHolder>{
                 cardView.setLayoutParams(params);
             }
 
-            // Điều chỉnh text size dựa trên kích thước màn hình
             ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
             textView.setTextSize(textSize.body);
         }

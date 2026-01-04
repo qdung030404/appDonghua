@@ -47,7 +47,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
 
         int rank = position + 1;
 
-        // Tải ảnh với Glide
         Context context = holder.itemView.getContext();
         String imageUrl = story.getCoverImageUrl();
 
@@ -60,7 +59,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
                     .into(holder.bookCover);
         }
 
-        // Thiết lập thông tin truyện
         holder.bookTitle.setText(story.getTitle());
         holder.bookAuthor.setText("Tác giả: " + story.getAuthor());
         holder.bookCategory.setText(String.join(", ", story.getGenres()));
@@ -138,7 +136,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         return items != null ? items.size() : 0;
     }
 
-    // Phương thức cập nhật dữ liệu
     public void updateData(ArrayList<Story> newItems) {
         this.items = newItems;
         notifyDataSetChanged();
@@ -164,7 +161,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
             params.height = imageHeight;
             bookCover.setLayoutParams(params);
 
-            // ✅ SỬ DỤNG ScreenUtils cho text size
             ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(context);
             bookTitle.setTextSize(textSize.title);
             bookAuthor.setTextSize(textSize.subtitle);

@@ -117,7 +117,6 @@ public class SearchActivity extends AppCompatActivity {
         searchResultRecyclerView.setAdapter(searchResultAdapter);
         searchResultRecyclerView.setVisibility(View.GONE);
 
-        // History list
         historyAdapter = new SearchHistoryAdapter(historyList, new SearchHistoryAdapter.OnHistoryItemClickListener() {
             @Override
             public void onHistoryItemClick(String query) {
@@ -290,13 +289,10 @@ public class SearchActivity extends AppCompatActivity {
         topSearchRecyclerView.setVisibility(View.GONE);
         searchResultRecyclerView.setVisibility(View.GONE);
 
-        // Clear previous results
         searchResultList.clear();
 
-        // Convert query to lowercase for case-insensitive search
         String searchQuery = query.toLowerCase();
 
-        // Search in Firestore
         db.collection("stories")
                 .orderBy("title")
                 .get()
@@ -306,11 +302,9 @@ public class SearchActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Story story = document.toObject(Story.class);
 
-                        // Check if title contains search query (case-insensitive)
                         if (story.getTitle() != null &&
                                 story.getTitle().toLowerCase().contains(searchQuery)) {
                             incrementSearchCount(document.getId(), story.getTitle());
-                            // Convert Story to NovelList
                             String genre = story.getGenres() != null && !story.getGenres().isEmpty()
                                     ? story.getGenres().get(0) : "Chưa phân loại";
 
@@ -318,7 +312,6 @@ public class SearchActivity extends AppCompatActivity {
                         }
                     }
 
-                    // Update UI
                     progressBar.setVisibility(View.GONE);
 
                     if (searchResultList.isEmpty()) {

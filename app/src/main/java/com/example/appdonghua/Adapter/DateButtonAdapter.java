@@ -16,7 +16,7 @@ import java.util.List;
 public class DateButtonAdapter extends RecyclerView.Adapter<DateButtonAdapter.ViewHolder> {
     private List<Date> datebtns;
     private OnItemClickListener listener;
-    private int selectedPosition = 0; // Vị trí được chọn mặc định
+    private int selectedPosition = 0;
 
     public interface OnItemClickListener {
         void onDateClick(Date date, int position);
@@ -73,16 +73,14 @@ public class DateButtonAdapter extends RecyclerView.Adapter<DateButtonAdapter.Vi
         public void bind(Date date, int position, boolean isSelected) {
             dateButton.setText(date.getName());
 
-            // Highlight button được chọn
             dateButton.setSelected(isSelected);
 
             dateButton.setOnClickListener(v -> {
                 if (listener != null) {
-                    // Cập nhật vị trí được chọn
+
                     int oldPosition = selectedPosition;
                     selectedPosition = getAdapterPosition();
 
-                    // Refresh UI cho 2 items
                     notifyItemChanged(oldPosition);
                     notifyItemChanged(selectedPosition);
 

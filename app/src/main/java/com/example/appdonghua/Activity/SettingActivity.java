@@ -33,15 +33,13 @@ import com.google.firebase.messaging.FirebaseMessaging;
 public class SettingActivity extends AppCompatActivity {
     ImageButton backButton;
     LinearLayout layoutLogout, account, notificationLayout;
-    Switch switchNightMode, switchNotification;
+    Switch switchNightMode;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private SharedPreferences sharedPreferences;
     private static final String PREFS_NAME = "AppSettings";
     private static final String KEY_NIGHT_MODE = "night_mode";
-    private static final String KEY_NOTIFICATION = "notification_enabled";
-    private NotificationHelper notificationHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,13 +51,9 @@ public class SettingActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Khởi tạo SharedPreferences
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        notificationHelper = new NotificationHelper(this);
-        // Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Khởi tạo Google Sign In Client
         initGoogleSignInClient();
         getFCMToken();
         init();
@@ -73,15 +67,10 @@ public class SettingActivity extends AppCompatActivity {
         account = findViewById(R.id.account);
         notificationLayout = findViewById(R.id.notification_layout);
         backButton.setOnClickListener(v -> finish());
-        // Xử lý sự kiện click đăng xuất
         layoutLogout.setOnClickListener(v -> showLogoutDialog());
 
-        // Xử lý sự kiện thay đổi chế độ ban đêm
         switchNightMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
             setNightMode(isChecked);
-        });
-        switchNotification.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            setNotificationEnabled(isChecked);
         });
         notificationLayout.setOnClickListener(v -> openNotificationSettings());
         account.setOnClickListener(v -> {
@@ -90,47 +79,11 @@ public class SettingActivity extends AppCompatActivity {
         });
     }
     private void loadSettings() {
-        // Lấy trạng thái chế độ ban đêm đã lưu
         boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
         switchNightMode.setChecked(isNightMode);
 
-        // Lấy trạng thái thông báo đã lưu
-        boolean isNotificationEnabled = sharedPreferences.getBoolean(KEY_NOTIFICATION, true);
-        switchNotification.setChecked(isNotificationEnabled);
     }
 
-    private void setNotificationEnabled(boolean isEnabled) {
-        // Lưu trạng thái vào SharedPreferences
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(KEY_NOTIFICATION, isEnabled);
-        editor.apply();
-
-        if (isEnabled) {
-            // Subscribe to topic để nhận thông báo
-            FirebaseMessaging.getInstance().subscribeToTopic("all")
-                    .addOnCompleteListener(task -> {
-                        String msg = task.isSuccessful() ?
-                                "Đã bật thông báo" : "Không thể bật thông báo";
-                        Toast.makeText(SettingActivity.this, msg, Toast.LENGTH_SHORT).show();
-
-                        // Gửi thông báo test
-                        if (task.isSuccessful()) {
-                            notificationHelper.sendNotification(
-                                    "Thông báo đã được bật",
-                                    "Bạn sẽ nhận được thông báo từ ứng dụng"
-                            );
-                        }
-                    });
-        } else {
-            // Unsubscribe from topic
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("all")
-                    .addOnCompleteListener(task -> {
-                        String msg = task.isSuccessful() ?
-                                "Đã tắt thông báo" : "Không thể tắt thông báo";
-                        Toast.makeText(SettingActivity.this, msg, Toast.LENGTH_SHORT).show();
-                    });
-        }
-    }
 
     private void getFCMToken() {
         FirebaseMessaging.getInstance().getToken()
@@ -140,7 +93,6 @@ public class SettingActivity extends AppCompatActivity {
                         return;
                     }
 
-                    // Get new FCM registration token
                     String token = task.getResult();
                     Log.d(TAG, "FCM Token: " + token);
 
@@ -152,11 +104,9 @@ public class SettingActivity extends AppCompatActivity {
             Intent intent = new Intent();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Android 8.0 trở lên - mở App Notification Settings
                 intent.setAction(Settings.ACTION_APP_NOTIFICATION_SETTINGS);
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName());
             } else {
-                // Android 7.1 trở xuống - mở App Info Settings
                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.setData(Uri.parse("package:" + getPackageName()));
             }
@@ -164,7 +114,6 @@ public class SettingActivity extends AppCompatActivity {
             startActivity(intent);
 
         } catch (Exception e) {
-            // Fallback: nếu không mở được notification settings, mở app info
             try {
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.setData(Uri.parse("package:" + getPackageName()));
@@ -175,13 +124,11 @@ public class SettingActivity extends AppCompatActivity {
         }
     }
     private void loadNightModeSetting() {
-        // Lấy trạng thái chế độ ban đêm đã lưu
         boolean isNightMode = sharedPreferences.getBoolean(KEY_NIGHT_MODE, false);
         switchNightMode.setChecked(isNightMode);
     }
 
     private void setNightMode(boolean isNightMode) {
-        // Lưu trạng thái vào SharedPreferences
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(KEY_NIGHT_MODE, isNightMode);
         editor.apply();
@@ -212,15 +159,11 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void logout() {
-        // 1. Đăng xuất Firebase
         mAuth.signOut();
 
-        // 2. Đăng xuất Google
         mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
-            // 3. Thông báo và đóng Activity
             Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-
-            // 4. Đóng SettingActivity và quay về UserFragment
+            
             finish();
         });
     }

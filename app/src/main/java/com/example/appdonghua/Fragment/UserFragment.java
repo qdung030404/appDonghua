@@ -52,7 +52,6 @@ public class UserFragment extends Fragment {
     private ImageView imgAvatar;
     private TextView tvUsername, tvEmail;
     private LinearLayout layoutSetting, layoutNote, layoutBookCase, layoutSearch, layoutFeedback, layoutAbout;
-    private ImageButton settingButton;
 
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -191,17 +190,15 @@ public class UserFragment extends Fragment {
     }
 
     private void setupLoggedInClickListeners() {
-        // Favorites
         if (layoutBookCase != null) {
             layoutBookCase.setOnClickListener(v -> {
                 if (getActivity() instanceof MainActivity) {
                     MainActivity mainActivity = (MainActivity) getActivity();
-                    // Chuyển ViewPager sang tab bookcase (position 2)
                     mainActivity.findViewById(R.id.vp);
                     androidx.viewpager.widget.ViewPager viewPager =
                             mainActivity.findViewById(R.id.vp);
                     if (viewPager != null) {
-                        viewPager.setCurrentItem(2); // Position 2 = bookcase tab
+                        viewPager.setCurrentItem(2);
                     }
                 }
             });
@@ -226,7 +223,6 @@ public class UserFragment extends Fragment {
             });
         }
 
-        // Feedback
         if (layoutFeedback != null) {
             layoutFeedback.setOnClickListener(v -> showFeedBackDialog());
         }

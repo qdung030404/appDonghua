@@ -78,55 +78,49 @@ public class RankingBoardFragment extends Fragment {
 
         switch(category) {
             case "full":
-                // Lấy truyện đã hoàn thành
                 query = db.collection("stories")
                         .whereEqualTo("status", "Full") // Hoặc "full"
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "hot":
-                // Lấy truyện hot nhất
                 query = db.collection("stories")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "do_thi":
-                // Lấy truyện thể loại Tu Tiên
+
                 query = db.collection("stories")
                         .whereArrayContains("genres", "Đô Thị")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "magical":
-                // Lấy truyện thể loại Huyền Huyễn
+
                 query = db.collection("stories")
                         .whereArrayContains("genres", "Huyền Huyễn")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "xuyen_khong":
-                // Lấy truyện thể loại Xuyên Không
                 query = db.collection("stories")
                         .whereArrayContains("genres", "Xuyên Không")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "tien_hiep":
-                // Lấy truyện thể loại Tiên Hiệp
                 query = db.collection("stories")
                         .whereArrayContains("genres", "Tiên Hiệp")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             case "mechanic":
-                // Lấy truyện thể loại Khoa Huyễn
                 query = db.collection("stories")
                         .whereArrayContains("genres", "Khoa Huyễn")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
                 break;
             default:
-                // Mặc định lấy tất cả truyện
                 query = db.collection("stories")
                         .orderBy("viewCount", Query.Direction.DESCENDING)
                         .limit(10);
@@ -146,7 +140,6 @@ public class RankingBoardFragment extends Fragment {
 
                     if (items.isEmpty()) {
                         Log.d(TAG, "No data found for category: " + category);
-                        // Thêm dữ liệu mẫu nếu không có dữ liệu
                     }
 
                     adapter.updateData(items);
@@ -154,7 +147,6 @@ public class RankingBoardFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error fetching data for category " + category + ": " + e.getMessage());
-                    // Thêm dữ liệu mẫu khi có lỗi
                     ArrayList<Story> sampleItems = new ArrayList<>();
                     adapter.updateData(sampleItems);
                 });

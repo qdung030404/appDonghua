@@ -77,7 +77,7 @@ public class ReadActivity extends AppCompatActivity {
     private int currentChapterIndex = 0;
     private int totalChapters;
     private String comicTitle;
-    private boolean isLatestFirst = true; // Mặc định sắp xếp mới nhất trước
+    private boolean isLatestFirst = true;
 
     // Settings
     private float currentTextSize = 16f;
@@ -362,13 +362,10 @@ public class ReadActivity extends AppCompatActivity {
     }
 
     private void setupChapterList() {
-        // Setup RecyclerView
         rvChapters.setLayoutManager(new LinearLayoutManager(this));
 
-        // Update chapter count
         tvChapterCount.setText(totalChapters + " chương");
 
-        // Create adapter with click listener
         chapterAdapter = new ChapterAdapter(chapterList, (chapter, position) -> {
             if (position != currentChapterIndex) {
                 boolean isGoingBack = position < currentChapterIndex;
@@ -379,7 +376,6 @@ public class ReadActivity extends AppCompatActivity {
 
         rvChapters.setAdapter(chapterAdapter);
 
-        // Update sort button states
         updateSortButtonStates();
     }
 
@@ -388,23 +384,17 @@ public class ReadActivity extends AppCompatActivity {
         float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
         float screenHeightPx = displayMetrics.heightPixels;
 
-        // Giới hạn chiều cao RecyclerView dựa trên kích thước màn hình
         ViewGroup.LayoutParams rvParams = rvChapters.getLayoutParams();
         if (screenWidthDp >= 600) {
-            // Tablet: 50% màn hình
             rvParams.height = (int) (screenHeightPx * 0.5);
         } else if (screenWidthDp >= 400) {
-            // Phone lớn: 45% màn hình
             rvParams.height = (int) (screenHeightPx * 0.45);
         } else {
-            // Phone nhỏ: 40% màn hình
             rvParams.height = (int) (screenHeightPx * 0.4);
         }
         rvChapters.setLayoutParams(rvParams);
 
-        // Text size cho nội dung đọc
         if (screenWidthDp >= 600) {
-            // Tablet
             if (currentTextSize == 16f || currentTextSize == 18f) {
                 currentTextSize = 20f;
             }
@@ -415,7 +405,6 @@ public class ReadActivity extends AppCompatActivity {
                     ScreenUtils.dpToPx(this, 24)
             );
         } else if (screenWidthDp >= 400) {
-            // Phone lớn
             if (currentTextSize == 16f) {
                 currentTextSize = 18f;
             }
@@ -426,7 +415,6 @@ public class ReadActivity extends AppCompatActivity {
                     ScreenUtils.dpToPx(this, 20)
             );
         } else {
-            // Phone nhỏ
             tvContent.setPadding(
                     ScreenUtils.dpToPx(this, 16),
                     ScreenUtils.dpToPx(this, 16),
@@ -435,21 +423,17 @@ public class ReadActivity extends AppCompatActivity {
             );
         }
 
-        // Chapter count text size
         ScreenUtils.TextSize textSize = ScreenUtils.calculateTextSize(this);
         tvChapterCount.setTextSize(textSize.title);
 
-        // Sort buttons text size
         sortLatestButton.setTextSize(textSize.body);
         sortOldestButton.setTextSize(textSize.body);
 
-        // Settings titles text size
         brightnessTitle.setTextSize(textSize.title);
         textSizeTitle.setTextSize(textSize.title);
         backgroundColorTitle.setTextSize(textSize.title);
         this.textSize.setTextSize(textSize.subtitle);
 
-        // Button sizes
         int buttonHeight;
         int buttonWidth;
         if (screenWidthDp >= 600) {
@@ -740,7 +724,6 @@ public class ReadActivity extends AppCompatActivity {
         }
 
         chapterAdapter = new ChapterAdapter(sortedList, (chapter, position) -> {
-            // Tìm vị trí thực tế trong danh sách gốc
             int actualPosition = chapterList.indexOf(chapter);
             if (actualPosition != currentChapterIndex) {
                 boolean isGoingBack = actualPosition < currentChapterIndex;
@@ -834,7 +817,7 @@ public class ReadActivity extends AppCompatActivity {
 
     // ==================== CHAPTER LIST METHODS ====================
 
-    private void toggleChapterList() {
+    private void  toggleChapterList() {
         if (isChapterListVisible) {
             hideChapterList();
         } else {
@@ -844,7 +827,7 @@ public class ReadActivity extends AppCompatActivity {
     }
 
     private void showChapterList() {
-        // Hide settings if visible
+
         if (isSettingsVisible) {
             settingsCard.setVisibility(View.GONE);
             isSettingsVisible = false;
@@ -860,7 +843,6 @@ public class ReadActivity extends AppCompatActivity {
                 .translationY(0)
                 .start();
 
-        // Scroll to current chapter
         int scrollPosition = isLatestFirst ? currentChapterIndex : (chapterList.size() - 1 - currentChapterIndex);
         rvChapters.scrollToPosition(scrollPosition);
     }

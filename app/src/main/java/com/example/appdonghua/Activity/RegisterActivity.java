@@ -67,10 +67,8 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Khởi tạo Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        // Khởi tạo SharedPreferences
         sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
 
         initViews();
@@ -138,7 +136,6 @@ public class RegisterActivity extends AppCompatActivity {
         tvLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Chuyển về màn hình đăng nhập
                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
@@ -200,7 +197,6 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Đăng ký với Firebase
         registerUserWithFirebase(email, password);
     }
 
@@ -213,7 +209,6 @@ public class RegisterActivity extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            // Tạo user profile trên Firestore
                             createUserProfileIfNotExist(user);
 
                             Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
@@ -292,9 +287,8 @@ public class RegisterActivity extends AppCompatActivity {
             finalAvatarUrl = defaultAvatarUrl;
         }
 
-        String finalUsername = username; // Tạo biến final để dùng trong lambda
+        String finalUsername = username;
 
-        // Tạo DocumentReference
         DocumentReference userRef = db.collection("users").document(uid);
 
         userRef.get().addOnCompleteListener(task -> {

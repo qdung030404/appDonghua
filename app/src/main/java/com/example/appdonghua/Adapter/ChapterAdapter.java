@@ -17,16 +17,10 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHold
     private List<Chapter> chapters;
     private OnChapterClickListener listener;
 
-    // Interface để xử lý sự kiện click
     public interface OnChapterClickListener {
         void onChapterClick(Chapter chapter, int position);
     }
 
-    public ChapterAdapter(List<Chapter> chapters) {
-        this.chapters = chapters;
-    }
-
-    // Constructor với listener
     public ChapterAdapter(List<Chapter> chapters, OnChapterClickListener listener) {
         this.chapters = chapters;
         this.listener = listener;
@@ -56,10 +50,6 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterAdapter.ViewHold
     @Override
     public int getItemCount() {
         return chapters.size();
-    }
-
-    public void setHighlightedPosition(int position) {
-        // Có thể implement để highlight chương đang đọc
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
